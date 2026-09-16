@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { musicConfig, resolveMusicOptions } from "../../src/config/musicConfig";
+import { musicTracks } from "../../src/data/music";
 import I18nKey from "../../src/i18n/i18nKey";
 import { en } from "../../src/i18n/languages/en";
 import { es } from "../../src/i18n/languages/es";
@@ -132,6 +133,11 @@ test.describe("music sidebar architecture", () => {
 		test.skip(
 			musicConfig.provider !== "local" && musicConfig.provider !== "mixed",
 			"Local configuration is not using local tracks",
+		);
+		// 封面为远端地址时（例如歌单体检生成的列表）不经过 Astro 资源优化，该断言不适用
+		test.skip(
+			/^https?:/i.test(musicTracks[0]?.cover ?? ""),
+			"Local tracks use remote covers",
 		);
 
 		await page.goto("/");

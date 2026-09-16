@@ -59,7 +59,13 @@
     "lint": "biome check --write ./src",
     "preinstall": "npx only-allow pnpm",
     "test": "playwright test",
-    "perf:measure": "node scripts/perf/measure.mjs"
+    "perf:measure": "node scripts/perf/measure.mjs",
+    "meting:deploy": "bash scripts/deploy-meting.sh",
+    "meting:test": "bash scripts/deploy-meting.sh test",
+    "meting:refresh": "bash scripts/deploy-meting.sh refresh",
+    "meting:logs": "bash scripts/deploy-meting.sh logs",
+    "meting:cookie": "bash scripts/update-meting-cookie.sh",
+    "music:audit": "node scripts/music/audit-playlist.mjs"
   },
   "dependencies": {
     "@arayui/rainy-day": "^1.0.6",

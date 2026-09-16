@@ -69,3 +69,10 @@ artifacts/lighthouse/*
 
 # generated AI skills plugin packages
 artifacts/shirone-ai-*
+
+# meting 自建音乐服务：QQ / 网易云登录 Cookie（等同账号凭证，切勿提交或外发）
+qq-cookie.txt
+meting-api/
+
+# 歌单体检器生成的本地曲目备份
+src/data/music.ts.bak

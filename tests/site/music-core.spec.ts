@@ -4,6 +4,7 @@ import {
 	resolveMusicOptions,
 } from "../../src/config/musicConfig";
 import type { MusicConfig } from "../../src/types/musicConfig";
+import { musicTracks } from "../../src/data/music";
 import {
 	buildMetingUrl,
 	createMusicRuntime,
@@ -175,7 +176,8 @@ test.describe("music configuration and playlist helpers", () => {
 		});
 		expect(resolved).not.toBeNull();
 		expect(resolved?.playlist.length).toBeGreaterThan(0);
-		expect(resolved?.playlist[0].id).toBe("dazbee");
+		// 与数据源保持一致：src/data/music.ts 可由 scripts/music/audit-playlist.mjs --write 重新生成
+		expect(resolved?.playlist[0].id).toBe(musicTracks[0]?.id);
 	});
 
 	test("resolves custom and meting provider configurations", () => {

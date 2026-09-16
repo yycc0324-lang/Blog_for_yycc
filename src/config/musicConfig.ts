@@ -50,7 +50,12 @@ import { withUserConfig } from "../utils/config-overlay.ts";
  */
 export const musicConfig: MusicConfig = withUserConfig("music", {
 	enable: true,
-	provider: "mixed",
+	// 「本地模式」：只播放 src/data/music.ts 的曲目列表（当前是歌单体检筛出来的"确认可播放"曲目），
+	// 不产生任何远端请求，首屏立即可播；歌单更新后用 `pnpm music:audit --write` 重新生成列表即可。
+	//
+	// 想改回「远端歌单自动更新」：provider 改回 "mixed"（本地保底 + 远端歌单自动合并）
+	// 或 "meting"（只用远端歌单）；下方 meting 段已完整保留，切换时无需重新配置。
+	provider: "local",
 	// tracks: [
 	// 	{
 	// 		id: "custom-1",
@@ -62,12 +67,17 @@ export const musicConfig: MusicConfig = withUserConfig("music", {
 	// 	},
 	// ],
 	meting: {
-		server: "netease",
+		// 本地自建 Meting 容器（部署、Cookie 更新与排查见本仓 docs/DEPLOYMENT_METING.md）。
+		// 8899 是本机开发正在共用的 Meting 容器端口；若改用本仓自带的 compose（默认 8900）
+		// 或部署上线，请同步把这里换成对应端口 / 公网 HTTPS 反代域名。
+		// 模板占位符由 utils/music/meting.ts 的 buildMetingUrl() 填充。
+		api: "http://127.0.0.1:8899/?server=:server&type=:type&id=:id&r=:r",
+		server: "tencent", // QQ 音乐
 		type: "playlist",
-		id: "14164869977",
+		id: "9777005268", // QQ 歌单 ID（在 QQ 音乐歌单分享链接里取 id= 后面的数字）
 		// 进入视口时预取歌单元数据（仅元信息，不预取音频流）：
 		// "metadata"（取）| "none"（默认，不取；交互后才请求，卡片显示「尚未请求」占位）
-		preload: "none",
+		preload: "metadata",
 	},
 	defaultVolume: 0.7,
 	defaultMode: "sequence",
