@@ -141,11 +141,11 @@ test.describe("Rainy window layer — 开启后", () => {
 		});
 
 		await page.waitForFunction(() => Boolean(window.swup?.navigate));
-		await page.evaluate(() => window.swup?.navigate("/about/"));
+		await page.evaluate(() => window.swup?.navigate("/friends/"));
 		await page.waitForFunction(
 			() =>
 				document.getElementById("swup-container")?.dataset.currentPage ===
-				"about",
+				"friends",
 		);
 
 		await expect(layer).toHaveCount(1);

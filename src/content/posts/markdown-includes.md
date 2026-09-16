@@ -3,7 +3,7 @@ title: "Markdown File Includes"
 published: 2026-08-28
 description: "Build-time Markdown file and slice includes."
 tags: [Markdown, Shirone]
-category: Guides
+category: 指南
 draft: false
 ---
 

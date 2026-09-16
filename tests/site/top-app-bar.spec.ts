@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { siteConfig } from "../../src/config/siteConfig";
 import { aboutConfig } from "../../src/config/aboutConfig";
 import { albumsConfig } from "../../src/config/albumsConfig";
 import { animeConfig } from "../../src/config/animeConfig";
@@ -37,7 +38,7 @@ test.describe("top app bar content alignment", () => {
 		const title = content.locator(":scope > a");
 		const nav = content.locator(":scope > nav");
 
-		await expect(title).toHaveText("Shirone");
+		await expect(title).toHaveText(siteConfig.title);
 		await expect(title).not.toHaveClass(/lg:absolute/);
 		await expect(nav).toBeVisible();
 		await expect(nav).toHaveClass(/lg:absolute/);

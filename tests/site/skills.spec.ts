@@ -3,7 +3,10 @@ import { expect, test } from "@playwright/test";
 const SKILL_COUNT = 21;
 const FRONTEND_COUNT = 8;
 
+import { skillsConfig } from "../../src/config/skillsConfig";
+
 test.describe("技能页", () => {
+	test.skip(!skillsConfig.enable, "技能页已关闭（skillsConfig.enable = false）");
 	test.beforeEach(async ({ page }) => {
 		await page.goto("/skills/");
 		await expect(page.locator(".skill-card")).toHaveCount(SKILL_COUNT);
@@ -56,6 +59,7 @@ test.describe("技能页", () => {
 });
 
 test.describe("技能页 Swup 导航", () => {
+	test.skip(!skillsConfig.enable, "技能页已关闭（skillsConfig.enable = false）");
 	test.use({ viewport: { width: 1280, height: 900 } });
 
 	test("从持久顶栏进入后同步页面、导航与侧栏状态", async ({ page }) => {

@@ -1,4 +1,6 @@
 import { expect, test } from "@playwright/test";
+import I18nKey from "../../src/i18n/i18nKey";
+import { i18n } from "../../src/i18n/translation";
 
 const PROJECT_COUNT = 3;
 
@@ -13,9 +15,9 @@ test.describe("项目页", () => {
 			"data-current-page",
 			"projects",
 		);
-		await expect(page.locator(".page-header__title")).toHaveText("Projects");
+		await expect(page.locator(".page-header__title")).toHaveText(i18n(I18nKey.projects));
 		await expect(page.locator(".projects-section__count")).toHaveText(
-			"3 projects",
+			String(3) + " " + i18n(I18nKey.projectsCounts),
 		);
 
 		const shirone = page.locator('[data-project="shirone"]');
@@ -26,13 +28,13 @@ test.describe("项目页", () => {
 		);
 		await expect(shirone).toHaveClass(/project-card--featured/);
 		await expect(shirone.locator('[data-phase="building"]')).toHaveText(
-			"Building",
+			i18n(I18nKey.projectPhaseBuilding),
 		);
 		await expect(shirone.locator(".project-card__technologies li")).toHaveCount(
 			4,
 		);
 		await expect(
-			shirone.getByRole("link", { name: "View source" }),
+			shirone.getByRole("link", { name: i18n(I18nKey.projectSource) }),
 		).toHaveAttribute("href", "https://github.com/LyraVoid/Shirone");
 
 		// 无封面项目：渲染图标瓷砖形态（不渲染封面区）
@@ -40,20 +42,20 @@ test.describe("项目页", () => {
 		await expect(folkpatch.locator(".project-card__icon")).toBeVisible();
 		await expect(folkpatch.locator(".project-card__cover")).toHaveCount(0);
 		await expect(folkpatch.locator('[data-phase="building"]')).toHaveText(
-			"Building",
+			i18n(I18nKey.projectPhaseBuilding),
 		);
 		await expect(
-			folkpatch.getByRole("link", { name: "View source" }),
+			folkpatch.getByRole("link", { name: i18n(I18nKey.projectSource) }),
 		).toHaveAttribute("href", "https://github.com/LyraVoid/FolkPatch");
 
 		const kernelpatch = page.locator('[data-project="kernelpatch"]');
 		await expect(kernelpatch.locator(".project-card__icon")).toBeVisible();
 		await expect(kernelpatch.locator(".project-card__cover")).toHaveCount(0);
 		await expect(kernelpatch.locator('[data-phase="shipped"]')).toHaveText(
-			"Shipped",
+			i18n(I18nKey.projectPhaseShipped),
 		);
 		await expect(
-			kernelpatch.getByRole("link", { name: "View source" }),
+			kernelpatch.getByRole("link", { name: i18n(I18nKey.projectSource) }),
 		).toHaveAttribute("href", "https://github.com/lyravoid/KernelPatch");
 	});
 
@@ -77,7 +79,7 @@ test.describe("项目页", () => {
 		).toBeVisible();
 		await expect(page.locator(".project-card")).toHaveCount(2);
 		await expect(page.locator(".projects-section__count")).toHaveText(
-			"2 projects",
+			String(2) + " " + i18n(I18nKey.projectsCounts),
 		);
 		await expect(page.locator('[data-project="shirone"]')).toHaveCount(0);
 		await expect(page.locator('[data-project="folkpatch"]')).toBeVisible();
@@ -213,8 +215,8 @@ test.describe("项目页 Swup 导航", () => {
 	test.use({ viewport: { width: 1280, height: 900 } });
 
 	test("从持久顶栏进入后同步页面、导航与侧栏状态", async ({ page }) => {
-		await page.goto("/skills/", { waitUntil: "domcontentloaded" });
-		await page.getByRole("button", { name: "More", exact: true }).click();
+		await page.goto("/devices/", { waitUntil: "domcontentloaded" });
+		await page.getByRole("button", { name: i18n(I18nKey.more), exact: true }).click();
 		await page.locator('a[data-nav-key="projects"]').click();
 
 		await expect(page).toHaveURL(/\/projects\/$/);

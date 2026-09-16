@@ -4,7 +4,7 @@ published: 2026-08-20
 pinned: true
 description: A demonstration of client-side authenticated decryption, memory session persistence, and M3E design tokens in Shirone.
 tags: [Demo, Security, Encryption, Markdown]
-category: Examples
+category: 示例
 lang: en
 encrypted: true
 password: "shirone-secret"

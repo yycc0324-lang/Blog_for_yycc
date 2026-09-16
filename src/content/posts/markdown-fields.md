@@ -2,7 +2,7 @@
 title: Markdown Field Cards
 description: API and component parameter documentation cards.
 published: 2026-08-30
-category: Guides
+category: 指南
 draft: true
 ---
 

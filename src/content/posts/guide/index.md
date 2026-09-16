@@ -6,7 +6,7 @@ pinned: true
 description: "A comprehensive guide to post authoring, frontmatter schema, Markdown extensions, encryption, and media in Shirone."
 image: "./cover.jpeg"
 tags: ["Shirone", "Guide", "Markdown", "M3E", "Blogging"]
-category: Guides
+category: 指南
 draft: false
 ---
 
@@ -53,7 +53,7 @@ pinned: true
 description: "A deep dive into dynamic HCT color science and fluid transitions in Shirone."
 image: "./cover.webp"
 tags: [M3E, Design, Frontend]
-category: Guides
+category: 指南
 draft: false
 comment: true
 ---

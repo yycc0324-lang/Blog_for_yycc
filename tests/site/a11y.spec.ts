@@ -1,4 +1,5 @@
 import AxeBuilder from "@axe-core/playwright";
+import { getDisabledPages } from "../../src/config/sitemapFilter";
 import { expect, test } from "@playwright/test";
 
 /**
@@ -31,6 +32,12 @@ const pages = [
 	{ name: "分类索引", path: "/categories/" },
 	{ name: "标签索引", path: "/tags/" },
 ];
+
+// 被配置关闭的页面（enable: false）不参与扫描：与导航 / sitemap 的裁剪规则一致
+const disabledPages = getDisabledPages();
+const enabledPages = pages.filter(
+	(p) => !disabledPages.some((name) => p.path.startsWith(`/` + name + `/`)),
+);
 
 const DISABLED_RULES = ["page-has-heading-one"];
 
@@ -95,7 +102,7 @@ async function openSitePage(
 
 for (const mode of modes) {
 	test.describe(`Site a11y scan lock (${mode.name})`, () => {
-		for (const p of pages) {
+		for (const p of enabledPages) {
 			test(p.name, async ({ page }) => {
 				await openSitePage(page, p.path, mode.theme, p.layout);
 				// 防止主题未应用导致“假通过”：确认页面确实处于目标模式

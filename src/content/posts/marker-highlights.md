@@ -3,7 +3,7 @@ title: Markdown Marker Highlights
 published: 2026-08-28
 description: Highlight key phrases with token-driven marker syntax in Shirone Markdown.
 tags: [Demo, Markdown, Typography, Shirone]
-category: Guides
+category: 指南
 lang: en
 draft: false
 ---

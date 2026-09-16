@@ -1,9 +1,11 @@
 import { expect, test } from "@playwright/test";
+import { timelineConfig } from "../../src/config/timelineConfig";
 
 const TOTAL_COUNT = 5;
 const MILESTONE_COUNT = 1;
 
 test.describe("时间线页", () => {
+	test.skip(!timelineConfig.enable, "时间线已关闭（timelineConfig.enable = false）");
 	test.beforeEach(async ({ page }) => {
 		await page.goto("/timeline/");
 		await expect(page.locator(".timeline-card")).toHaveCount(TOTAL_COUNT);
@@ -55,6 +57,7 @@ test.describe("时间线页", () => {
 });
 
 test.describe("时间线页 Swup 导航", () => {
+	test.skip(!timelineConfig.enable, "时间线已关闭（timelineConfig.enable = false）");
 	test.use({ viewport: { width: 1280, height: 900 } });
 
 	test("从持久顶栏进入后同步页面、导航与侧栏状态", async ({ page }) => {

@@ -22,7 +22,7 @@ import { onMount } from "svelte";
 
 let {
 	moments = [] as MomentItem[],
-	author = { name: "", avatar: "", url: "/about/" } as MomentAuthor,
+	author = { name: "", avatar: "", url: "/" } as MomentAuthor,
 	title = i18n(I18nKey.moments),
 	subtitle = i18n(I18nKey.momentsBanner),
 }: {

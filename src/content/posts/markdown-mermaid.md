@@ -3,7 +3,7 @@ title: Mermaid Diagram Gallery
 published: 2024-05-02
 description: A gallery of Mermaid diagrams for processes, interactions, data models, schedules, and project history.
 tags: [Demo, Example, Markdown, Mermaid]
-category: Examples
+category: 示例
 lang: en
 draft: false
 ---

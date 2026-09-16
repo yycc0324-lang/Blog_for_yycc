@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
+import I18nKey from "../../src/i18n/i18nKey";
+import { i18n } from "../../src/i18n/translation";
 
-const DEVICE_COUNT = 5;
+const DEVICE_COUNT = 6;
 
 test.describe("设备展示页", () => {
 	test.beforeEach(async ({ page }) => {
@@ -13,34 +15,35 @@ test.describe("设备展示页", () => {
 			"data-current-page",
 			"devices",
 		);
-		await expect(page.locator(".page-header__title")).toHaveText("My Devices");
+		await expect(page.locator(".page-header__title")).toHaveText(i18n(I18nKey.devices));
 		await expect(page.locator(".devices-section__count")).toHaveText(
-			"5 devices",
+			String(DEVICE_COUNT) + " " + i18n(I18nKey.devicesCounts),
 		);
 
-		const macbook = page.locator('[data-device="macbook-pro-16"]');
-		await expect(macbook.locator("h2")).toHaveText('MacBook Pro 16"');
+		const macbook = page.locator('[data-device="macbook-air-m4"]');
+		await expect(macbook.locator("h2")).toHaveText("MacBook Air M4");
 		await expect(macbook.locator(".device-card__brand")).toHaveText("Apple");
 		await expect(macbook.locator('[data-status="active"]')).toContainText(
-			"Active",
+			i18n(I18nKey.devicesStatusActive),
 		);
 		await expect(macbook.locator(".device-card__specs")).toContainText(
-			"M3 Max / 64GB / 2TB",
+			"M4 / 16GB / 256GB",
 		);
 		await expect(macbook).toHaveClass(/device-card--featured/);
+		// 该设备未配置 link：卡片不渲染「查看详情」入口
 		await expect(
-			macbook.getByRole("link", { name: "View details" }),
-		).toHaveAttribute("href", "https://www.apple.com/macbook-pro/");
+			macbook.getByRole("link", { name: i18n(I18nKey.devicesViewSpecs) }),
+		).toHaveCount(0);
 
 		// 无图片设备：渲染图标瓷砖形态（不渲染媒体区）
-		const iphone = page.locator('[data-device="iphone-16-pro"]');
+		const iphone = page.locator('[data-device="iphone-17-pro-max"]');
 		await expect(iphone.locator(".device-card__icon")).toBeVisible();
 		await expect(iphone.locator(".device-card__media")).toHaveCount(0);
 
-		// 备用状态（backup）正确渲染
-		const ipad = page.locator('[data-device="ipad-pro-11"]');
-		await expect(ipad.locator('[data-status="backup"]')).toContainText(
-			"Backup",
+		// 主力推荐（featured）设备的状态徽标正确渲染
+		const mini = page.locator('[data-device="mac-mini-m4"]');
+		await expect(mini.locator('[data-status="active"]')).toContainText(
+			i18n(I18nKey.devicesStatusActive),
 		);
 	});
 
@@ -58,23 +61,22 @@ test.describe("设备展示页", () => {
 		page,
 	}) => {
 		await page
-			.getByRole("button", { name: "Mobile & EDC", exact: true })
+			.getByRole("button", { name: "随身设备", exact: true })
 			.click();
 		await expect(
 			page.locator(".devices-section__loading .m3-loading--contained"),
 		).toBeVisible();
-		await expect(page.locator(".device-card")).toHaveCount(2);
+		await expect(page.locator(".device-card")).toHaveCount(1);
 		await expect(page.locator(".devices-section__count")).toHaveText(
-			"2 devices",
+			String(1) + " " + i18n(I18nKey.devicesCounts),
 		);
-		await expect(page.locator('[data-device="iphone-16-pro"]')).toBeVisible();
-		await expect(page.locator('[data-device="ipad-pro-11"]')).toBeVisible();
-		await expect(page.locator('[data-device="macbook-pro-16"]')).toHaveCount(0);
+		await expect(page.locator('[data-device="iphone-17-pro-max"]')).toBeVisible();
+		await expect(page.locator('[data-device="macbook-air-m4"]')).toHaveCount(0);
 		await expect(page.locator(".devices-section__loading")).toHaveCount(0);
 
 		// 再次点击已选分类取消筛选，恢复全部
 		await page
-			.getByRole("button", { name: "Mobile & EDC", exact: true })
+			.getByRole("button", { name: "随身设备", exact: true })
 			.click();
 		await expect(page.locator(".device-card")).toHaveCount(DEVICE_COUNT);
 	});
@@ -84,7 +86,7 @@ test.describe("设备展示页", () => {
 		await searchInput.fill("Unknown9999");
 		await expect(page.locator(".device-card")).toHaveCount(0);
 		await expect(page.locator(".devices-section__empty")).toContainText(
-			"No devices matched your filters",
+			i18n(I18nKey.devicesNoResults),
 		);
 	});
 
@@ -93,7 +95,7 @@ test.describe("设备展示页", () => {
 		await expect(searchInput).toBeVisible();
 		await searchInput.fill("MacBook");
 		await expect(page.locator(".device-card")).toHaveCount(1);
-		await expect(page.locator('[data-device="macbook-pro-16"]')).toBeVisible();
+		await expect(page.locator('[data-device="macbook-air-m4"]')).toBeVisible();
 		await expect(page).toHaveURL(/[?&]q=MacBook/);
 
 		// 清除搜索恢复全部
@@ -105,18 +107,18 @@ test.describe("设备展示页", () => {
 
 	test("URL 参数刷新后恢复筛选状态", async ({ page }) => {
 		await page
-			.getByRole("button", { name: "Audio & Visual", exact: true })
+			.getByRole("button", { name: "影音设备", exact: true })
 			.click();
 		await expect(page).toHaveURL(/[?&]category=audio/);
 		await expect(page.locator(".device-card")).toHaveCount(1);
-		await expect(page.locator('[data-device="sony-wh1000xm5"]')).toBeVisible();
+		await expect(page.locator('[data-device="xiberia-k30s"]')).toBeVisible();
 
 		// 刷新后恢复同一次筛选
 		await page.reload();
 		await expect(page.locator(".device-card")).toHaveCount(1);
-		await expect(page.locator('[data-device="sony-wh1000xm5"]')).toBeVisible();
+		await expect(page.locator('[data-device="xiberia-k30s"]')).toBeVisible();
 		await expect(
-			page.getByRole("button", { name: "Audio & Visual", exact: true }),
+			page.getByRole("button", { name: "影音设备", exact: true }),
 		).toHaveAttribute("aria-pressed", "true");
 	});
 });
@@ -126,7 +128,7 @@ test.describe("设备展示页 Swup 导航", () => {
 
 	test("从持久顶栏进入后同步页面、导航与侧栏状态", async ({ page }) => {
 		await page.goto("/skills/", { waitUntil: "domcontentloaded" });
-		await page.getByRole("button", { name: "More", exact: true }).click();
+		await page.getByRole("button", { name: i18n(I18nKey.more), exact: true }).click();
 		await page.locator('a[data-nav-key="devices"]').click();
 
 		await expect(page).toHaveURL(/\/devices\/$/);

@@ -1,5 +1,15 @@
 import { expect, test } from "@playwright/test";
+import { aboutConfig } from "../../src/config/aboutConfig";
+import { siteConfig } from "../../src/config/siteConfig";
 import { resolveBannerState } from "../../src/utils/banner-state";
+import I18nKey from "../../src/i18n/i18nKey";
+import { i18n } from "../../src/i18n/translation";
+
+/** 横幅文案随站点配置与语言变化：断言从配置 / i18n 取值，避免写死语言。 */
+const homeText = siteConfig.banner.homeText;
+const homeSubtitles = Array.isArray(homeText.subtitle)
+	? homeText.subtitle
+	: [homeText.subtitle];
 
 function isBannerAsset(value: string): boolean {
 	return /\/assets\/(?:images\/)?banner\//.test(decodeURIComponent(value));
@@ -24,7 +34,7 @@ async function waitForBannerState(
 
 async function expectSubtitleTyping(page: import("@playwright/test").Page) {
 	const subtitle = page.locator("#banner-wrapper [data-banner-home-copy] p");
-	const expected = "特別なことはないけど、君がいると十分です";
+	const expected = homeSubtitles[0];
 	await expect(subtitle).toHaveAttribute("data-subtitle-state", "typing");
 	const typingText = await subtitle.textContent();
 	expect(typingText).toBeTruthy();
@@ -265,12 +275,12 @@ test.describe("banner wallpaper", () => {
 		await waitForBannerState(page, true);
 		const context = page.locator("[data-banner-context]");
 		await expect(context.locator("[data-banner-context-title]")).toHaveText(
-			"Friends",
+			i18n(I18nKey.friends),
 		);
 		await expect(
 			context.locator("[data-banner-context-description]"),
 		).toHaveText(
-			"Link exchange is welcome — see the About page for how to apply.",
+			i18n(I18nKey.friendsBanner),
 		);
 		await expect(context.locator("[data-banner-context-meta]")).toBeHidden();
 	});
@@ -281,18 +291,21 @@ test.describe("banner wallpaper", () => {
 		await page.goto("/archive/", { waitUntil: "domcontentloaded" });
 		await waitForBannerState(page, true);
 		await expect(page.locator("[data-banner-context-title]")).toHaveText(
-			"Archive",
+			i18n(I18nKey.archive),
 		);
 		await expect(page.locator("[data-banner-context-description]")).toHaveText(
-			/^\d+ posts$/,
+			new RegExp(`^\\d+ ${i18n(I18nKey.postsCount)}$`),
 		);
 
-		await page.goto("/about/", { waitUntil: "domcontentloaded" });
-		await waitForBannerState(page, true);
-		await expect(page.locator("[data-banner-context-title]")).toHaveText(
-			"About",
-		);
-		await expect(page.locator("[data-banner-context-details]")).toBeHidden();
+		// 关于页可能被配置关闭（aboutConfig.enable = false）：关闭时该页不参与断言
+		if (aboutConfig.enable) {
+			await page.goto("/about/", { waitUntil: "domcontentloaded" });
+			await waitForBannerState(page, true);
+			await expect(page.locator("[data-banner-context-title]")).toHaveText(
+				i18n(I18nKey.about),
+			);
+			await expect(page.locator("[data-banner-context-details]")).toBeHidden();
+		}
 	});
 
 	test("server response keeps the complete home subtitle", async ({
@@ -301,7 +314,7 @@ test.describe("banner wallpaper", () => {
 		const response = await request.get("/");
 		expect(response.ok()).toBe(true);
 		const html = await response.text();
-		expect(html).toContain("特別なことはないけど、君がいると十分です");
+		expect(html).toContain(homeSubtitles[0]);
 		expect(html).toContain("<picture");
 		expect(html).toContain('fetchpriority="high"');
 		expect(html).not.toContain("/assets/banner/desktop/1.webp");
@@ -332,13 +345,7 @@ test.describe("banner wallpaper", () => {
 		);
 		await expect(page.locator("#banner-wrapper")).toHaveAttribute(
 			"data-home-subtitles",
-			JSON.stringify([
-				"特別なことはないけど、君がいると十分です",
-				"今でもあなたは私の光",
-				"君ってさ、知らないうちに私の毎日になってたよ",
-				"君と話すと、なんか毎日がちょっと楽しくなるんだ",
-				"今日はなんでもない日。でも、ちょっとだけいい日",
-			]),
+			JSON.stringify(homeSubtitles),
 		);
 	});
 
@@ -356,7 +363,7 @@ test.describe("banner wallpaper", () => {
 
 		await page.goto("/", { waitUntil: "domcontentloaded" });
 		await waitForBannerState(page, true);
-		await expect(page.locator("#banner-wrapper h1")).toHaveText("Shirone");
+		await expect(page.locator("#banner-wrapper h1")).toHaveText(homeText.title);
 		await expectSubtitleTyping(page);
 		await expect(page.locator("#navbar")).toHaveClass(
 			/top-app-bar--transparent/,
@@ -487,7 +494,7 @@ test.describe("banner wallpaper", () => {
 		await page.goto("/", { waitUntil: "domcontentloaded" });
 		await waitForBannerState(page, true);
 		await page.locator("#display-settings-switch").click();
-		await page.getByText("Solid", { exact: true }).click();
+		await page.getByText(i18n(I18nKey.wallpaperModeNone), { exact: true }).click();
 		await waitForBannerState(page, false);
 		expect(
 			await page.evaluate(() => localStorage.getItem("wallpaper-mode")),
@@ -497,7 +504,7 @@ test.describe("banner wallpaper", () => {
 		await page.reload({ waitUntil: "domcontentloaded" });
 		await waitForBannerState(page, false);
 		await page.locator("#display-settings-switch").click();
-		await page.getByText("Banner", { exact: true }).click();
+		await page.getByText(i18n(I18nKey.wallpaperModeBanner), { exact: true }).click();
 		await waitForBannerState(page, true);
 	});
 
@@ -598,7 +605,7 @@ test.describe("banner wallpaper", () => {
 		await waitForBannerState(page, true);
 		await expect(
 			page.locator("#banner-wrapper [data-banner-home-copy] p"),
-		).toHaveText("特別なことはないけど、君がいると十分です");
+		).toHaveText(homeSubtitles[0]);
 		await expect(
 			page.locator("#banner-wrapper [data-banner-home-copy] p"),
 		).toHaveAttribute("data-subtitle-state", "complete");
@@ -623,7 +630,7 @@ test.describe("banner wallpaper", () => {
 		await waitForBannerState(page, true);
 		await expect(
 			page.locator("#banner-wrapper [data-banner-home-copy] p"),
-		).toHaveText("特別なことはないけど、君がいると十分です");
+		).toHaveText(homeSubtitles[0]);
 		await expect(
 			page.locator("#banner-wrapper [data-banner-home-copy] p"),
 		).toHaveAttribute("data-subtitle-state", "complete");
@@ -679,10 +686,10 @@ test.describe("banner wallpaper", () => {
 				"friends",
 		);
 		await expect(page.locator("[data-banner-context-title]")).toHaveText(
-			"Friends",
+			i18n(I18nKey.friends),
 		);
 		await expect(page.locator("[data-banner-context-description]")).toHaveText(
-			"Link exchange is welcome — see the About page for how to apply.",
+			i18n(I18nKey.friendsBanner),
 		);
 		await expect(page.locator("[data-banner-context-meta]")).toBeHidden();
 		expect(

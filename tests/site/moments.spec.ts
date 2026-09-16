@@ -1,4 +1,7 @@
 import { expect, test } from "@playwright/test";
+import { profileConfig } from "../../src/config/profileConfig";
+import I18nKey from "../../src/i18n/i18nKey";
+import { i18n } from "../../src/i18n/translation";
 
 /**
  * 动态页功能锁定（pages/moments.astro -> organisms/MomentSection.svelte，client:only）。
@@ -22,17 +25,17 @@ test.describe("动态页", () => {
 		const first = page.locator(".moment-card").first();
 		// 置顶条目排最前，带置顶徽标与心情图标
 		await expect(first.locator(".moment-card__badge--pinned")).toHaveText(
-			"Pinned",
+			i18n(I18nKey.pinned),
 		);
 		await expect(
 			first.locator(".moment-card__badge:not(.moment-card__badge--pinned) svg"),
 		).toHaveCount(1);
-		// 作者区（头像 + 名字）链到关于页
+		// 作者区（头像 + 名字）：作者未配置链接时回退到站内首页
 		await expect(first.locator(".moment-card__author")).toHaveAttribute(
 			"href",
 			"/about/",
 		);
-		await expect(first.locator(".moment-card__name")).toHaveText("Shirone");
+		await expect(first.locator(".moment-card__name")).toHaveText(profileConfig.name);
 		await expect(first.locator(".moment-card__author img")).toHaveAttribute(
 			"srcset",
 			/ 64w, .* 96w/,
@@ -99,7 +102,7 @@ test.describe("动态页", () => {
 		);
 		// 键盘 →/← 切换，计数同步；首图 prev 禁用
 		await expect(
-			viewer.getByRole("button", { name: "Previous image" }),
+			viewer.getByRole("button", { name: i18n(I18nKey.previousImage) }),
 		).toBeDisabled();
 		await page.keyboard.press("ArrowRight");
 		await expect(viewer.locator(".moment-viewer__counter")).toHaveText("2 / 3");
@@ -117,7 +120,7 @@ test.describe("动态页", () => {
 		const focused = await page.evaluate(() =>
 			document.activeElement?.getAttribute("aria-label"),
 		);
-		expect(focused).toBe("Open image 1");
+		expect(focused).toBe(i18n(I18nKey.openImage) + " 1");
 	});
 
 	test("多图切换期间保持主舞台和卡片布局稳定", async ({ page }) => {
@@ -230,7 +233,7 @@ test.describe("动态页", () => {
 
 	test("使用站点统一的页面视觉结构", async ({ page }) => {
 		await expect(page.locator(".page-header")).toHaveCount(1);
-		await expect(page.locator(".page-header__title")).toHaveText("Moments");
+		await expect(page.locator(".page-header__title")).toHaveText(i18n(I18nKey.moments));
 		await expect(page.locator(".page-header__icon svg")).toHaveCount(1);
 		// 官方 Chips 原子（filter 形态）承担标签筛选
 		await expect(
@@ -238,7 +241,7 @@ test.describe("动态页", () => {
 		).toHaveCount(6);
 		// 计数文案（复数形态）
 		await expect(page.locator(".moment-section__count")).toHaveText(
-			"6 moments",
+			String(6) + " " + i18n(I18nKey.momentsCounts),
 		);
 		// 位置与 #标签 弱文本（At my desk = 整理壁纸库那条）
 		await expect(page.locator(".moment-card__location").first()).toContainText(
@@ -298,7 +301,7 @@ test.describe("动态页", () => {
 		await page.locator(".moment-section__search input").fill("no such moment");
 		await expect(page.locator(".moment-section__empty")).toBeVisible();
 		await expect(page.locator(".moment-section__empty")).toContainText(
-			"No moments matched your filters",
+			i18n(I18nKey.momentsNoResults),
 		);
 	});
 });
