@@ -33,7 +33,7 @@ test.describe("项目页", () => {
 		);
 		await expect(
 			shirone.getByRole("link", { name: "View source" }),
-		).toHaveAttribute("href", "https://github.com/LyraVoid/Shirone");
+		).toHaveAttribute("href", "https://github.com/yycc0324-lang/Blog_for_yycc");
 
 		// 无封面项目：渲染图标瓷砖形态（不渲染封面区）
 		const folkpatch = page.locator('[data-project="folkpatch"]');

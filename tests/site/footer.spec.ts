@@ -7,7 +7,7 @@ test("footer exposes the source theme version from package metadata", async ({
 	await page.goto("/", { waitUntil: "domcontentloaded" });
 
 	const versionLink = page
-		.locator('.m3-blog-footer a[href="https://github.com/LyraVoid/Shirone"]')
+		.locator('.m3-blog-footer a[href="https://github.com/yycc0324-lang/Blog_for_yycc"]')
 		.filter({ hasText: packageMetadata.version })
 		.first();
 

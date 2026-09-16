@@ -8,7 +8,7 @@
 
 為長文寫作、個人收藏，以及讓網站真正屬於你的細節而生的安靜閱讀空間。
 
-[線上預覽](https://shirone.mysqil.com/) · [專案文件](https://docs.shirone.mysqil.com/) · [回報問題](https://github.com/LyraVoid/Shirone/issues)
+[線上預覽](https://shirone.mysqil.com/) · [專案文件](https://docs.shirone.mysqil.com/) · [回報問題](https://github.com/yycc0324-lang/Blog_for_yycc/issues)
 
 [English](./README.md) · [简体中文](./README.zh-CN.md) · [繁體中文](./README.zh-TW.md) · [日本語](./README.ja.md)
 
@@ -77,8 +77,8 @@ Shirone 是一款使用 Astro 7、Svelte 5、Tailwind CSS 4 與 Stylus 建構的
 ### 在本機執行
 
 ```bash
-git clone https://github.com/LyraVoid/Shirone.git
-cd Shirone
+git clone https://github.com/yycc0324-lang/Blog_for_yycc.git
+cd Blog_for_yycc
 corepack enable
 pnpm install
 pnpm dev

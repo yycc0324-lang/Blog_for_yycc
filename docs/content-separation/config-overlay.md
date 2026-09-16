@@ -88,7 +88,7 @@ customSections:
     description: 作者维护的开源项目
     items:
       - title: Shirone
-        url: https://github.com/LyraVoid/Shirone
+        url: https://github.com/yycc0324-lang/Blog_for_yycc
         description: Astro 的 M3E 博客主题
 ```
 

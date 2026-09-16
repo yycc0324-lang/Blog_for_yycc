@@ -8,7 +8,7 @@
 
 A calm reading space for long-form writing, personal collections, and the small details that make a site feel like yours.
 
-[Live demo](https://shirone.mysqil.com/) · [Documentation](https://docs.shirone.mysqil.com/) · [Report an issue](https://github.com/LyraVoid/Shirone/issues)
+[Live demo](https://shirone.mysqil.com/) · [Documentation](https://docs.shirone.mysqil.com/) · [Report an issue](https://github.com/yycc0324-lang/Blog_for_yycc/issues)
 
 [English](./README.md) · [简体中文](./README.zh-CN.md) · [繁體中文](./README.zh-TW.md) · [日本語](./README.ja.md)
 
@@ -81,8 +81,8 @@ Shirone ships with [agent skills](./.agents/skills/README.md) in `.agents/skills
 ### Run locally
 
 ```bash
-git clone https://github.com/LyraVoid/Shirone.git
-cd Shirone
+git clone https://github.com/yycc0324-lang/Blog_for_yycc.git
+cd Blog_for_yycc
 corepack enable
 pnpm install
 pnpm dev

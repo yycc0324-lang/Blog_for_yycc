@@ -869,7 +869,7 @@
 				{
 					"kind": "leaf-directive",
 					"pattern": "::github{repo=\"owner/repo\"}",
-					"example": "::github{repo=\"LyraVoid/Shirone\"}"
+					"example": "::github{repo=\"yycc0324-lang/Blog_for_yycc\"}"
 				}
 			],
 			"attributes": [

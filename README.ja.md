@@ -8,7 +8,7 @@
 
 長文の執筆や個人コレクション、サイトを自分らしくする細部のための、落ち着いた読書空間です。
 
-[デモ](https://shirone.mysqil.com/) · [ドキュメント](https://docs.shirone.mysqil.com/) · [問題を報告](https://github.com/LyraVoid/Shirone/issues)
+[デモ](https://shirone.mysqil.com/) · [ドキュメント](https://docs.shirone.mysqil.com/) · [問題を報告](https://github.com/yycc0324-lang/Blog_for_yycc/issues)
 
 [English](./README.md) · [简体中文](./README.zh-CN.md) · [繁體中文](./README.zh-TW.md) · [日本語](./README.ja.md)
 
@@ -77,8 +77,8 @@ Shirone は Astro 7、Svelte 5、Tailwind CSS 4、Stylus で構築された静�
 ### ローカルで起動する
 
 ```bash
-git clone https://github.com/LyraVoid/Shirone.git
-cd Shirone
+git clone https://github.com/yycc0324-lang/Blog_for_yycc.git
+cd Blog_for_yycc
 corepack enable
 pnpm install
 pnpm dev

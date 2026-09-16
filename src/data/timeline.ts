@@ -21,7 +21,7 @@ export const timelineData: TimelineItem[] = [
 		links: [
 			{
 				label: "GitHub Repository",
-				url: "https://github.com/LyraVoid/Shirone",
+				url: "https://github.com/yycc0324-lang/Blog_for_yycc",
 				icon: "fa6-brands:github",
 			},
 		],

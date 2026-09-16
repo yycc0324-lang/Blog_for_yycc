@@ -21,8 +21,8 @@ Wrap one Markdown ordered list in a `:::steps` container. Each top-level list it
    Clone the repository and enter the project directory.
 
    ```powershell
-   git clone https://github.com/LyraVoid/Shirone.git
-   Set-Location Shirone
+   git clone https://github.com/yycc0324-lang/Blog_for_yycc.git
+   Set-Location Blog_for_yycc
    ```
 
 2. **Install dependencies**
@@ -58,8 +58,8 @@ Wrap one Markdown ordered list in a `:::steps` container. Each top-level list it
    Clone the repository and enter the project directory.
 
    ```powershell
-   git clone https://github.com/LyraVoid/Shirone.git
-   Set-Location Shirone
+   git clone https://github.com/yycc0324-lang/Blog_for_yycc.git
+   Set-Location Blog_for_yycc
    ```
 
 2. **Install dependencies**

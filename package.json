@@ -5,13 +5,13 @@
   "description": "An expressive, anime-inspired blog theme built on Material 3 Expressive, Astro 7, and Svelte 5",
   "license": "MIT",
   "author": "matsuzaka-yuki",
-  "homepage": "https://shirone.mysqil.com/",
+  "homepage": "https://github.com/yycc0324-lang/Blog_for_yycc",
   "repository": {
     "type": "git",
-    "url": "https://github.com/LyraVoid/Shirone.git"
+    "url": "https://github.com/yycc0324-lang/Blog_for_yycc.git"
   },
   "bugs": {
-    "url": "https://github.com/LyraVoid/Shirone/issues"
+    "url": "https://github.com/yycc0324-lang/Blog_for_yycc/issues"
   },
   "keywords": [
     "astro",
