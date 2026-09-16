@@ -272,6 +272,11 @@ export const th: Translation = {
 	[Key.backToHome]: "กลับหน้าแรก",
 	[Key.close]: "ปิด",
 	[Key.scanToRead]: "สแกนเพื่ออ่านบทความ",
+	[Key.qrCodeTitle]: "สแกนเพื่อเพิ่ม {name}",
+	[Key.qrCodeHint]: "สแกนคิวอาร์โค้ดด้วยโทรศัพท์",
+	[Key.qrCodeFailed]: "สร้างคิวอาร์โค้ดไม่สำเร็จ กรุณาลองใหม่",
+	[Key.openLink]: "เปิดลิงก์",
+	[Key.copyContent]: "คัดลอก",
 
 	[Key.reduceMotion]: "ลดการเคลื่อนไหว",
 	[Key.wallpaperMode]: "พื้นหลังหน้า",

@@ -327,6 +327,8 @@ variables.styl  --mc-* → 语义令牌（--primary、--surface-container-low…
 | `src/components/organisms/ArticleDiscovery.astro` | 文章主 Card 内的延伸阅读编排：接收页面构建期选好的相关文章与随机文章，以分隔线和语义列表承接正文，随 Swup 主内容整体替换 |
 | `src/components/organisms/ArticleShare.svelte` | 文章主 Card 内的分享编排：链接复制、海报生成中状态、预览与下载 |
 | `src/utils/share-poster.ts` | 分享海报生成底层工具：动态按需加载 qrcode、读取当前主题色快照、Canvas 2D 绘制固定宽度、内容高度的海报并输出 PNG Blob |
+| `src/utils/qr-code.ts` | 二维码绘制工具：动态按需加载 `qrcode`，固定黑/白高对比配色并保留静默区（扫码可识别性优先于主题色） |
+| `src/components/molecules/ProfileLinkButton.svelte` | 资料卡社交链接按钮：未配置 `qr` 时为原生外链按钮，配置 `qr` 时点击弹出二维码弹层（二维码 + 可复制文本 + 打开链接） |
 | `src/components/organisms/MomentSection.svelte` | 动态页主体（搜索/标签筛选/加载更多 + Fancybox 接线） |
 | `src/components/molecules/SkillCard.svelte` | 技能单项展示：图标、说明、离散等级标签与四段语义化 meter，不使用伪精确百分比 |
 | `src/components/organisms/SkillSection.svelte` | 技能页编排：消费传入的技能数据与分类清单，过滤关闭项并提供分类 chips 筛选 |

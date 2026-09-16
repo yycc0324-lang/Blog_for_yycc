@@ -1,10 +1,8 @@
 ---
 import { getImage } from "astro:assets";
-import Button from "@components/atoms/action/Button.svelte";
-import IconButton from "@components/atoms/action/IconButton.svelte";
 import Avatar from "@components/atoms/display/Avatar.svelte";
 import Card from "@components/atoms/display/Card.svelte";
-import Tooltip from "@components/atoms/overlay/Tooltip.svelte";
+import ProfileLinkButton from "@components/molecules/ProfileLinkButton.svelte";
 import UmamiStats from "@components/organisms/UmamiStats.astro";
 import { resolveImageAsset } from "@utils/asset-utils";
 import { url } from "@utils/url-utils";
@@ -83,17 +81,15 @@ if (typeof avatarAsset !== "string") {
         <div class="m3-profile__bio">{config.bio}</div>
         <div class="m3-profile__links flex flex-wrap gap-2 justify-center mb-1">
             {config.links.length > 1 && config.links.map(item =>
-                <Tooltip label={item.name} placement="top" client:load>
-                    <IconButton href={item.url} target="_blank" rel="me" label={item.name}>
-                        <Icon name={item.icon} class="text-[1.5rem]"></Icon>
-                    </IconButton>
-                </Tooltip>
+                <ProfileLinkButton name={item.name} url={item.url} qr={item.qr} qrLabel={item.qrLabel} client:visible>
+                    <Icon name={item.icon} class="text-[1.5rem]"></Icon>
+                </ProfileLinkButton>
             )}
-            {config.links.length == 1 && <Button href={config.links[0].url} target="_blank" ariaLabel={config.links[0].name}
-                                                 variant="text" size="small" class="!px-3 !font-bold !text-[var(--on-surface)]">
+            {config.links.length == 1 && <ProfileLinkButton labeled name={config.links[0].name}
+                                                              url={config.links[0].url} qr={config.links[0].qr}
+                                                              qrLabel={config.links[0].qrLabel} client:visible>
                 <Icon name={config.links[0].icon} class="text-[1.5rem]"></Icon>
-                {config.links[0].name}
-            </Button>}
+            </ProfileLinkButton>}
         </div>
         <UmamiStats variant="profile" />
     </div>

@@ -282,6 +282,11 @@ export const ko: Translation = {
 	[Key.backToHome]: "홈으로 돌아가기",
 	[Key.close]: "닫기",
 	[Key.scanToRead]: "QR 코드로 글 읽기",
+	[Key.qrCodeTitle]: "스캔하여 {name} 추가",
+	[Key.qrCodeHint]: "휴대폰으로 QR 코드를 스캔하세요",
+	[Key.qrCodeFailed]: "QR 코드 생성에 실패했습니다. 다시 시도해 주세요.",
+	[Key.openLink]: "링크 열기",
+	[Key.copyContent]: "복사",
 
 	[Key.reduceMotion]: "동작 줄이기",
 	[Key.wallpaperMode]: "페이지 배경",

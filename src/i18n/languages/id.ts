@@ -287,6 +287,11 @@ export const id: Translation = {
 	[Key.backToHome]: "Kembali ke beranda",
 	[Key.close]: "Tutup",
 	[Key.scanToRead]: "Pindai untuk membaca artikel",
+	[Key.qrCodeTitle]: "Pindai untuk menambahkan {name}",
+	[Key.qrCodeHint]: "Pindai kode QR dengan ponsel Anda",
+	[Key.qrCodeFailed]: "Gagal membuat kode QR. Silakan coba lagi.",
+	[Key.openLink]: "Buka tautan",
+	[Key.copyContent]: "Salin",
 
 	[Key.reduceMotion]: "Kurangi animasi",
 	[Key.wallpaperMode]: "Latar halaman",

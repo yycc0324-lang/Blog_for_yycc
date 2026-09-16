@@ -286,6 +286,11 @@ export const tr: Translation = {
 	[Key.backToHome]: "Ana sayfaya dön",
 	[Key.close]: "Kapat",
 	[Key.scanToRead]: "Makaleyi okumak için tara",
+	[Key.qrCodeTitle]: "{name} eklemek için tarayın",
+	[Key.qrCodeHint]: "QR kodunu telefonunuzla tarayın",
+	[Key.qrCodeFailed]: "QR kodu oluşturulamadı. Lütfen tekrar deneyin.",
+	[Key.openLink]: "Bağlantıyı aç",
+	[Key.copyContent]: "Kopyala",
 
 	[Key.reduceMotion]: "Hareketi azalt",
 	[Key.wallpaperMode]: "Sayfa arka planı",

@@ -273,6 +273,11 @@ export const zh_CN: Translation = {
 	[Key.backToHome]: "返回首页",
 	[Key.close]: "关闭",
 	[Key.scanToRead]: "扫码阅读全文",
+	[Key.qrCodeTitle]: "扫码添加 {name}",
+	[Key.qrCodeHint]: "用手机扫二维码（用手机自带的，不要用Q/微的扫码器）",
+	[Key.qrCodeFailed]: "二维码生成失败，请重试",
+	[Key.openLink]: "打开链接",
+	[Key.copyContent]: "复制",
 
 	[Key.reduceMotion]: "减少动态效果",
 	[Key.wallpaperMode]: "页面背景",

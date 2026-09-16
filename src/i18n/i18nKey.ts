@@ -296,6 +296,13 @@ enum I18nKey {
 	close = "close",
 	scanToRead = "scanToRead",
 
+	// 资料卡社交链接二维码弹层
+	qrCodeTitle = "qrCodeTitle",
+	qrCodeHint = "qrCodeHint",
+	qrCodeFailed = "qrCodeFailed",
+	openLink = "openLink",
+	copyContent = "copyContent",
+
 	// Feed subscription & guide
 	rss = "rss",
 	rssSubtitle = "rssSubtitle",

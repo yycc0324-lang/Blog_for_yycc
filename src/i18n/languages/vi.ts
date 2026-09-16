@@ -285,6 +285,11 @@ export const vi: Translation = {
 	[Key.backToHome]: "Về trang chủ",
 	[Key.close]: "Đóng",
 	[Key.scanToRead]: "Quét mã để đọc bài viết",
+	[Key.qrCodeTitle]: "Quét để thêm {name}",
+	[Key.qrCodeHint]: "Quét mã QR bằng điện thoại",
+	[Key.qrCodeFailed]: "Không tạo được mã QR. Vui lòng thử lại.",
+	[Key.openLink]: "Mở liên kết",
+	[Key.copyContent]: "Sao chép",
 
 	[Key.reduceMotion]: "Giảm chuyển động",
 	[Key.wallpaperMode]: "Nền trang",

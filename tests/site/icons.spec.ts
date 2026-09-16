@@ -35,9 +35,14 @@ test.describe("SSR 图标渲染", () => {
 
 	test("侧栏个人资料社交链接图标可见（3 个）", async ({ page }) => {
 		await page.goto("/");
-		const links = page.locator("a[rel='me'] svg");
-		await expect(links).toHaveCount(3);
-		await expect(links.first()).toBeVisible();
+		// 3 个图标全部 SSR 直出（astro-icon children 方式）
+		const icons = page.locator(".m3-profile__links svg");
+		await expect(icons).toHaveCount(3);
+		await expect(icons.first()).toBeVisible();
+		// 其中配置了 qr 的链接渲染为打开二维码弹层的 <button>，故 <a rel="me"> 为 2 个
+		await expect(
+			page.locator(".m3-profile__links a[rel='me'] svg"),
+		).toHaveCount(2);
 	});
 
 	test("文章页复制链接按钮图标可见", async ({ page }) => {

@@ -158,6 +158,13 @@ export type ProfileConfig = {
 		name: string;
 		url: string;
 		icon: string;
+		/**
+		 * 二维码内容：填写后点击该图标弹出二维码弹层（如 QQ 加好友名片协议串）。
+		 * 省略时与既有行为完全一致（普通外链按钮），不产生额外 DOM 与请求。
+		 */
+		qr?: string;
+		/** 二维码下方的可复制文本（如 "QQ：12345678"）；省略则只显示二维码 */
+		qrLabel?: string;
 	}[];
 };
 

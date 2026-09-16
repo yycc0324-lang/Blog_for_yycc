@@ -285,6 +285,11 @@ export const es: Translation = {
 	[Key.backToHome]: "Volver al inicio",
 	[Key.close]: "Cerrar",
 	[Key.scanToRead]: "Escanear para leer el artículo",
+	[Key.qrCodeTitle]: "Escanea para añadir {name}",
+	[Key.qrCodeHint]: "Escanea el código QR con tu teléfono",
+	[Key.qrCodeFailed]: "No se pudo generar el código QR. Inténtalo de nuevo.",
+	[Key.openLink]: "Abrir enlace",
+	[Key.copyContent]: "Copiar",
 
 	[Key.reduceMotion]: "Reducir movimiento",
 	[Key.wallpaperMode]: "Fondo de página",

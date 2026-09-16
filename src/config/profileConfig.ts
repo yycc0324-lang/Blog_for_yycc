@@ -11,16 +11,21 @@ export const profileConfig: ProfileConfig = withUserConfig("profile", {
 	bio: "诸事顺,利",
 	links: [
 		{
-			name: "Twitter",
-			icon: "fa6-brands:twitter", // Visit https://icones.js.org/ for icon codes
+			name: "BiliBili",
+			icon: "fa6-brands:bilibili", // Visit https://icones.js.org/ for icon codes
 			// You will need to install the corresponding icon set if it's not already included
 			// `pnpm add @iconify-json/<icon-set-name>`
-			url: "https://twitter.com",
+			url: "https://space.bilibili.com/1084234569?spm_id_from=333.1007.0.0",
 		},
 		{
-			name: "Steam",
-			icon: "fa6-brands:steam",
-			url: "https://store.steampowered.com",
+			name: "QQ",
+			icon: "fa6-brands:qq",
+			// 个人名片协议：手机 QQ 内点击直接弹出「加好友」名片；桌面浏览器无 QQ 时
+			// 该协议无响应，因此下方 qr / qrLabel 提供扫码与复制号码两条兜底路径。
+			url: "mqqapi://card/show_pslcard?src_type=internal&version=1&uin=2816146402&card_type=person&source=qrcode",
+			// 二维码内容：与 url 同源，供手机 QQ「扫一扫」直接弹出加好友名片
+			qr: "mqqapi://card/show_pslcard?src_type=internal&version=1&uin=2816146402&card_type=person&source=qrcode",
+			qrLabel: "QQ：2816146402",
 		},
 		{
 			name: "GitHub",

@@ -273,6 +273,11 @@ export const zh_TW: Translation = {
 	[Key.backToHome]: "返回首頁",
 	[Key.close]: "關閉",
 	[Key.scanToRead]: "掃碼閱讀全文",
+	[Key.qrCodeTitle]: "掃碼新增 {name}",
+	[Key.qrCodeHint]: "用手機掃一掃二維碼",
+	[Key.qrCodeFailed]: "二維碼生成失敗，請重試",
+	[Key.openLink]: "開啟連結",
+	[Key.copyContent]: "複製",
 
 	[Key.reduceMotion]: "減少動態效果",
 	[Key.wallpaperMode]: "頁面背景",

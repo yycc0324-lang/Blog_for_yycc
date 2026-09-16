@@ -284,6 +284,11 @@ export const ja: Translation = {
 	[Key.backToHome]: "ホームへ戻る",
 	[Key.close]: "閉じる",
 	[Key.scanToRead]: "QRコードで続きを読む",
+	[Key.qrCodeTitle]: "スキャンして {name} を追加",
+	[Key.qrCodeHint]: "スマートフォンで QR コードをスキャン",
+	[Key.qrCodeFailed]: "QR コードの生成に失敗しました。もう一度お試しください。",
+	[Key.openLink]: "リンクを開く",
+	[Key.copyContent]: "コピー",
 
 	[Key.reduceMotion]: "動きを減らす",
 	[Key.wallpaperMode]: "ページ背景",

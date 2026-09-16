@@ -283,6 +283,11 @@ export const en: Translation = {
 	[Key.backToHome]: "Back to home",
 	[Key.close]: "Close",
 	[Key.scanToRead]: "Scan to read article",
+	[Key.qrCodeTitle]: "Scan to add {name}",
+	[Key.qrCodeHint]: "Scan the QR code with your phone",
+	[Key.qrCodeFailed]: "Failed to generate the QR code. Please retry.",
+	[Key.openLink]: "Open link",
+	[Key.copyContent]: "Copy",
 
 	[Key.reduceMotion]: "Reduce motion",
 	[Key.wallpaperMode]: "Page background",
