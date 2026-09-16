@@ -1,0 +1,27 @@
+---
+import {
+	resolveRainyDayOptions,
+	resolveTextureOptions,
+	siteConfig,
+} from "@/config";
+
+const textureOptions = resolveTextureOptions();
+// 雨滴特效未启用时不输出任何载体属性（关闭即零足迹，也避免打包产物差异比对出现噪音）
+const rainyDayOptions = resolveRainyDayOptions(siteConfig.rainyDay);
+---
+
+<div
+	id="config-carrier"
+	data-hue={siteConfig.themeColor.hue}
+	data-wallpaper-mode={siteConfig.wallpaperMode.defaultMode}
+	{...(textureOptions.enable
+		? {
+				"data-texture-preset": textureOptions.defaultPreset,
+				"data-texture-opacity": textureOptions.defaultOpacity,
+			}
+		: {})}
+	{...(rainyDayOptions.enable
+		? { "data-rainy-day-enabled": String(rainyDayOptions.defaultEnabled) }
+		: {})}
+>
+</div>
