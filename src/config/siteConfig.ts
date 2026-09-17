@@ -17,6 +17,10 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 	base: "/",
 	title: "Welcome",
 	subtitle: "YiCheng's Blog",
+	siteStats: {
+		// 运行天数起点；按当前需求从 9 天前开始计算，之后随日期自然递增。
+		startDate: "2026-09-08T00:00:00+08:00",
+	},
 	// 电脑端顶栏标题与导航内容区域："left" 左对齐，"center" 居中。
 	topAppBar: {
 		contentAlign: "center",

@@ -20,7 +20,7 @@ export const zh_CN: Translation = {
 
 	[Key.moments]: "动态",
 	[Key.momentsNoResults]: "没有符合条件的动态",
-	[Key.momentsBanner]: "随手记录的碎碎念 —— 生活、折腾与一切小确幸。",
+	[Key.momentsBanner]: "随手记录的碎碎念 —— 生活、折腾与一切。",
 	[Key.momentsCount]: "条动态",
 	[Key.momentsCounts]: "条动态",
 	[Key.pinned]: "置顶",
@@ -172,6 +172,7 @@ export const zh_CN: Translation = {
 	[Key.statsDaysAgo]: "{days} 天前",
 	[Key.profileStatsPageViews]: "页面浏览",
 	[Key.profileStatsVisits]: "访问次数",
+	[Key.profileAboutGuide]: "点这里",
 
 	[Key.calendar]: "日历",
 	[Key.calendarBackToday]: "回到今天",

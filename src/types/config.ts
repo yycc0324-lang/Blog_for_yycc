@@ -83,6 +83,10 @@ export type SiteConfig = {
 	base?: string;
 	title: string;
 	subtitle: string;
+	/** 站点统计：运行天数起点（ISO 8601，建议带时区）。未设置时回退到最早文章发布时间。 */
+	siteStats?: {
+		startDate?: string;
+	};
 	/** 默认社交媒体分享预览图（og:image / twitter:image），支持本地相对路径或远程绝对链接。未配置时自动回退为第一张桌面版横幅壁纸。 */
 	ogImage?: string;
 	topAppBar: {

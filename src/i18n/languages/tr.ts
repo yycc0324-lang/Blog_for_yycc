@@ -181,6 +181,7 @@ export const tr: Translation = {
 	[Key.statsDaysAgo]: "{days} gün önce",
 	[Key.profileStatsPageViews]: "Sayfa görüntüleme",
 	[Key.profileStatsVisits]: "Ziyaret",
+	[Key.profileAboutGuide]: "Buraya tıkla",
 
 	[Key.calendar]: "Takvim",
 	[Key.calendarBackToday]: "Bugüne dön",

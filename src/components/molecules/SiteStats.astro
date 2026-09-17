@@ -26,12 +26,10 @@ const stats = await getSiteStats();
 const fmt = (n: number) => n.toLocaleString("en-US");
 
 // 最近更新：SSR 渲染绝对日期（构建产物稳定、无 JS 也可读），
-// 页面加载后由底部脚本升级为相对时间（今天/昨天/N 天前）
+// 页面加载后由底部脚本升级为相对时间（0 天前 / 1 天前 / N 天前）
 const lastActivityText = stats.lastActivity
 	? formatDateToYYYYMMDD(new Date(stats.lastActivity))
 	: "—";
-const todayText = i18n(I18nKey.statsToday);
-const yesterdayText = i18n(I18nKey.statsYesterday);
 const daysAgoText = i18n(I18nKey.statsDaysAgo);
 
 const rows = [
@@ -127,20 +125,16 @@ const rows = [
 		white-space: nowrap
 </style>
 
-<script is:inline define:vars={{ lastActivityISO: stats.lastActivity, todayText, yesterdayText, daysAgoText }}>
-	// 最近更新相对化：按本地时区取日界，差值恒为整天数；
-	// 无文章或脚本禁用时保留 SSR 的绝对日期
+<script is:inline define:vars={{ lastActivityISO: stats.lastActivity, daysAgoText }}>
+	// 最近更新相对化：按真实 24 小时计算，0-23h 显示 0 天前，24-47h 显示 1 天前，以此类推。
+	// 脚本禁用时保留 SSR 的绝对日期。
 	(() => {
 		const el = document.querySelector("[data-last-update]");
 		if (!el || !lastActivityISO) return;
 		const DAY_MS = 86_400_000;
-		const dayStart = (d) =>
-			new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
-		const diffDays = Math.round(
-			(dayStart(new Date()) - dayStart(new Date(lastActivityISO))) / DAY_MS,
-		);
-		if (diffDays <= 0) el.textContent = todayText;
-		else if (diffDays === 1) el.textContent = yesterdayText;
-		else el.textContent = daysAgoText.replace("{days}", String(diffDays));
+		const elapsedMs = Date.now() - new Date(lastActivityISO).getTime();
+		if (!Number.isFinite(elapsedMs)) return;
+		const diffDays = Math.max(0, Math.floor(elapsedMs / DAY_MS));
+		el.textContent = daysAgoText.replace("{days}", String(diffDays));
 	})();
 </script>

@@ -172,6 +172,9 @@ enum I18nKey {
 	profileStatsPageViews = "profileStatsPageViews",
 	profileStatsVisits = "profileStatsVisits",
 
+	/** 资料卡头像「点这里」引导 */
+	profileAboutGuide = "profileAboutGuide",
+
 	calendar = "calendar",
 	calendarBackToday = "calendarBackToday",
 	calendarPrevMonth = "calendarPrevMonth",
