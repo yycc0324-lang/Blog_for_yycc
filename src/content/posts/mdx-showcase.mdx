@@ -1,10 +1,11 @@
 ---
-title: "MDX Integration and M3E Atomic Components"
+title: "MDX 集成与 M3E 原子组件"
 published: 2026-08-20
-description: "A comprehensive guide to composing rich interactive articles in Shirone using MDX, Svelte 5 interactive islands, and Material 3 Expressive design tokens."
+description: "一份完整指南：在 Shirone 中用 MDX、Svelte 5 交互岛屿与 Material 3 Expressive 设计令牌组合出丰富的交互式文章。"
 image: ""
-tags: [MDX, Components, Svelte, Markdown, Demo]
+tags: [MDX, 组件, Svelte, Markdown, 示例]
 category: "指南"
+lang: zh_CN
 draft: false
 ---
 
@@ -26,59 +27,59 @@ import Slider from "@components/atoms/selection/Slider.svelte";
 export const authorInfo = {
   framework: "Astro 7",
   ui: "Svelte 5",
-  tokens: "M3E Design Tokens",
-  architecture: "Islands Architecture"
+  tokens: "M3E 设计令牌",
+  architecture: "岛屿架构"
 };
 
 export const showcaseItems = [
-  { name: "Atomic Component Embedding", desc: "Directly import and render 60+ M3E atoms and molecules in article content" },
-  { name: "Svelte 5 Islands", desc: "Selective hydration via client:visible ensures zero unnecessary JavaScript overhead" },
-  { name: "JSX Expressions", desc: "Native JavaScript variables, data mappings, and conditional rendering" },
-  { name: "Extension Pipeline", desc: "Unified SSOT compilation for Mermaid, KaTeX, Admonitions, and Expressive Code" }
+  { name: "原子组件嵌入", desc: "在文章正文里直接导入并渲染 60+ 个 M3E 原子与分子组件" },
+  { name: "Svelte 5 交互岛屿", desc: "通过 client:visible 选择性水合，确保零多余 JavaScript 开销" },
+  { name: "JSX 表达式", desc: "原生 JavaScript 变量、数据映射与条件渲染" },
+  { name: "扩展管线", desc: "为 Mermaid、KaTeX、提示框与 Expressive Code 提供统一的 SSOT 编译" }
 ];
 
 export const filterChipOptions = [
-  { value: "all", label: "All Components" },
-  { value: "display", label: "Display Atoms" },
-  { value: "feedback", label: "Feedback" },
-  { value: "action", label: "Interactive" }
+  { value: "all", label: "全部组件" },
+  { value: "display", label: "展示原子" },
+  { value: "feedback", label: "反馈" },
+  { value: "action", label: "交互" }
 ];
 
 export const segmentedOptions = [
-  { value: "linear", label: "Linear" },
-  { value: "circular", label: "Circular" },
-  { value: "morph", label: "Morphing" }
+  { value: "linear", label: "线形" },
+  { value: "circular", label: "环形" },
+  { value: "morph", label: "形变" }
 ];
 
 :::tip
-**MDX (Markdown + JSX)** bridges the gap between static writing and application interfaces. In Shirone, authors can seamlessly mix dynamic logic, reactive Svelte 5 components, and Material 3 design tokens directly within post content.
+**MDX（Markdown + JSX）** 在静态写作与应用界面之间架起了一座桥。在 Shirone 里，作者可以在文章正文中无缝混用动态逻辑、响应式的 Svelte 5 组件与 Material 3 设计令牌。
 :::
 
-## 1. Markdown vs MDX Capability Matrix
+## 1. Markdown 与 MDX 能力对照
 
-| Feature | Standard Markdown (`.md`) | Shirone MDX (`.mdx`) | Execution Mode |
+| 能力 | 标准 Markdown（`.md`） | Shirone MDX（`.mdx`） | 执行方式 |
 | :--- | :--- | :--- | :--- |
-| **Typography & Structure** | Full Support | Full Support | Static SSR |
-| **Code Highlighting** | Line Numbers, Frames, Collapsible | Line Numbers, Frames, Collapsible | Static SSR (Expressive Code) |
-| **Diagrams & Mathematics** | Mermaid, KaTeX | Mermaid, KaTeX | Client Enhanced |
-| **Callout Admonitions** | Note, Tip, Important, Warning, Caution | Note, Tip, Important, Warning, Caution | Static SSR |
-| **M3E Display Atoms** | Not Available | Direct Integration (`<Card>`, `<Skeleton>`) | Pure SSR (Zero Client JS) |
-| **Svelte 5 Reactive Islands** | Not Available | On-Demand Hydration (`<Button>`, `<Switch>`) | `client:visible` Lazy Hydrated |
-| **Feedback & Loading Atoms** | Not Available | Animated Morph (`<LoadingIndicator>`) | `client:visible` Reactive |
-| **Dynamic JSX Expressions** | Not Available | Native Evaluation (`{authorInfo.ui}`) | Compile-Time / Client |
+| **排版与结构** | 完整支持 | 完整支持 | 静态 SSR |
+| **代码高亮** | 行号、边框、可折叠 | 行号、边框、可折叠 | 静态 SSR（Expressive Code） |
+| **图表与数学** | Mermaid、KaTeX | Mermaid、KaTeX | 客户端增强 |
+| **提示框** | Note、Tip、Important、Warning、Caution | Note、Tip、Important、Warning、Caution | 静态 SSR |
+| **M3E 展示原子** | 不可用 | 直接集成（`<Card>`、`<Skeleton>`） | 纯 SSR（零客户端 JS） |
+| **Svelte 5 响应式岛屿** | 不可用 | 按需水合（`<Button>`、`<Switch>`） | `client:visible` 懒水合 |
+| **反馈与加载原子** | 不可用 | 形变动画（`<LoadingIndicator>`） | `client:visible` 响应式 |
+| **动态 JSX 表达式** | 不可用 | 原生求值（`{authorInfo.ui}`） | 编译期 / 客户端 |
 
 ---
 
-## 2. Dynamic Expressions and Data Mapping
+## 2. 动态表达式与数据映射
 
-MDX allows declaring scoped constants using `export const` at the top of the file, which can be evaluated inline or mapped across templates:
+MDX 允许你用文件顶部的 `export const` 声明作用域内的常量，这些常量既可以在行内求值，也可以映射到模板中进行渲染：
 
-- **Core Framework**: {authorInfo.framework}
-- **UI Engine**: {authorInfo.ui}
-- **Design Tokens**: {authorInfo.tokens}
-- **Architecture Pattern**: {authorInfo.architecture}
+- **核心框架**：{authorInfo.framework}
+- **UI 引擎**：{authorInfo.ui}
+- **设计令牌**：{authorInfo.tokens}
+- **架构模式**：{authorInfo.architecture}
 
-Arrays and collections can be rendered dynamically into grid layouts:
+数组与集合可以动态渲染成网格布局：
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
   {showcaseItems.map((item, idx) => (
@@ -96,43 +97,43 @@ Arrays and collections can be rendered dynamically into grid layouts:
 
 ---
 
-## 3. M3E Display and Layout Primitives (SSR-Only)
+## 3. M3E 展示与布局原语（纯 SSR）
 
-In accordance with Shirone's component architecture (`docs/atomic-structure.md`), stateless display components output clean, accessible semantic HTML with no client-side runtime payload.
+依照 Shirone 的组件架构（`docs/atomic-structure.md`），无状态的展示组件只输出干净、可访问的语义化 HTML，不携带任何客户端运行时负载。
 
-### 3.1 Card Containers (`Card.svelte`)
+### 3.1 卡片容器（`Card.svelte`）
 
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
   <Card variant="filled" class="!p-5">
-    <div class="font-bold text-[var(--primary)] mb-2">Filled Card</div>
-    <div class="text-sm text-[var(--on-surface-variant)]">Default container background with no elevation shadow. Ideal for grouped content blocks.</div>
+    <div class="font-bold text-[var(--primary)] mb-2">填充式卡片</div>
+    <div class="text-sm text-[var(--on-surface-variant)]">默认的容器背景，不带高度阴影。适合用来归组内容块。</div>
   </Card>
 
   <Card variant="elevated" class="!p-5">
-    <div class="font-bold text-[var(--primary)] mb-2">Elevated Card</div>
-    <div class="text-sm text-[var(--on-surface-variant)]">Level 1 container elevation with interactive state layering for heightened visual focus.</div>
+    <div class="font-bold text-[var(--primary)] mb-2">抬高式卡片</div>
+    <div class="text-sm text-[var(--on-surface-variant)]">Level 1 容器高度，叠加交互状态层，视觉焦点更强。</div>
   </Card>
 
   <Card variant="outlined" class="!p-5">
-    <div class="font-bold text-[var(--primary)] mb-2">Outlined Card</div>
-    <div class="text-sm text-[var(--on-surface-variant)]">A crisp 1px outline boundary providing clean separation on neutral surfaces.</div>
+    <div class="font-bold text-[var(--primary)] mb-2">描边式卡片</div>
+    <div class="text-sm text-[var(--on-surface-variant)]">1px 的清晰描边边界，在中性表面上提供干净的区隔。</div>
   </Card>
 </div>
 
-### 3.2 Accent Bars and Badges (`AccentBar` & `Badge`)
+### 3.2 强调条与徽章（`AccentBar` 与 `Badge`）
 
 <div class="flex items-center gap-4 my-4 p-4 rounded-lg bg-[var(--surface-container-high)]">
   <AccentBar size="large" />
   <div class="flex-1">
-    <span class="font-bold text-lg">System Announcement</span>
-    <p class="text-xs text-[var(--on-surface-variant)] m-0">Combine AccentBar with Badge to build prominent visual callouts</p>
+    <span class="font-bold text-lg">系统公告</span>
+    <p class="text-xs text-[var(--on-surface-variant)] m-0">把 AccentBar 与 Badge 组合起来，可以做出醒目的视觉提示</p>
   </div>
   <Badge>M3E v0.192</Badge>
 </div>
 
-### 3.3 Skeleton Placeholders (`Skeleton.svelte`)
+### 3.3 骨架屏占位（`Skeleton.svelte`）
 
-For previewing layout skeletons or prototyping async states:
+用于预览布局骨架，或给异步状态做原型：
 
 <div class="flex flex-col gap-3 my-6 p-5 rounded-xl border border-[var(--outline-variant)] bg-[var(--surface-container-low)]">
   <div class="flex items-center gap-3">
@@ -147,146 +148,146 @@ For previewing layout skeletons or prototyping async states:
 
 ---
 
-## 4. Feedback and Loading Indicators
+## 4. 反馈与加载指示器
 
-Shirone features full-fidelity Material 3 Expressive motion and feedback atoms:
+Shirone 内置了一套高保真的 Material 3 Expressive 动效与反馈原子组件：
 
-### 4.1 Morphing Loading Indicator (`LoadingIndicator.svelte`)
+### 4.1 形变加载指示器（`LoadingIndicator.svelte`）
 
-Implemented with `androidx.graphics.shapes` polygon morphing, providing smooth spring-interpolated 7-shape animations:
+基于 `androidx.graphics.shapes` 的多边形形变实现，提供流畅的弹簧插值七形状动画：
 
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-6 p-6 rounded-2xl bg-[var(--surface-container)] border border-[var(--outline-variant)] text-center">
   <div class="flex flex-col items-center gap-2">
     <div class="h-16 flex items-center justify-center">
       <LoadingIndicator client:visible />
     </div>
-    <span class="text-xs text-[var(--on-surface-variant)]">Indeterminate Shape Morph</span>
+    <span class="text-xs text-[var(--on-surface-variant)]">不确定形状形变</span>
   </div>
 
   <div class="flex flex-col items-center gap-2">
     <div class="h-16 flex items-center justify-center">
       <LoadingIndicator client:visible contained />
     </div>
-    <span class="text-xs text-[var(--on-surface-variant)]">Contained Circular Variant</span>
+    <span class="text-xs text-[var(--on-surface-variant)]">容器内环形变体</span>
   </div>
 
   <div class="flex flex-col items-center gap-2">
     <div class="h-16 flex items-center justify-center">
       <LoadingIndicator client:visible progress={0.68} />
     </div>
-    <span class="text-xs text-[var(--on-surface-variant)]">Determinate Progress (68%)</span>
+    <span class="text-xs text-[var(--on-surface-variant)]">确定进度（68%）</span>
   </div>
 </div>
 
-### 4.2 Linear and Indeterminate Progress (`ProgressIndicator.svelte`)
+### 4.2 线性与不确定进度（`ProgressIndicator.svelte`）
 
 <div class="flex flex-col gap-4 my-6 p-6 rounded-2xl bg-[var(--surface-container)] border border-[var(--outline-variant)]">
   <div class="flex flex-col gap-2">
     <div class="flex justify-between text-xs text-[var(--on-surface-variant)]">
-      <span>Pipeline Compilation</span>
+      <span>管线编译</span>
       <span>80%</span>
     </div>
     <ProgressIndicator client:visible progress={0.8} />
   </div>
 
   <div class="flex flex-col gap-2 mt-2">
-    <div class="text-xs text-[var(--on-surface-variant)]">Continuous Dual-Line Animation</div>
+    <div class="text-xs text-[var(--on-surface-variant)]">持续双向扫描动画</div>
     <ProgressIndicator client:visible />
   </div>
 </div>
 
 ---
 
-## 5. Interactive Svelte 5 Islands
+## 5. 可交互的 Svelte 5 岛屿
 
-Components declared with `client:visible` are lazy-hydrated via `IntersectionObserver` when entering the viewport:
+用 `client:visible` 声明的组件，会在进入视口时经由 `IntersectionObserver` 懒水合：
 
-### 5.1 Button Matrix (`Button.svelte`)
+### 5.1 按钮矩阵（`Button.svelte`）
 
 <div class="flex flex-wrap items-center gap-3 my-6 p-4 rounded-xl border border-[var(--outline-variant)]">
-  <Button client:visible variant="filled">Filled Button</Button>
-  <Button client:visible variant="elevated">Elevated</Button>
-  <Button client:visible variant="tonal">Tonal Button</Button>
-  <Button client:visible variant="outlined">Outlined</Button>
-  <Button client:visible variant="text">Text Button</Button>
+  <Button client:visible variant="filled">填充按钮</Button>
+  <Button client:visible variant="elevated">抬高按钮</Button>
+  <Button client:visible variant="tonal">色调按钮</Button>
+  <Button client:visible variant="outlined">描边按钮</Button>
+  <Button client:visible variant="text">文字按钮</Button>
 </div>
 
-### 5.2 Filter Chips and Segmented Buttons (`Chips` & `SegmentedButton`)
+### 5.2 筛选 Chip 与分段按钮（`Chips` 与 `SegmentedButton`）
 
 <div class="flex flex-col gap-4 my-6 p-6 rounded-2xl bg-[var(--surface-container)] border border-[var(--outline-variant)]">
   <div>
-    <div class="text-xs font-bold text-[var(--on-surface-variant)] mb-2">M3E Filter Chips</div>
+    <div class="text-xs font-bold text-[var(--on-surface-variant)] mb-2">M3E 筛选 Chip</div>
     <Chips client:visible items={filterChipOptions} value="all" />
   </div>
 
   <Divider />
 
   <div>
-    <div class="text-xs font-bold text-[var(--on-surface-variant)] mb-2">Segmented Control</div>
+    <div class="text-xs font-bold text-[var(--on-surface-variant)] mb-2">分段控件</div>
     <SegmentedButton client:visible options={segmentedOptions} value="linear" />
   </div>
 </div>
 
-### 5.3 Switches, Checkboxes, and Sliders (`Switch`, `Checkbox`, `Slider`)
+### 5.3 开关、复选框与滑块（`Switch`、`Checkbox`、`Slider`）
 
 <div class="flex flex-col gap-4 my-6 p-6 rounded-2xl bg-[var(--surface-container)] border border-[var(--outline-variant)]">
   <div class="flex items-center justify-between">
-    <span class="font-bold text-sm">Switch with Status Icons</span>
-    <Switch client:visible checked={true} icons label="Push notifications" />
+    <span class="font-bold text-sm">带状态图标的开关</span>
+    <Switch client:visible checked={true} icons label="推送通知" />
   </div>
 
   <Divider />
 
   <div class="flex items-center justify-between">
-    <span class="font-bold text-sm">Selection Checkboxes</span>
+    <span class="font-bold text-sm">选择复选框</span>
     <div class="flex items-center gap-4">
-      <Checkbox client:visible checked={true} label="Selected" />
-      <Checkbox client:visible checked={false} label="Unselected" />
-      <Checkbox client:visible checked={null} triState label="Indeterminate" />
+      <Checkbox client:visible checked={true} label="已选中" />
+      <Checkbox client:visible checked={false} label="未选中" />
+      <Checkbox client:visible checked={null} triState label="不确定" />
     </div>
   </div>
 
   <Divider />
 
   <div class="flex flex-col gap-2">
-    <span class="font-bold text-sm">Hue Spectrum Slider</span>
-    <Slider client:visible value={60} label="Hue adjustment" />
+    <span class="font-bold text-sm">色相滑块</span>
+    <Slider client:visible value={60} label="色相调节" />
   </div>
 </div>
 
-### 5.4 Input Controls (`TextField.svelte`)
+### 5.4 输入控件（`TextField.svelte`）
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
-  <TextField client:visible variant="filled" label="Filled Text Field" placeholder="Enter text..." />
-  <TextField client:visible variant="outlined" label="Outlined Text Field" placeholder="Enter text..." />
+  <TextField client:visible variant="filled" label="填充式文本框" placeholder="请输入内容..." />
+  <TextField client:visible variant="outlined" label="描边文本框" placeholder="请输入内容..." />
 </div>
 
 ---
 
-## 6. Markdown Extension Compatibility
+## 6. Markdown 扩展兼容性
 
-Shirone's SSOT unified plugin pipeline preserves full compatibility with all Markdown extensions:
+Shirone 的 SSOT 统一插件管线，与所有 Markdown 扩展保持了完整兼容：
 
-### 6.1 GitHub Repository Cards
+### 6.1 GitHub 仓库卡片
 
 ::github{repo="saicaca/fuwari"}
 
-### 6.2 Mermaid Architecture Diagrams
+### 6.2 Mermaid 架构图
 
 ```mermaid
 flowchart TD
-    MDX[MDX Source Entry] --> Compiler["@astrojs/mdx Compiler"]
-    Compiler --> Plugins["Remark / Rehype SSOT Pipeline"]
-    Plugins --> Islands["Svelte 5 Interactive Islands"]
-    Islands --> Swup["Swup Client Navigation Shell"]
-    Swup --> Screen["M3E Expressive Article View"]
+    MDX[MDX 源码入口] --> Compiler["@astrojs/mdx 编译器"]
+    Compiler --> Plugins["Remark / Rehype SSOT 管线"]
+    Plugins --> Islands["Svelte 5 交互岛屿"]
+    Islands --> Swup["Swup 客户端导航外壳"]
+    Swup --> Screen["M3E 表达力文章视图"]
 ```
 
-### 6.3 Mathematical Expressions (LaTeX / KaTeX)
+### 6.3 数学表达式（LaTeX / KaTeX）
 
-Inline equation: Mass-energy equivalence $E = mc^2$ and Gaussian integral $\int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}$.
+行内公式：质能等价 $E = mc^2$，以及高斯积分 $\int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}$。
 
-Block equation:
+独立公式：
 
 $$
 \mathcal{L}_{M3E} = \sum_{i=1}^{N} \left( \text{Token}_i \cdot \text{ContrastRatio} \right) + \lambda \|\text{MotionElegance}\|
@@ -294,6 +295,6 @@ $$
 
 ---
 
-## 7. Summary
+## 7. 小结
 
-The native integration of MDX empowers technical writers to build rich, interactive documentation while preserving Shirone's ultra-fast static performance. All components adhere to the Material 3 Expressive token design system, ensuring consistency, accessibility, and visual harmony.
+原生的 MDX 集成让技术写作者能够构建丰富、可交互的文档，同时又保留了 Shirone 极快的静态性能。所有组件都遵循 Material 3 Expressive 令牌设计体系，从而保证了一致性、可访问性与视觉和谐。
