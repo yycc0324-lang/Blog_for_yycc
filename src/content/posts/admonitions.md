@@ -1,56 +1,56 @@
 ---
-title: Markdown Admonitions
+title: Markdown 提示框
 published: 2026-08-27
-description: Present notes, warnings, and optional details with Shirone's M3E Markdown containers.
-tags: [Demo, Markdown, Admonition, Shirone]
+description: 用 Shirone 的 M3E Markdown 容器呈现提示、警告和可选的详细信息。
+tags: [示例, Markdown, 提示框, Shirone]
 category: 指南
-lang: en
+lang: zh_CN
 draft: false
 ---
 
-Admonitions keep supporting information visually distinct while preserving the article's reading flow. Every form is rendered on the server and uses the same compact M3E component.
+提示框（Admonition）能让补充信息在视觉上区分开来，同时又不打断文章的阅读节奏。所有形式都在服务端渲染，并共用同一个紧凑的 M3E 组件。
 
-## Semantic variants
+## 语义变体
 
-::: note Deployment context
-The spaced form accepts a plain custom title while remaining compatible with the reference syntax.
+::: note 部署上下文
+带空格的形式可以接受一个纯文本自定义标题，同时仍兼容参考写法。
 :::
 
 :::info
-Use information blocks for neutral context that helps readers understand the surrounding section.
+当需要中性的上下文信息、帮助读者理解所在小节时，使用信息块。
 :::
 
-:::tip[Existing **label** syntax]
-The original bracket label remains available and can contain inline Markdown emphasis.
+:::tip[原有的 **标签** 语法]
+带方括号的标签写法依然可用，并且可以在里面写行内 Markdown 强调。
 :::
 
 > [!IMPORTANT]
-> GitHub Alert syntax enters the same renderer, so existing articles keep one visual language.
+> GitHub Alert 语法会进入同一个渲染器，因此已有文章能保持统一的视觉语言。
 
 :::warning
-Check environment variables before running a production build.
+在生产构建之前，先检查环境变量。
 :::
 
 :::caution
-Do not publish credentials, local configuration, or private keys with an example.
+不要把凭据、本地配置或私钥连同示例一起发布出去。
 :::
 
-## Optional details
+## 可选详情
 
-::: details Inspect the complete command
-The disclosure uses native browser semantics and remains keyboard accessible without client JavaScript.
+::: details 查看完整命令
+这个折叠区使用浏览器原生语义，即使没有客户端 JavaScript，也依然可以通过键盘操作。
 
 ```powershell
 npx.cmd astro check
 pnpm.cmd build
 ```
 
-- It starts closed.
-- Long code can scroll inside its own code block.
-- The container remains within the article width on narrow screens.
+- 它默认是收起的。
+- 较长的代码可以在自己的代码块内滚动。
+- 在窄屏上，容器也不会超出文章宽度。
 :::
 
-## Author syntax
+## 作者语法
 
 ```markdown
 :::note[Existing title syntax]

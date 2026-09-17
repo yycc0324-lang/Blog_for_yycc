@@ -36,7 +36,7 @@
 
 ## ✦ 最近在看
 
-最近在看博主 [lvy010](https://github.com/lvy010) 在 2025 年发的帖子，持续拓展自己在 Agent 与大模型应用方面的思路。
+最近在看博主 [lvy010](https://github.com/lvy010) 的Agent项目与笔记 ，持续拓展自己在 Agent 与大模型应用方面的思路。
 
 ## ✦ 联系我
 

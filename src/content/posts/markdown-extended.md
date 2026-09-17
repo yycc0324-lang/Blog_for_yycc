@@ -1,63 +1,64 @@
 ---
-title: Markdown Extended Features
+title: Markdown 扩展功能
 published: 2024-05-01
 updated: 2024-11-29
-description: 'Read more about Markdown features in Fuwari'
+description: '进一步了解 Fuwari 中的 Markdown 功能'
 image: ''
-tags: [Demo, Example, Markdown, Fuwari]
+tags: [示例, Markdown, Fuwari]
 category: '示例'
-draft: false 
+lang: zh_CN
+draft: false
 ---
 
-## GitHub Repository Cards
-You can add dynamic cards that link to GitHub repositories, on page load, the repository information is pulled from the GitHub API. 
+## GitHub 仓库卡片
+你可以添加动态卡片来链接 GitHub 仓库，页面加载时会从 GitHub API 拉取仓库信息。
 
 ::github{repo="Fabrizz/MMM-OnSpotify"}
 
-Create a GitHub repository card with the code `::github{repo="<owner>/<repo>"}`.
+用代码 `::github{repo="<owner>/<repo>"}` 即可创建一个 GitHub 仓库卡片。
 
 ```markdown
 ::github{repo="saicaca/fuwari"}
 ```
 
-## Mermaid Diagrams
+## Mermaid 图表
 
-Fenced `mermaid` blocks are rendered as diagrams and follow the active color scheme.
+带 `mermaid` 标记的代码块会被渲染成图表，并跟随当前配色方案。
 
 ```mermaid
 flowchart LR
-    accTitle: Markdown rendering pipeline
-    accDescr: Markdown source is transformed into semantic HTML and then enhanced as a themed SVG diagram.
-    A[Markdown source] --> B[Astro content pipeline]
-    B --> C[Semantic HTML]
-    C --> D[Themed diagram]
+    accTitle: Markdown 渲染管线
+    accDescr: Markdown 源码先被转换为语义化 HTML，再增强为主题化 SVG 图表。
+    A[Markdown 源码] --> B[Astro 内容管线]
+    B --> C[语义化 HTML]
+    C --> D[主题化图表]
 ```
 
-## Admonitions
+## 提示框
 
-Following types of admonitions are supported: `note` `tip` `important` `warning` `caution`
+支持以下类型的提示框：`note` `tip` `important` `warning` `caution`
 
 :::note
-Highlights information that users should take into account, even when skimming.
+强调用户即使只是快速扫读也应当留意的信息。
 :::
 
 :::tip
-Optional information to help a user be more successful.
+帮助用户更顺利地完成操作的补充信息。
 :::
 
 :::important
-Crucial information necessary for users to succeed.
+用户成功所必需的关键信息。
 :::
 
 :::warning
-Critical content demanding immediate user attention due to potential risks.
+由于潜在风险而需要用户立即注意的关键内容。
 :::
 
 :::caution
-Negative potential consequences of an action.
+某个操作可能带来的负面后果。
 :::
 
-### Basic Syntax
+### 基础语法
 
 ```markdown
 :::note
@@ -69,12 +70,12 @@ Optional information to help a user be more successful.
 :::
 ```
 
-### Custom Titles
+### 自定义标题
 
-The title of the admonition can be customized.
+提示框的标题可以自定义。
 
-:::note[MY CUSTOM TITLE]
-This is a note with a custom title.
+:::note[我的自定义标题]
+这是一条带自定义标题的提示。
 :::
 
 ```markdown
@@ -83,10 +84,10 @@ This is a note with a custom title.
 :::
 ```
 
-### GitHub Syntax
+### GitHub 语法
 
 > [!TIP]
-> [The GitHub syntax](https://github.com/orgs/community/discussions/16925) is also supported.
+> 同时支持 [GitHub 语法](https://github.com/orgs/community/discussions/16925)。
 
 ```
 > [!NOTE]
@@ -96,29 +97,29 @@ This is a note with a custom title.
 > The GitHub syntax is also supported.
 ```
 
-### Spoiler
+### 剧透
 
-You can add spoilers to your text. The text also supports **Markdown** syntax.
+你可以给文字加上剧透遮罩。遮罩里的文字同样支持 **Markdown** 语法。
 
-The content :spoiler[is hidden **ayyy**]!
+内容是 :spoiler[被藏起来的 **ayyy**]！
 
 ```markdown
 The content :spoiler[is hidden **ayyy**]!
 
 ```
 
-## Image Widths and Captions
+## 图片宽度与题注
 
-A standalone image accepts an optional `w-N%` width token in its alt text and a Markdown title rendered as a centered caption below the image:
+单独一行插入的图片，可以在替代文本里带上可选的 `w-N%` 宽度标记，并可用 Markdown 标题生成居中显示在图下方的题注：
 
-![Album example image w-50%](/images/albums/AcgExample/07.webp "Half-width image with a caption")
+![相册示例图片 w-50%](/images/albums/AcgExample/07.webp "半宽图片，带题注")
 
 ```markdown
 ![Image description w-50%](./image.webp "Visible caption")
 ```
 
-Valid widths range from `w-1%` to `w-100%`; invalid tokens stay in the alt text. The width and the caption are independent — a title alone also produces a caption:
+合法宽度范围是 `w-1%` 到 `w-100%`；非法标记会保留在替代文本里。宽度与题注互相独立 —— 只写标题同样会生成题注：
 
-![Album example image w-75%](/images/albums/AcgExample/08.webp)
+![相册示例图片 w-75%](/images/albums/AcgExample/08.webp)
 
-![Album example image](/images/albums/AcgExample/09.webp "Caption without a width token")
+![相册示例图片](/images/albums/AcgExample/09.webp "只有题注，没有宽度标记")

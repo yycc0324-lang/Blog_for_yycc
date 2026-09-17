@@ -1,50 +1,51 @@
 ---
-title: Expressive Code Example
+title: Expressive Code 代码块示例
 published: 2024-04-10
-description: How code blocks look in Markdown using Expressive Code.
-tags: [Markdown, Blogging, Demo]
+description: 使用 Expressive Code 时，Markdown 里的代码块长什么样。
+tags: [Markdown, 博客, 示例]
 category: 示例
+lang: zh_CN
 draft: false
 ---
 
-Here, we'll explore how code blocks look using [Expressive Code](https://expressive-code.com/). The provided examples are based on the official documentation, which you can refer to for further details.
+接下来我们看看，使用 [Expressive Code](https://expressive-code.com/) 之后代码块是什么效果。下面的示例取自官方文档，想深入了解可以查阅原文。
 
 ## Expressive Code
 
-### Syntax Highlighting
+### 语法高亮
 
 [Syntax Highlighting](https://expressive-code.com/key-features/syntax-highlighting/)
 
-#### Regular syntax highlighting
+#### 常规语法高亮
 
 ```js
 console.log('This code is syntax highlighted!')
 ```
 
-#### Rendering ANSI escape sequences
+#### 渲染 ANSI 转义序列
 
 ```ansi
 ANSI colors:
-- Regular: [31mRed[0m [32mGreen[0m [33mYellow[0m [34mBlue[0m [35mMagenta[0m [36mCyan[0m
-- Bold:    [1;31mRed[0m [1;32mGreen[0m [1;33mYellow[0m [1;34mBlue[0m [1;35mMagenta[0m [1;36mCyan[0m
-- Dimmed:  [2;31mRed[0m [2;32mGreen[0m [2;33mYellow[0m [2;34mBlue[0m [2;35mMagenta[0m [2;36mCyan[0m
+- Regular: Red Green Yellow Blue Magenta Cyan
+- Bold:    Red Green Yellow Blue Magenta Cyan
+- Dimmed:  Red Green Yellow Blue Magenta Cyan
 
 256 colors (showing colors 160-177):
-[38;5;160m160 [38;5;161m161 [38;5;162m162 [38;5;163m163 [38;5;164m164 [38;5;165m165[0m
-[38;5;166m166 [38;5;167m167 [38;5;168m168 [38;5;169m169 [38;5;170m170 [38;5;171m171[0m
-[38;5;172m172 [38;5;173m173 [38;5;174m174 [38;5;175m175 [38;5;176m176 [38;5;177m177[0m
+160 161 162 163 164 165
+166 167 168 169 170 171
+172 173 174 175 176 177
 
 Full RGB colors:
-[38;2;34;139;34mForestGreen - RGB(34, 139, 34)[0m
+ForestGreen - RGB(34, 139, 34)
 
-Text formatting: [1mBold[0m [2mDimmed[0m [3mItalic[0m [4mUnderline[0m
+Text formatting: Bold Dimmed Italic Underline
 ```
 
-### Editor & Terminal Frames
+### 编辑器与终端边框
 
 [Editor & Terminal Frames](https://expressive-code.com/key-features/frames/)
 
-#### Code editor frames
+#### 代码编辑器边框
 
 ```js title="my-test-file.js"
 console.log('Title attribute example')
@@ -57,7 +58,7 @@ console.log('Title attribute example')
 <div>File name comment example</div>
 ```
 
-#### Terminal frames
+#### 终端边框
 
 ```bash
 echo "This terminal frame has no title"
@@ -69,7 +70,7 @@ echo "This terminal frame has no title"
 Write-Output "This one has a title!"
 ```
 
-#### Overriding frame types
+#### 覆盖边框类型
 
 ```sh frame="none"
 echo "Look ma, no frame!"
@@ -83,11 +84,11 @@ function Watch-Tail { Get-Content -Tail 20 -Wait $args }
 New-Alias tail Watch-Tail
 ```
 
-### Text & Line Markers
+### 文本与行标记
 
 [Text & Line Markers](https://expressive-code.com/key-features/text-markers/)
 
-#### Marking full lines & line ranges
+#### 标记整行与行范围
 
 ```js {1, 4, 7-8}
 // Line 1 - targeted by line number
@@ -100,7 +101,7 @@ New-Alias tail Watch-Tail
 // Line 8 - targeted by range "7-8"
 ```
 
-#### Selecting line marker types (mark, ins, del)
+#### 选择行标记类型（mark、ins、del）
 
 ```js title="line-markers.js" del={2} ins={3-4} {6}
 function demo() {
@@ -112,7 +113,7 @@ function demo() {
 }
 ```
 
-#### Adding labels to line markers
+#### 为行标记添加标签
 
 ```jsx {"1":5} del={"2":7-8} ins={"3":10-12}
 // labeled-line-markers.jsx
@@ -130,7 +131,7 @@ function demo() {
 </button>
 ```
 
-#### Adding long labels on their own lines
+#### 让长标签独占一行
 
 ```jsx {"1. Provide the value prop here:":5-6} del={"2. Remove the disabled and active states:":8-10} ins={"3. Add this to render the children inside the button:":12-15}
 // labeled-line-markers.jsx
@@ -151,7 +152,7 @@ function demo() {
 </button>
 ```
 
-#### Using diff-like syntax
+#### 使用类 diff 语法
 
 ```diff
 +this line will be marked as inserted
@@ -170,7 +171,7 @@ this is a regular line
  no whitespace will be removed either
 ```
 
-#### Combining syntax highlighting with diff-like syntax
+#### 把语法高亮与类 diff 语法结合
 
 ```diff lang="js"
   function thisIsJavaScript() {
@@ -181,7 +182,7 @@ this is a regular line
   }
 ```
 
-#### Marking individual text inside lines
+#### 标记行内的具体文本
 
 ```js "given text"
 function demo() {
@@ -190,19 +191,19 @@ function demo() {
 }
 ```
 
-#### Regular expressions
+#### 正则表达式
 
 ```ts /ye[sp]/
 console.log('The words yes and yep will be marked.')
 ```
 
-#### Escaping forward slashes
+#### 转义正斜杠
 
 ```sh /\/ho.*\//
 echo "Test" > /home/test.txt
 ```
 
-#### Selecting inline marker types (mark, ins, del)
+#### 选择行内标记类型（mark、ins、del）
 
 ```js "return true;" ins="inserted" del="deleted"
 function demo() {
@@ -212,11 +213,11 @@ function demo() {
 }
 ```
 
-### Word Wrap
+### 自动换行
 
 [Word Wrap](https://expressive-code.com/key-features/word-wrap/)
 
-#### Configuring word wrap per block
+#### 按代码块配置换行
 
 ```js wrap
 // Example with wrap
@@ -234,7 +235,7 @@ function getLongString() {
 }
 ```
 
-#### Configuring indentation of wrapped lines
+#### 配置换行后的缩进
 
 ```js wrap preserveIndent
 // Example with preserveIndent (enabled by default)
@@ -252,7 +253,7 @@ function getLongString() {
 }
 ```
 
-## Collapsible Sections
+## 可折叠区块
 
 [Collapsible Sections](https://expressive-code.com/plugins/collapsible-sections/)
 
@@ -283,11 +284,11 @@ engine.freeMemory()
 engine.shutdown({ reason: 'End of example boilerplate code' })
 ```
 
-## Line Numbers
+## 行号
 
 [Line Numbers](https://expressive-code.com/plugins/line-numbers/)
 
-### Displaying line numbers per block
+### 按代码块显示行号
 
 ```js showLineNumbers
 // This code block will show line numbers
@@ -303,7 +304,7 @@ console.log('Hello?')
 console.log('Sorry, do you know what line I am on?')
 ```
 
-### Changing the starting line number
+### 修改起始行号
 
 ```js showLineNumbers startLineNumber=5
 console.log('Greetings from line 5!')
