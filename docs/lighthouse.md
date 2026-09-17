@@ -33,8 +33,8 @@ lighthouse:collect 使用现有 dist 启动 preview，并将采集结果保存�
 - /archive/
 - /moments/
 - /about/
-- /posts/guide/
-- /posts/mdx-showcase/
+- /posts/python-crawler-quickstart/
+- /posts/python-crawler-quickstart/
 
 每个 URL 默认采集 3 次。配置位于根目录 lighthouserc.cjs。网格首页通过审计脚本注入 localStorage 状态；普通首页不会被改变。审计脚本还等待主题变量和页面入场动画收敛，避免把中间帧作为结果。
 

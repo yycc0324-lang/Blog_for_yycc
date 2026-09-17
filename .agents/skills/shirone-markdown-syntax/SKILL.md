@@ -7,7 +7,7 @@ description: Authoring content with Shirone's custom Markdown syntaxes - admonit
 
 以下语法**开箱即用、自激活**:写进正文即可,无需 frontmatter 开关或配置;页面只加载实际用到的语法的 CSS/JS。机器可读的完整契约(pattern、参数、默认值、示例)以 `src/plugins/markdown/manifest.json` 为单一索引。普通 CommonMark/GFM 之外的所有自定义语法如下:
 
-| 语法 | 写法 | 演示文章 |
+| 语法 | 写法 | 原演示文章（已移除） |
 |---|---|---|
 | Field cards / 字段卡片 | `:::: field-group` + `::: field name` with `@type`, `@default`, and required-state metadata | `markdown-fields.md` |
 | 提示容器 | `:::tip[标题] ... :::` 或 `> [!NOTE]`,类型:`note/info/tip/important/warning/caution/details` | `admonitions.md` |
@@ -57,7 +57,7 @@ Supported metadata is `@name`, `@type`, `@default`, `@required`, `@optional`, `@
 
 Use four-colon fences for `field-group` when nesting three-colon `field` blocks. A single `field` can also be used without a group. Unknown or malformed `@tags` are preserved as ordinary description text instead of being discarded. Rendering is SSR-only: the cards add no JavaScript or network requests.
 
-Reference implementation and copyable example: `src/plugins/markdown/manifest.json` and `src/content/posts/markdown-fields.md`.
+Reference implementation: `src/plugins/markdown/manifest.json`.
 
 ## Bilibili 视频
 
@@ -91,4 +91,4 @@ Reference implementation and copyable example: `src/plugins/markdown/manifest.js
 
 - `src/plugins/markdown/manifest.json` — 每种语法的 forms/attributes/示例/运行时成本(单一真源)
 - `docs/markdown-syntax-manifest.md` — 清单字段与状态含义(stable/legacy/deprecated)
-- `src/content/posts/` — 上述演示文章,均含可复制示例
+- `src/plugins/markdown/manifest.json` — 上述语法的 forms/attributes/示例（机器可读单一真源）

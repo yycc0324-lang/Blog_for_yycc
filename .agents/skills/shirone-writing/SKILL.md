@@ -51,9 +51,9 @@ hideHomeContent: true   # 加密内容在首页隐藏(默认 true)
 2. 写正文:自定义语法直接使用,无需任何启用开关(见 `shirone-markdown-syntax` 技能);图片可用相对路径引用同目录资源;
 3. 本地预览:`pnpm.cmd dev` 后访问 `http://localhost:4321`。
 
-## 现成范例(demo 文章即文档)
+## 内容范例
 
-`src/content/posts/` 下的示例文章同时是语法文档,写作前可参考:`markdown.md`(基础)、`markdown-extended.md`(扩展语法)、`admonitions.md`、`spoilers.md`、`steps.md`、`option-groups.md`、`collapse-panels.md`、`marker-highlights.md`、`markdown-abbreviations.md`、`markdown-mermaid.md`、`expressive-code.md`、`encrypted-demo.md`(加密)、`video.md`、`image-grid-demo/`(图片画廊)、`markdown-includes.md`(文件包含)。
+模板示例文章已移除；需要查阅语法时可参考 `src/plugins/markdown/manifest.json` 中的 forms/example 字段与 `docs/markdown-extensions.md`。
 
 ## 注意事项
 
@@ -65,8 +65,8 @@ hideHomeContent: true   # 加密内容在首页隐藏(默认 true)
 
 - `src/content.config.ts` — posts/moments 的 zod schema 权威定义
 - `scripts/new-post.js` — `pnpm new-post` 脚手架行为
-- `src/content/posts/` — 示例文章(语法活文档)
-- `src/content/moments/` — 动态示例
+- `src/content/posts/` — 文章目录（不再包含模板示例）
+- `src/content/moments/` — 动态目录
 
 ## npm 包模式内容路径
 
