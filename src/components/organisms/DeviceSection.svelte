@@ -1,9 +1,10 @@
 <script lang="ts">
 /**
  * 设备展示主体（有机体）：实时搜索 + 场景分类筛选
- * （带 LoadingIndicator 过渡）+ 瀑布流柔性网格。
+ * （带 LoadingIndicator 过渡）+ 等高对齐网格。
  * - 筛选状态与搜索词同步 URL（?category= / ?q=），刷新/分享/回退保留；
- * - 瀑布流复用文章列表的最短列打包（utils/masonry.ts），ResizeObserver 处理换列。
+ * - 设备卡片内容长度差异大，这里刻意**不用瀑布流**：同一行等高、顶边底边对齐，
+ *   否则左右两列会各自累积高度、越往下错得越多（观感像"没对齐"）。
  */
 import Chips from "@components/atoms/action/Chips.svelte";
 import Card from "@components/atoms/display/Card.svelte";
@@ -14,7 +15,6 @@ import PageHeader from "@components/molecules/PageHeader.svelte";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import Icon from "@iconify/svelte";
-import { packMasonry, setupMasonry } from "@utils/masonry";
 import { onMount } from "svelte";
 import type { DeviceCategory, DeviceItem } from "@/types/devicesConfig";
 
@@ -33,7 +33,6 @@ let {
 let query = $state("");
 let selectedCategory = $state("");
 let initialized = false;
-let gridEl: HTMLElement | undefined = $state();
 
 /** 筛选过渡三段态：loading 展示指示器 → out 指示器淡出 → idle 列表 stagger 揭幕 */
 type FilterPhase = "idle" | "loading" | "out";
@@ -109,21 +108,11 @@ onMount(() => {
 	query = params.get("q") || "";
 	initialized = true;
 
-	if (!gridEl) return;
-	setupMasonry(gridEl);
-	document.fonts?.ready.then(() => packMasonry(gridEl)).catch(() => {});
 	return () => {
 		phaseTimers.forEach(clearTimeout);
 	};
 });
 
-$effect(() => {
-	// 依赖 filteredItems 与 phase：过滤完成回到 idle 状态后重新打包
-	filteredItems;
-	if (phase === "idle" && gridEl) {
-		requestAnimationFrame(() => packMasonry(gridEl));
-	}
-});
 </script>
 
 <Card color="var(--card-bg)" radius="l" class="devices-section px-8 py-6">
@@ -192,7 +181,6 @@ $effect(() => {
 			<div
 				class="devices-section__grid"
 				aria-live="polite"
-				bind:this={gridEl}
 			>
 				{#each filteredItems as device, index (device.id)}
 					<DeviceCard {device} delay={Math.min(index, 7) * 45} />
@@ -311,18 +299,15 @@ $effect(() => {
 	&__grid
 		display: grid
 		grid-template-columns: minmax(0, 1fr)
-		gap: 0.75rem
+		gap: var(--m3e-space-4)
 		margin-top: 1.25rem
 
-		/* 瀑布流：仅 ≥md（单列下 packMasonry 自动清空定位，保持普通行距）。
-		   约定与 PostPage/masonry.ts 同步：auto-rows 8px、row-gap 0、
-		   行距 16px 烘焙进 span（column-gap 与 ROW_GAP 同值） */
+		/* 等高对齐网格：同一行的卡片顶部/底部对齐（align-items 保持默认 stretch）。
+		   固定两列：用 auto-fill + 最小宽度会让列数随主内容区宽度"跳"——1280px
+		   侧栏出现后主区仅剩 ~577px 会掉成单列，而 1920px 又会变成三列。
+		   设备卡片内容量不大，两列是最舒服的密度，因此直接写死列数。 */
 		@media (min-width: bp-md)
-			grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr))
-			align-items: start
-			grid-auto-rows: 8px
-			row-gap: 0
-			column-gap: var(--m3e-space-4)
+			grid-template-columns: repeat(2, minmax(0, 1fr))
 
 /* 指示器退场：淡出 + 轻微收拢（reduced-motion 由全局规则压至终态） */
 @keyframes devices-loading-out

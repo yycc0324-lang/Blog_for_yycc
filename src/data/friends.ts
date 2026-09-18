@@ -18,11 +18,11 @@ export interface FriendItem {
 export const friendsData: FriendItem[] = [
 	{
 		id: 1,
-		title: "Mizuki",
-		imgurl: "https://avatars.githubusercontent.com/u/225602409?v=4&s=640",
-		desc: "Another Fuwari-based blog theme with docs",
-		siteurl: "https://mizuki.mysqil.com",
-		tags: ["Blog", "Theme"],
+		title: "Aria-7",
+		imgurl: "/images/friends/aria7.webp",
+		desc: "记录设计、代码、影像与日常观察的个人博客",
+		siteurl: "https://aria7.wiki/",
+		tags: ["Blog"],
 	},
 	{
 		id: 2,

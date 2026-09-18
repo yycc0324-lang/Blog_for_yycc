@@ -17,14 +17,24 @@ export const projectsConfig: ProjectsConfig = withUserConfig("projects", {
 	description: "$t:projectsBanner",
 	categories: [
 		{
-			key: "theme",
-			label: "Theme",
-			icon: "material-symbols:palette-outline-rounded",
+			key: "agent",
+			label: "Agent 与 AI",
+			icon: "material-symbols:smart-toy-outline-rounded",
 		},
 		{
-			key: "android",
-			label: "Android",
-			icon: "material-symbols:android-rounded",
+			key: "backend",
+			label: "Java 后端",
+			icon: "material-symbols:dns-outline-rounded",
+		},
+		{
+			key: "harmony",
+			label: "鸿蒙",
+			icon: "material-symbols:devices-rounded",
+		},
+		{
+			key: "web",
+			label: "网站",
+			icon: "material-symbols:globe-outline-rounded",
 		},
 	],
 	// disabledKeys: [],

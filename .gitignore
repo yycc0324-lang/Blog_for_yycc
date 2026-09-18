@@ -43,8 +43,11 @@ src/generated/local-icon-collections.ts
 *.iml
 
 # anime snapshot data & downloaded covers
-src/data/anime-snapshots/*.json
-public/assets/anime/covers/*
+# 刻意不忽略：快照是「last-known-good 基线」，封面随基线一起提交，
+# 使 Vercel / CI 等无法访问 B 站接口的环境也能构建出正确的番剧页。
+# 更新方式：本地运行 `pnpm anime:sync` 后提交以下两处变更。
+#   - src/data/anime-snapshots/*.json
+#   - public/assets/anime/covers/*
 !public/assets/anime/covers/.gitkeep
 
 # generated responsive moment thumbnails

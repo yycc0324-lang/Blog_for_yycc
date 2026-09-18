@@ -65,8 +65,22 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 		// desktop 用于 >= 1024px；mobile 仅用于 < 1024px 的首页，手机非首页不显示壁纸。
 		// 数组顺序就是轮播顺序；只需要静态 Banner 时，每组保留一张图片即可。
 		src: {
-			desktop: ["assets/images/banner/desktop/1.webp"],
-			mobile: ["assets/images/banner/mobile/1.webp"],
+			desktop: [
+				"assets/images/banner/desktop/1.webp",
+				"assets/images/banner/desktop/2.webp",
+				"assets/images/banner/desktop/3.webp",
+				"assets/images/banner/desktop/4.webp",
+				"assets/images/banner/desktop/5.webp",
+				"assets/images/banner/desktop/6.webp",
+			],
+			mobile: [
+				"assets/images/banner/mobile/1.webp",
+				"assets/images/banner/mobile/2.webp",
+				"assets/images/banner/mobile/3.webp",
+				"assets/images/banner/mobile/4.webp",
+				"assets/images/banner/mobile/5.webp",
+				"assets/images/banner/mobile/6.webp",
+			],
 		},
 		// 图片裁切焦点："top"、"center" 或 "bottom"。
 		position: "center",
@@ -97,7 +111,9 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 			// 是否开启多张图片自动轮播；多张图片时生效，单张图片时自动降级为静态展示。
 			enable: true,
 			// 轮播切换间隔时间（毫秒），运行时最小值限制为 3000ms。
-			interval: 6000,
+			// 30 * 60 * 1000 = 30 分钟换一张壁纸。
+			// 调试时可临时改成 5000（5 秒）快速验证轮播是否生效。
+			interval: 1800000,
 			// 交叉淡入淡出（Crossfade）过渡时长（毫秒，默认 1200ms）。
 			fadeDuration: 1200,
 			// 运镜呼吸动画模式："ken-burns"（默认，循环运镜）| "zoom-in"（推进）| "zoom-out"（拉远）| "pan-left"（左移）| "pan-right"（右移）| "none"（无运镜）。
@@ -123,7 +139,11 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 	},
 	favicon: [
 		// 浏览器标签页图标，路径相对于 public 目录。
-		{ src: "/logo/icon.webp" },
+		// ⚠️ 尺寸必须小：favicon 在**每一次页面访问**都会请求，直接用大图会白吃掉大量带宽。
+		// 之前的 /logo/icon.webp 是 1024×1024、1.1 MB，占首页总传输量的 39%。
+		// 现在 32(3 KB) + 180(17 KB)，合计不到 20 KB。
+		{ src: "/logo/icon-32.png", sizes: "32x32" },
+		{ src: "/logo/icon-180.png", sizes: "180x180" },
 	],
 });
 

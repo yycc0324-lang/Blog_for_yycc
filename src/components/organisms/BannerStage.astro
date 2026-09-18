@@ -746,9 +746,18 @@ const bannerCors = rainyDayEnabled ? "anonymous" : undefined;
 
 	function scheduleRotation(images: string[]) {
 		stopRotation();
-		const delay = Number.parseInt(stage?.dataset.carouselInterval || "6000", 10);
+		const interval = Math.max(
+			Number.parseInt(stage?.dataset.carouselInterval || "6000", 10) || 6000,
+			3000,
+		);
+		// 与「时间片」对齐：睡到下一个时间片边界再换，而不是「加载后 interval」。
+		// 这样页面开着时显示的画面也会与当前时间片保持一致，不会越走越偏。
+		const now = Date.now();
+		const nextBoundary = (Math.floor(now / interval) + 1) * interval;
+		const delay = Math.max(1000, nextBoundary - now + 200);
 		runtime.timer = window.setTimeout(() => {
-			runtime.activeIndex = (runtime.activeIndex + 1) % images.length;
+			// 直接取当前时间片下标，天然幂等：重复触发也不会跳错图
+			runtime.activeIndex = timeSlotIndex(images.length);
 			showImage(images[runtime.activeIndex], false);
 			preloadNext(images, runtime.activeIndex);
 			syncBanner();
@@ -901,6 +910,22 @@ const bannerCors = rainyDayEnabled ? "anonymous" : undefined;
 		return Boolean(title);
 	}
 
+	/**
+	 * 壁纸时间片轮换下标：floor(now / interval) % count。
+	 *
+	 * 与「轮播」不同，这里不看页面打开了多久，而是看**当前挂钟时间落在哪个时间片**：
+	 * - 同一时间窗内，所有访客（含刷新、重新打开）看到的都是同一张；
+	 * - 每过一个 interval 整体换一张，刷新页面即可立刻看到当前时间片对应的壁纸。
+	 *
+	 * interval 复用 carousel.interval（当前 30 分钟）。
+	 */
+	function timeSlotIndex(count: number): number {
+		if (count <= 1) return 0;
+		const interval = Number(stage?.dataset.carouselInterval) || 1800000;
+		if (!Number.isFinite(interval) || interval <= 0) return 0;
+		return Math.floor(Date.now() / interval) % count;
+	}
+
 	function syncBanner(pageOverride?: SidebarPage, contextOverride?: BannerContext) {
 		if (!stage) return;
 		const viewport = currentViewport();
@@ -947,10 +972,12 @@ const bannerCors = rainyDayEnabled ? "anonymous" : undefined;
 
 		if (runtime.activeGroup !== state.assetGroup || themeChanged) {
 			runtime.activeGroup = state.assetGroup;
-			runtime.activeIndex = 0;
-			showImage(images[0], true);
+			// 壁纸按时间片轮换：下标 = floor(now / 间隔) % 张数。
+			// 同一时间窗内所有访客看到同一张，每过一个间隔整体换一次 —— 刷新页面即生效。
+			runtime.activeIndex = timeSlotIndex(images.length);
+			showImage(images[runtime.activeIndex], true);
 			layers[runtime.activeLayer]?.setAttribute("fetchpriority", "high");
-			preloadNext(images, 0);
+			preloadNext(images, runtime.activeIndex);
 		}
 
 		if (state.rotate && !document.hidden) scheduleRotation(images);
