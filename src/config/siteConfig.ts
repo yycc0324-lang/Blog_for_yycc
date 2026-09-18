@@ -13,10 +13,10 @@ import { resolveRainyDayOptions } from "./rainyDayConfig.ts";
  * 类型见 src/types/config.ts。
  */
 export const siteConfig: SiteConfig = withUserConfig("site", {
-	site: "https://shirone.mysqil.com/",
+	site: "https://cnyicheng.top/",
 	base: "/",
-	title: "Welcome",
-	subtitle: "YiCheng's Blog",
+	title: "伊橙",
+	subtitle: "伊橙的博客",
 	siteStats: {
 		// 运行天数起点；按当前需求从 9 天前开始计算，之后随日期自然递增。
 		startDate: "2026-09-08T00:00:00+08:00",

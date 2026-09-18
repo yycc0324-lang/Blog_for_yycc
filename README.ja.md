@@ -8,7 +8,7 @@
 
 長文の執筆や個人コレクション、サイトを自分らしくする細部のための、落ち着いた読書空間です。
 
-[デモ](https://shirone.mysqil.com/) · [ドキュメント](https://docs.shirone.mysqil.com/) · [問題を報告](https://github.com/LyraVoid/Shirone/issues)
+[デモ](https://cnyicheng.top/) · [ドキュメント](https://docs.cnyicheng.top/) · [問題を報告](https://github.com/LyraVoid/Shirone/issues)
 
 [English](./README.md) · [简体中文](./README.zh-CN.md) · [繁體中文](./README.zh-TW.md) · [日本語](./README.ja.md)
 
@@ -20,11 +20,11 @@
 </div>
 
 > [!IMPORTANT]
-> **まず[オンラインドキュメント](https://docs.shirone.mysqil.com/)を参照してください。** テーマ設定、コンテンツ運用、デプロイの主要な入口です。
+> **まず[オンラインドキュメント](https://docs.cnyicheng.top/)を参照してください。** テーマ設定、コンテンツ運用、デプロイの主要な入口です。
 
 ## ここから始める
 
-[オンラインドキュメント](https://docs.shirone.mysqil.com/)が、テーマ設定、コンテンツ管理、デプロイの入口です。このリポジトリにはテーマ本体が含まれています。個人コンテンツを分離して管理する場合は [Shirone-Content](https://github.com/LyraVoid/Shirone-Content) を利用してください。
+[オンラインドキュメント](https://docs.cnyicheng.top/)が、テーマ設定、コンテンツ管理、デプロイの入口です。このリポジトリにはテーマ本体が含まれています。個人コンテンツを分離して管理する場合は [Shirone-Content](https://github.com/LyraVoid/Shirone-Content) を利用してください。
 
 ## 実測パフォーマンス
 

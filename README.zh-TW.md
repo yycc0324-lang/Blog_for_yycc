@@ -8,7 +8,7 @@
 
 為長文寫作、個人收藏，以及讓網站真正屬於你的細節而生的安靜閱讀空間。
 
-[線上預覽](https://shirone.mysqil.com/) · [專案文件](https://docs.shirone.mysqil.com/) · [回報問題](https://github.com/LyraVoid/Shirone/issues)
+[線上預覽](https://cnyicheng.top/) · [專案文件](https://docs.cnyicheng.top/) · [回報問題](https://github.com/LyraVoid/Shirone/issues)
 
 [English](./README.md) · [简体中文](./README.zh-CN.md) · [繁體中文](./README.zh-TW.md) · [日本語](./README.ja.md)
 
@@ -20,11 +20,11 @@
 </div>
 
 > [!IMPORTANT]
-> **請先閱讀[線上文件](https://docs.shirone.mysqil.com/)。** 主題設定、內容工作流程與部署說明均以此為主要入口。
+> **請先閱讀[線上文件](https://docs.cnyicheng.top/)。** 主題設定、內容工作流程與部署說明均以此為主要入口。
 
 ## 從這裡開始
 
-[線上文件](https://docs.shirone.mysqil.com/)是設定主題、管理內容和部署網站的主要入口。本儲存庫包含主題原始碼；如果希望將個人內容獨立管理，請使用 [Shirone-Content](https://github.com/LyraVoid/Shirone-Content)。
+[線上文件](https://docs.cnyicheng.top/)是設定主題、管理內容和部署網站的主要入口。本儲存庫包含主題原始碼；如果希望將個人內容獨立管理，請使用 [Shirone-Content](https://github.com/LyraVoid/Shirone-Content)。
 
 ## 實測表現
 
