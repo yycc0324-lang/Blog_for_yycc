@@ -145,7 +145,11 @@ DEPLOY_DIR=/你的目录 bash scripts/update-meting-cookie.sh
 provider: "local",              // 当前：只播 src/data/music.ts（歌单体检筛出的"确认可播放"曲目，零远端请求）
                                 // 想让远端歌单自动同步：改 "mixed"（本地保底 + 远端合并）或 "meting"（只用远端）
 meting: {
-  api: "http://127.0.0.1:8899/?server=:server&type=:type&id=:id&r=:r",
+  api: "https://api.injahow.cn/meting/?server=:server&type=:type&id=:id&r=:r",
+  // 当前用公共 Meting 实例（自建容器只绑 127.0.0.1，公网不可达）。
+  // 服务器侧把 Meting 反代到公网后（第 9 节），把 api 换回自建地址
+  // （如 "https://meting.你的域名/?server=:server&type=:type&id=:id&r=:r"），
+  // 再 `pnpm music:audit --write` 重新生成曲库，即可恢复 VIP 曲目能力。
   server: "tencent",            // tencent = QQ 音乐（netease / kugou 等亦可）
   type: "playlist",
   id: "9777005268",            // ★ 换歌单只改这里（QQ 音乐歌单分享链接里的 id=）
