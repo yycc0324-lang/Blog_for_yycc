@@ -21,6 +21,41 @@ const isExternal =
 	(link.external === true ||
 		(/^https?:\/\//i.test(link.url) && link.external !== false));
 const closeDuration = Number(config.closeDuration ?? 86400);
+
+/**
+ * 公告「指纹」：内容 / 标题 / 链接 / 关闭周期 任意一项变化，指纹就会变，
+ * 旧的「已关闭」记录随即失效 —— 公告会重新展示给访客。
+ */
+function hashAnnouncement(input: string): string {
+	let h1 = 0xdeadbeef;
+	let h2 = 0x41c6ce57;
+	for (let i = 0; i < input.length; i++) {
+		const ch = input.charCodeAt(i);
+		h1 = Math.imul(h1 ^ ch, 2654435761);
+		h2 = Math.imul(h2 ^ ch, 1597334677);
+	}
+	h1 =
+		Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^
+		Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+	h2 =
+		Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^
+		Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+	return `${(h1 >>> 0).toString(16).padStart(8, "0")}${(h2 >>> 0)
+		.toString(16)
+		.padStart(8, "0")}`;
+}
+
+const announcementHash = hashAnnouncement(
+	JSON.stringify({
+		content: contentText,
+		title: config.title ?? "",
+		closable: config.closable ?? false,
+		closeDuration,
+		link: hasLink
+			? { text: link.text, url: link.url, external: isExternal }
+			: null,
+	}),
+);
 ---
 
 <!-- 组件显示由 sidebarConfig 统一控制，有内容时渲染 -->
@@ -31,7 +66,11 @@ const closeDuration = Number(config.closeDuration ?? 86400);
 		class={className}
 		style={style}
 	>
-		<div class="announcement-wrapper flex flex-col" data-close-duration={String(closeDuration)}>
+		<div
+			class="announcement-wrapper flex flex-col"
+			data-close-duration={String(closeDuration)}
+			data-announcement-hash={announcementHash}
+		>
 			<!-- 公告栏内容 -->
 			<div class="announcement-content">
 				{contentText}
@@ -140,11 +179,55 @@ const closeDuration = Number(config.closeDuration ?? 86400);
 	const STORAGE_KEY_CLOSED = "announcementClosed";
 	const STORAGE_KEY_TIME = "announcementClosedTime";
 
-	function isAnnouncementExpired(durationSeconds: number): boolean {
-		if (Number.isNaN(durationSeconds) || durationSeconds <= 0) {
-			return false;
+	type Keys = { closed: string; time: string };
+
+	/** 当前公告的内容指纹（由服务端渲染时写进 data 属性） */
+	function getCurrentHash(): string {
+		const wrapper = document.querySelector<HTMLElement>(".announcement-wrapper");
+		return wrapper?.getAttribute("data-announcement-hash") ?? "";
+	}
+
+	function keysForHash(hash: string): Keys {
+		const suffix = hash ? `:${hash}` : "";
+		return {
+			closed: `${STORAGE_KEY_CLOSED}${suffix}`,
+			time: `${STORAGE_KEY_TIME}${suffix}`,
+		};
+	}
+
+	/** 把旧版（无指纹）的关闭状态迁移到当前指纹下，避免升级后公告又突然冒出来 */
+	function migrateLegacyKeys(keys: Keys): void {
+		const legacyClosed = localStorage.getItem(STORAGE_KEY_CLOSED);
+		if (legacyClosed === "true" && localStorage.getItem(keys.closed) === null) {
+			localStorage.setItem(keys.closed, "true");
+			const legacyTime = localStorage.getItem(STORAGE_KEY_TIME);
+			localStorage.setItem(keys.time, legacyTime ?? Date.now().toString());
 		}
-		const closedTime = localStorage.getItem(STORAGE_KEY_TIME);
+	}
+
+	/** 清掉过期 key（旧版无指纹的 + 其它内容指纹的），避免 localStorage 越积越多 */
+	function cleanupStaleKeys(keys: Keys): void {
+		for (let i = localStorage.length - 1; i >= 0; i--) {
+			const key = localStorage.key(i);
+			if (!key) continue;
+			if (key === STORAGE_KEY_CLOSED || key === STORAGE_KEY_TIME) {
+				localStorage.removeItem(key);
+				continue;
+			}
+			const isAnnouncementKey =
+				key.startsWith(`${STORAGE_KEY_CLOSED}:`) ||
+				key.startsWith(`${STORAGE_KEY_TIME}:`);
+			if (isAnnouncementKey && key !== keys.closed && key !== keys.time) {
+				localStorage.removeItem(key);
+			}
+		}
+	}
+
+	function isAnnouncementExpired(keys: Keys, durationSeconds: number): boolean {
+		if (Number.isNaN(durationSeconds) || durationSeconds <= 0) {
+			return false; // 0 或非法值 = 永久关闭
+		}
+		const closedTime = localStorage.getItem(keys.time);
 		if (!closedTime) {
 			return true;
 		}
@@ -152,53 +235,50 @@ const closeDuration = Number(config.closeDuration ?? 86400);
 		return elapsedSeconds > durationSeconds;
 	}
 
-	function closeAnnouncement() {
-		const widgetLayouts = document.querySelectorAll<HTMLElement>(
-			'widget-layout[data-id="announcement"]',
+	function targetWidgets(): HTMLElement[] {
+		return Array.from(
+			document.querySelectorAll<HTMLElement>('widget-layout[data-id="announcement"]'),
 		);
-		if (widgetLayouts.length > 0) {
-			widgetLayouts.forEach((widget) => {
-				const container = widget.closest<HTMLElement>(".sidebar-widget") || widget;
-				container.style.display = "none";
-			});
-			localStorage.setItem(STORAGE_KEY_CLOSED, "true");
-			localStorage.setItem(STORAGE_KEY_TIME, Date.now().toString());
-		}
 	}
 
-	function checkAnnouncementClosed() {
-		const widgetLayouts = document.querySelectorAll<HTMLElement>(
-			'widget-layout[data-id="announcement"]',
-		);
-		if (widgetLayouts.length === 0) return;
+	function setVisible(visible: boolean): void {
+		targetWidgets().forEach((widget) => {
+			const container = widget.closest<HTMLElement>(".sidebar-widget") || widget;
+			container.style.display = visible ? "" : "none";
+			widget.style.display = "";
+		});
+	}
+
+	function closeAnnouncement(): void {
+		if (targetWidgets().length === 0) return;
+		const keys = keysForHash(getCurrentHash());
+		localStorage.setItem(keys.closed, "true");
+		localStorage.setItem(keys.time, Date.now().toString());
+		setVisible(false);
+	}
+
+	function checkAnnouncementClosed(): void {
+		if (targetWidgets().length === 0) return;
 
 		const wrapper = document.querySelector<HTMLElement>(".announcement-wrapper");
 		const durationAttr = wrapper?.getAttribute("data-close-duration");
 		const durationSeconds = durationAttr ? Number.parseFloat(durationAttr) : 86400;
 
-		const isClosed = localStorage.getItem(STORAGE_KEY_CLOSED) === "true";
-		if (!isClosed) {
-			widgetLayouts.forEach((widget) => {
-				const container = widget.closest<HTMLElement>(".sidebar-widget") || widget;
-				container.style.display = "";
-				widget.style.display = "";
-			});
+		const keys = keysForHash(getCurrentHash());
+		migrateLegacyKeys(keys);
+		cleanupStaleKeys(keys);
+
+		if (localStorage.getItem(keys.closed) !== "true") {
+			setVisible(true);
 			return;
 		}
 
-		if (isAnnouncementExpired(durationSeconds)) {
-			localStorage.removeItem(STORAGE_KEY_CLOSED);
-			localStorage.removeItem(STORAGE_KEY_TIME);
-			widgetLayouts.forEach((widget) => {
-				const container = widget.closest<HTMLElement>(".sidebar-widget") || widget;
-				container.style.display = "";
-				widget.style.display = "";
-			});
+		if (isAnnouncementExpired(keys, durationSeconds)) {
+			localStorage.removeItem(keys.closed);
+			localStorage.removeItem(keys.time);
+			setVisible(true);
 		} else {
-			widgetLayouts.forEach((widget) => {
-				const container = widget.closest<HTMLElement>(".sidebar-widget") || widget;
-				container.style.display = "none";
-			});
+			setVisible(false);
 		}
 	}
 
