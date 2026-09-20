@@ -272,11 +272,11 @@ LangChain 的 Memory 关心的是数据存在哪里、怎么持久化。Swarm �
 
 *图：两种「记忆」的存活范围。*
 
-## 2. 我前面有句话说得不对
+## 2. 纠错（I'm Sorry）
 
-写这篇的过程中我翻回去看了下自己之前的说法，得纠正一句："LangChain 持久、Swarm 临时"这个对比是不准确的。
+我前面说"LangChain 持久、Swarm 临时"，这个说法不对。
 
-准确的事实是：LangChain 的默认实现 `ConversationBufferMemory` 把数据存在内存里，进程重启、刷新页面同样会丢，默认并不持久。只有当它挂上持久化后端（`RedisChatMessageHistory`、`PostgresChatMessageHistory` 这类）之后，数据才写进外部存储，才能跨会话恢复。
+LangChain 的默认实现 `ConversationBufferMemory` 把数据存在内存里，进程重启、刷新页面同样会丢，默认并不持久。只有当它挂上持久化后端（`RedisChatMessageHistory`、`PostgresChatMessageHistory` 这类）之后，数据才写进外部存储，才能跨会话恢复。
 
 "可以持久"和"默认持久"是两回事。真实的区别在于框架有没有给你现成的方案：
 
@@ -288,8 +288,8 @@ LangChain 的 Memory 关心的是数据存在哪里、怎么持久化。Swarm �
 | 要实现持久得写多少代码 | 配置一下 | 自己写「存 / 取 / 传」三套逻辑 |
 | 主要存什么 | 对话消息历史（messages） | 结构化共享字段 |
 
-:::important 这是这一篇里我最想纠正的一点
-两者默认都不持久，刷新后都不记得。差别是 LangChain 提供了接数据库就能用的现成方案，Swarm 需要你自己写。
+:::important 真正的差别
+两者默认都不持久，刷新后都不记得。区别是 LangChain 提供了接数据库就能用的现成方案，Swarm 需要你自己写。
 :::
 
 ## 3. 那到底该用哪个
