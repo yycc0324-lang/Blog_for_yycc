@@ -17,6 +17,7 @@ Shirone is a blog theme built with Astro 7, Svelte 5, Tailwind 4, Stylus, and pn
 - In Svelte, follow the syntax already used by the file (runes or legacy) and never mix the two modes in one component. Use template-literal classes when conditional class names interact with scoped unused-CSS analysis; preserve valid `class:` directives elsewhere. In Stylus, keep modifier and element selectors as separate selectors where `&` would concatenate them incorrectly.
 - Keep designs original and differentiated. `research/` is reference material only: do not copy its schemas, names, defaults, algorithms, component compositions, or visual layouts. Do not edit, install, build, format, or commit inside research checkouts; descendant `AGENTS.md` files there are upstream artifacts, not Shirone instructions.
 - Persistent shell elements outside `#swup-container` are not rerendered by Swup. Logic that reacts to route changes must use the appropriate Swup lifecycle hook (`content:replace`, `page:view`, or event delegation) and must be tested for both direct load and client navigation.
+- Article prose follows `rules/article-writing.md`. Chinese wording is reviewed line by line by the author: avoid the banned patterns listed in §2, do not insert transitional summaries between sections, and keep section titles short. Run the self-check in §4 on any post you touch.
 - Shirone also ships as an npm package (`shirones`); `src/integration/` rebuilds `astro.config.mjs` for user projects. Any change to the theme source must keep both modes working — mirror config changes into `src/integration/`, avoid `process.cwd()` reads of theme-owned files, register Markdown syntax in the manifest, and follow the overlay rules. See `rules/project-rules.md` §12 and `docs/packaging-contract.md`.
 
 ## Required documents
@@ -29,6 +30,7 @@ Shirone is a blog theme built with Astro 7, Svelte 5, Tailwind 4, Stylus, and pn
 - `docs/markdown-extensions.md` — Markdown plugin pipeline, Typography boundaries, cache refresh, and validation.
 - `docs/markdown-on-demand-loading.md` — required before changing Markdown feature probes, conditional styles, runtime loading, or Swup resource lifecycles.
 - `docs/markdown-syntax-manifest.md` — required before adding, changing, or retiring custom author-facing Markdown syntax.
+- `rules/article-writing.md` — required before writing or editing any article under `src/content/posts/**`; it records the author's line-level corrections to Chinese prose style (banned sentence patterns, no stage summaries, short section labels).
 - `docs/sidebar-system.md` — sidebar orchestration, page filtering, and Swup synchronization.
 - `docs/DEPLOYMENT_METING.md` — required before changing the music player's Meting provider, the self-hosted Meting assets under `docs/meting/`, or the deployment scripts `scripts/deploy-meting.sh` / `scripts/update-meting-cookie.sh` / `scripts/meting-common.sh`.
 - `src/config/README.md` — required before changing configuration types or values.
