@@ -22,8 +22,6 @@ draft: false
 
 这几个问题问得有点杂，但最后都指向同一件事：在 Swarm 里，到底谁在干活。
 
-这篇就按这个顺序往下捋，先把角色分清楚，再顺着"记忆"这条线走到底。
-
 ![Swarm Context Variables 与 LangChain Memory 的总览对比](./memory-overview.webp)
 
 *图：两种「记忆」各自负责的部分。*
@@ -138,9 +136,7 @@ if __CTX_VARS_NAME__ in func.__code__.co_varnames:
 raw_result = func(**args)                          # 执行功能
 ```
 
-翻译一下：你这个工具函数的参数列表里如果写了 `context_variables`，Swarm 就把当前上下文塞进去；没写就不塞。
-
-这样你的工具函数就能同时拿到 AI 提取的参数和 Swarm 维护的上下文。
+工具函数如果需要上下文，在参数里写上 `context_variables` 就行，Swarm 会自动传进去。
 
 ## 3. 模型不是 Swarm 挑的
 
@@ -173,8 +169,6 @@ Swarm 把 `agent.model` 直接填进请求里，中间没有挑选的动作。
 | 这次该不该调工具、调哪一个 | AI 模型 | 需要 |
 | 调完之后怎么执行、状态怎么更新 | Swarm | 不需要 |
 
-所以更准确的说法是：Agent 负责声明能力和边界，AI 模型负责在边界内做决定，Swarm 负责把决定执行下去。
-
 顺便说一下，Agent 对象里并没有"装"着 AI 模型，它存的只是模型名字，比如 `"gpt-4o"`。真正的模型在别人的服务器上。
 
 写成分式的话，Agent 对象差不多等于 instructions、functions 这些外置内容，再加上一个"用哪个模型"的指针。
@@ -203,17 +197,7 @@ AI 模型看不到"会转到哪个 Agent"。它能看到的只是这个函数的
 
 如果程序员不写那个函数，AI 模型就永远转交不了，因为它的工具列表里没有这个选项。
 
-## 5. 小结
-
-到这儿第一部分可以收一下了。
-
-Agent 对象负责声明这个 Agent 的身份、说话方式、可用工具和模型；AI 模型在 Agent 划定的范围内，用算力判断这次该做什么；Swarm 负责读配置、组请求、调用模型、执行工具和切换 Agent。
-
-记住这三者各自的职责，后面就不会绕晕了。
-
 # 第二部分　context_variables 到底是个什么东西
-
-角色分清了，再回头看这个上下文变量。
 
 ## 1. 你传进去的字典，Swarm 会先复制一份
 
@@ -267,8 +251,6 @@ response = client.run(
 这里 `messages` 和 `context_variables` 是两回事。如果你把 `messages` 恢复了，AI 能从文本里看到之前聊过什么，但那是 AI 在读文本，不代表 `context_variables` 被恢复了。
 
 # 第三部分　那两种「记忆」的区别
-
-到这儿，可以正面回答最开始那个问题了。
 
 ## 1. 它们负责的事不一样
 
@@ -368,8 +350,6 @@ save_context_to_db(response.context_variables)    # 关键字段 → 自己持�
 
 # 最后
 
-回到最开始那几个问题：
+Swarm 这套东西里，Agent 负责声明，AI 模型负责判断，Swarm 负责执行。调不调工具由模型决定，调完之后去哪由程序员的代码决定，具体执行交给 Swarm。
 
-1. **Swarm 里，Agent 是配置表，AI 模型提供算力，Swarm 负责执行。** 调不调工具由模型判断，调了之后去哪由程序员的代码决定，具体执行交给 Swarm。
-2. **`context_variables` 只在单次运行内有效**，随 handoff 自动流动，运行完就没了。它不会自动提取字段，要持久化得自己存、取、传。
-3. **LangChain 的 Memory 默认也是内存、刷新也会丢**，它比 Swarm 多的是现成的持久化插件。开放文本的理解交给 `messages`，只有已经确定、并且需要跨组件显式共享的字段，才放进 `context_variables`。
+`context_variables` 只在单次运行内有效，随 handoff 流动，运行完就没了。它不会替你提取字段，想持久化得自己存、取、传。LangChain 的 Memory 默认也在内存里，刷新同样会丢，它比 Swarm 多的是现成的持久化插件。开放文本的理解交给 `messages`，只有已经确定、并且需要跨组件显式共享的字段，才放进 `context_variables`。
