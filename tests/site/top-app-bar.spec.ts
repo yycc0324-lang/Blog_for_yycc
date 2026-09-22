@@ -1,5 +1,4 @@
 import { expect, test } from "@playwright/test";
-import { siteConfig } from "../../src/config/siteConfig";
 import { aboutConfig } from "../../src/config/aboutConfig";
 import { albumsConfig } from "../../src/config/albumsConfig";
 import { animeConfig } from "../../src/config/animeConfig";
@@ -8,8 +7,14 @@ import { devicesConfig } from "../../src/config/devicesConfig";
 import { friendsConfig } from "../../src/config/friendsConfig";
 import { momentsConfig } from "../../src/config/momentsConfig";
 import { projectsConfig } from "../../src/config/projectsConfig";
+import {
+	resolveDisplaySettings,
+	siteConfig,
+} from "../../src/config/siteConfig";
 import { skillsConfig } from "../../src/config/skillsConfig";
 import { timelineConfig } from "../../src/config/timelineConfig";
+import I18nKey from "../../src/i18n/i18nKey";
+import { i18n } from "../../src/i18n/translation";
 
 /**
  * 功能开关 → 对应导航路由（与 `src/config/navBarConfig.ts` 的裁剪表同源）。
@@ -27,6 +32,8 @@ const featureRoutes: Array<[string, boolean, string]> = [
 	["skills", skillsConfig.enable, "/skills/"],
 	["about", aboutConfig.enable, "/about/"],
 ];
+
+const rainyDayGuideEnabled = resolveDisplaySettings().rainyDay;
 
 test.describe("top app bar content alignment", () => {
 	test("centers navigation while keeping the blog title on the left", async ({
@@ -53,6 +60,17 @@ test.describe("top app bar content alignment", () => {
 			geometry[0]!.x + geometry[0]!.width / 2,
 			0,
 		);
+	});
+
+	test("shows the rainy day guide bubble on the display settings entry", async ({
+		page,
+	}) => {
+		test.skip(!rainyDayGuideEnabled, "雨滴特效未启用");
+		await page.goto("/", { waitUntil: "domcontentloaded" });
+
+		const bubble = page.locator(".top-app-bar__rainy-bubble");
+		await expect(bubble).toHaveText(i18n(I18nKey.rainyDayGuide));
+		await expect(bubble).toBeVisible();
 	});
 });
 

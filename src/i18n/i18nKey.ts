@@ -324,6 +324,8 @@ enum I18nKey {
 	// 雨滴窗玻璃特效（显示设置面板）
 	rainyDay = "rainyDay",
 	rainyDayHint = "rainyDayHint",
+	/** 顶栏显示设置入口的漫画气泡引导 */
+	rainyDayGuide = "rainyDayGuide",
 }
 
 export default I18nKey;

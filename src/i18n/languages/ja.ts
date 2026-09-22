@@ -327,4 +327,5 @@ export const ja: Translation = {
 	// 雨滴ウィンドウエフェクト（表示設定パネル）
 	[Key.rainyDay]: "雨エフェクト",
 	[Key.rainyDayHint]: "バナー画像に雨粒を重ねます（バナー背景が必要）。",
+	[Key.rainyDayGuide]: "ここで雨の画面を切り替えられます",
 };

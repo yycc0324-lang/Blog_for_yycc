@@ -316,4 +316,5 @@ export const zh_TW: Translation = {
 	// 雨滴窗玻璃特效（顯示設定面板）
 	[Key.rainyDay]: "雨滴特效",
 	[Key.rainyDayHint]: "在橫幅圖片上疊加雨滴（需以橫幅作為頁面背景）。",
+	[Key.rainyDayGuide]: "這裡可以切換落雨介面",
 };

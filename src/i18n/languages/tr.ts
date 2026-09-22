@@ -331,4 +331,5 @@ export const tr: Translation = {
 	[Key.rainyDay]: "Yağmur efekti",
 	[Key.rainyDayHint]:
 		"Banner görseline yağmur damlaları ekler (banner arka planı gerekir).",
+	[Key.rainyDayGuide]: "Buradan yağmur efektini değiştirebilirsin",
 };

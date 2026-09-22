@@ -328,4 +328,5 @@ export const en: Translation = {
 	[Key.rainyDay]: "Rain effect",
 	[Key.rainyDayHint]:
 		"Adds raindrops on the banner image (needs the banner background).",
+	[Key.rainyDayGuide]: "Toggle the rain effect here",
 };

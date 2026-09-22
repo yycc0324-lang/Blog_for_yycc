@@ -332,4 +332,5 @@ export const id: Translation = {
 	[Key.rainyDay]: "Efek hujan",
 	[Key.rainyDayHint]:
 		"Menambahkan tetesan hujan pada gambar banner (perlu latar banner).",
+	[Key.rainyDayGuide]: "Di sini kamu bisa mengubah efek hujan",
 };

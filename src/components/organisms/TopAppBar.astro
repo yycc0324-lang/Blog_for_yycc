@@ -12,7 +12,12 @@ import { i18n } from "@i18n/translation";
 import { resolveNavBarLinks, resolvePageKey } from "@utils/nav-utils";
 import { url } from "@utils/url-utils";
 import { Icon } from "astro-icon/components";
-import { resolveUmamiOptions, siteConfig, umamiConfig } from "@/config";
+import {
+	resolveDisplaySettings,
+	resolveUmamiOptions,
+	siteConfig,
+	umamiConfig,
+} from "@/config";
 import { navBarConfig } from "@/config/navBarConfig";
 import DisplaySettings from "./DisplaySettings.svelte";
 import LightDarkSwitch from "./LightDarkSwitch.svelte";
@@ -26,6 +31,8 @@ const visitorBadgeEnabled =
 	resolveUmamiOptions(umamiConfig) !== null;
 const visitorCountPrefix = i18n(I18nKey.visitorCountPrefix);
 const visitorCountSuffix = i18n(I18nKey.visitorCountSuffix);
+const displaySettings = resolveDisplaySettings();
+const rainyDayGuideText = i18n(I18nKey.rainyDayGuide);
 
 function hrefFor(path?: string) {
 	return path ? url(path) : undefined;
@@ -98,9 +105,14 @@ function isActive(link: (typeof links)[number]): boolean {
 		)}
 		<Search client:only="svelte"></Search>
 		{!siteConfig.themeColor.fixed && (
-			<IconButton id="display-settings-switch" label="Display Settings" class="shrink-0">
-				<Icon name="material-symbols:palette-outline" class="text-[1.25rem]"></Icon>
-			</IconButton>
+			<div class="top-app-bar__rainy-guide">
+				<IconButton id="display-settings-switch" label="Display Settings" class="shrink-0">
+					<Icon name="material-symbols:palette-outline" class="text-[1.25rem]"></Icon>
+				</IconButton>
+				{displaySettings.rainyDay && (
+					<span class="top-app-bar__rainy-bubble">{rainyDayGuideText}</span>
+				)}
+			</div>
 		)}
 		<LightDarkSwitch client:only="svelte"></LightDarkSwitch>
 		<DisplaySettings client:only="svelte" class="top-full right-4 max-w-[calc(100vw-2rem)] md:right-0"></DisplaySettings>
@@ -362,5 +374,97 @@ document.addEventListener('swup:content:replace', bindSearchTriggers);
 
 	.top-app-bar__submenu-item.top-app-bar__nav-link--active::after {
 		display: none;
+	}
+
+	/* 顶栏显示设置入口的漫画气泡：与资料卡头像引导同款白底粗描边贴纸；
+	   首页常驻，其它页面 hover / focus 时出现，设置面板打开时让位。
+	   用户指定的白色漫画贴纸例外：固定白底深色描边，保证深浅色模式下都保持白色。 */
+	.top-app-bar__rainy-guide {
+		position: relative;
+		display: inline-flex;
+		align-items: center;
+		flex-shrink: 0;
+	}
+
+	.top-app-bar__rainy-bubble {
+		position: absolute;
+		top: calc(100% + 0.625rem);
+		right: 0;
+		z-index: 0;
+		display: inline-block;
+		padding: var(--m3e-space-2) var(--m3e-space-4);
+		border: 4px solid #222;
+		border-radius: var(--shape-corner-full);
+		background: #fff;
+		color: #222;
+		font: var(--m3e-type-title-medium);
+		font-weight: 900;
+		line-height: 1.15;
+		white-space: nowrap;
+		box-shadow:
+			0 4px 0 #222,
+			var(--m3e-elevation-2);
+		pointer-events: none;
+		opacity: 0;
+		visibility: hidden;
+		transition:
+			opacity var(--m3e-duration-short) var(--m3e-easing-standard),
+			visibility var(--m3e-duration-short) var(--m3e-easing-standard);
+		animation: top-app-bar-rainy-float 2s var(--m3e-easing-standard) infinite;
+	}
+
+	.top-app-bar__rainy-bubble::before,
+	.top-app-bar__rainy-bubble::after {
+		content: "";
+		position: absolute;
+		pointer-events: none;
+	}
+
+	.top-app-bar__rainy-bubble::before {
+		top: -13px;
+		right: calc(1.25rem - 9px);
+		border-left: 9px solid transparent;
+		border-right: 9px solid transparent;
+		border-bottom: 14px solid #222;
+	}
+
+	.top-app-bar__rainy-bubble::after {
+		top: -9px;
+		right: calc(1.25rem - 6px);
+		border-left: 6px solid transparent;
+		border-right: 6px solid transparent;
+		border-bottom: 10px solid #fff;
+	}
+
+	:global(body[data-current-page="home"]) .top-app-bar__rainy-bubble,
+	.top-app-bar__rainy-guide:hover .top-app-bar__rainy-bubble,
+	.top-app-bar__rainy-guide:focus-within .top-app-bar__rainy-bubble {
+		opacity: 1;
+		visibility: visible;
+	}
+
+	.top-app-bar:has(#display-setting:not(.float-panel-closed)) .top-app-bar__rainy-bubble {
+		opacity: 0;
+		visibility: hidden;
+	}
+
+	@keyframes top-app-bar-rainy-float {
+		0%,
+		100% {
+			transform: translateY(0) rotate(-4deg);
+		}
+		50% {
+			transform: translateY(-2px) rotate(-2deg);
+		}
+	}
+
+	:global(html.motion-reduced) .top-app-bar__rainy-bubble {
+		animation: none;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.top-app-bar__rainy-bubble {
+			animation: none;
+		}
 	}
 </style>

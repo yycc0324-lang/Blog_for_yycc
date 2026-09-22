@@ -329,4 +329,5 @@ export const vi: Translation = {
 	// Hiệu ứng cửa sổ mưa (bảng cài đặt hiển thị)
 	[Key.rainyDay]: "Hiệu ứng mưa",
 	[Key.rainyDayHint]: "Thêm hạt mưa lên ảnh banner (cần nền dạng banner).",
+	[Key.rainyDayGuide]: "Tại đây bạn có thể bật/tắt hiệu ứng mưa",
 };
