@@ -30,8 +30,9 @@ import { resolveRainyDayOptions, siteConfig } from "@/config";
  * 无 DOM、无样式、无 JS chunk，也不会加载特效库（含 Three.js）。样式全部用元素内联
  * style，不进 Astro 的 CSS 管线（见 docs/on-demand-loading.md §3 L3）。
  *
- * 运行时契约：懒挂载（load + 空闲）→ 弱网 / 移动端 / 减少动效（系统
- * `prefers-reduced-motion` 与站内 `html.motion-reduced`）一律不挂载；`document.hidden`
+ * 运行时契约：懒挂载（load + 空闲）→ 弱网 / 减少动效（系统 `prefers-reduced-motion`
+ * 与站内 `html.motion-reduced`）/ `mobile: false` 的手机视口一律不挂载；手机端默认可挂载，
+ * 但会在手机视口自动降档（24fps、关闭后处理、降低模糊与密度）。`document.hidden`
  * 时暂停渲染（库的 `pause()` 会 `cancelAnimationFrame`），`pagehide` 释放 WebGL 资源；
  * 访客可在显示设置里开关（存 localStorage）。解析后的参数以 `data-rainy-options`
  * 交给客户端脚本，脚本不再二次解析配置。
@@ -127,7 +128,7 @@ const mistMask = [
 		let swapping = false;
 		let cleanupTimer: number | null = null;
 
-		/** 环境不满足就不挂载：无 WebGL / 减少动效 / 移动端 / 容器不可见 */
+		/** 环境不满足就不挂载：无 WebGL / 减少动效 / mobile:false 的手机视口 / 容器不可见 */
 		function envBlocked(): boolean {
 			if (!hasWebGL) return true;
 			if (options.respectReducedMotion && reduceMQ.matches) return true;
@@ -189,18 +190,29 @@ const mistMask = [
 			backgroundImage: string,
 		): Promise<RainyInstance> {
 			const { RainyWindow } = await import("@arayui/rainy-day");
+			// 手机视口在保持雨幕完整可视的前提下自动降档：限帧到 24、关闭后处理，
+			// 并收敛模糊/密度，避免 WebGL 长时间占用导致中低端手机发热、掉帧。
+			const mobileTuning = mobileMQ.matches
+				? {
+						intensity: Math.min(options.intensity, 0.16),
+						blurIntensity: Math.min(options.blurIntensity, 0.12),
+						blurIterations: Math.min(options.blurIterations, 8),
+						postProcessing: false,
+						fps: Math.min(options.fps, 24),
+					}
+				: null;
 			const created = new RainyWindow(container, {
-				intensity: options.intensity,
+				intensity: mobileTuning?.intensity ?? options.intensity,
 				speed: options.speed,
 				brightness: options.brightness,
 				normal: options.normal,
 				zoom: options.zoom,
-				blurIntensity: options.blurIntensity,
-				blurIterations: options.blurIterations,
+				blurIntensity: mobileTuning?.blurIntensity ?? options.blurIntensity,
+				blurIterations: mobileTuning?.blurIterations ?? options.blurIterations,
 				lightning: options.lightning,
 				panning: options.panning,
-				postProcessing: options.postProcessing,
-				fps: options.fps,
+				postProcessing: mobileTuning?.postProcessing ?? options.postProcessing,
+				fps: mobileTuning?.fps ?? options.fps,
 				backgroundImage,
 			}) as unknown as RainyInstance;
 			// HiDPI 修正：上游用 CSS 像素计算 u_resolution，却把画布按 devicePixelRatio

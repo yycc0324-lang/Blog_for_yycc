@@ -18,6 +18,8 @@ export const umamiConfig: UmamiConfig = withUserConfig("umami", {
 	websiteId: "",
 	/** Umami 采集脚本 URL；与 websiteId 同时填写时启用访问采集 */
 	scriptUrl: "",
+	/** 顶栏访客徽标：true 时在顶栏右上角显示 Umami 唯一访客数，默认 false */
+	visitorBadge: false,
 });
 
 /**

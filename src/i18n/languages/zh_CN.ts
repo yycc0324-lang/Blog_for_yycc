@@ -172,6 +172,8 @@ export const zh_CN: Translation = {
 	[Key.statsDaysAgo]: "{days} 天前",
 	[Key.profileStatsPageViews]: "页面浏览",
 	[Key.profileStatsVisits]: "访问次数",
+	[Key.visitorCountPrefix]: "已有：",
+	[Key.visitorCountSuffix]: " 位不同用户访问",
 	[Key.profileAboutGuide]: "点这里",
 
 	[Key.calendar]: "日历",

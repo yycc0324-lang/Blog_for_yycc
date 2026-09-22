@@ -1205,6 +1205,12 @@ const bannerCors = rainyDayEnabled ? "anonymous" : undefined;
 			&__copy p
 				font-size: 1.125rem
 
+	/* 手机端壁纸是竖版 2:3：高度已按 min(80svh, 150vw) 贴近原图比例，
+	   contain 兜底保证较矮的视口也不会裁掉画面，左右露出的底色由 .banner-stage 背景承接。 */
+	@media (max-width: 767.98px)
+		.banner-stage__image
+			object-fit: contain
+
 	@keyframes banner-subtitle-caret
 		0%,
 		49%

@@ -2,14 +2,17 @@
 /**
  * M3 Top App Bar — 全站顶栏（替代 Fuwari 卡片式 Navbar）。
  * fixed 全宽、surface 底色 + 底部细分隔线；左侧菜单按钮（开全端导航抽屉）、
- * 站点标题（回首页）、右侧搜索/显示设置/主题切换。
+ * 站点标题（回首页）、右侧可选访客徽标/搜索/显示设置/主题切换。
  * 菜单按钮点击派发 site-drawer:toggle 事件，由 SiteNavigationDrawer 监听开合。
  */
 import IconButton from "@components/atoms/action/IconButton.svelte";
+import VisitorBadge from "@components/molecules/VisitorBadge.astro";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
 import { resolveNavBarLinks, resolvePageKey } from "@utils/nav-utils";
 import { url } from "@utils/url-utils";
 import { Icon } from "astro-icon/components";
-import { siteConfig } from "@/config";
+import { resolveUmamiOptions, siteConfig, umamiConfig } from "@/config";
 import { navBarConfig } from "@/config/navBarConfig";
 import DisplaySettings from "./DisplaySettings.svelte";
 import LightDarkSwitch from "./LightDarkSwitch.svelte";
@@ -18,6 +21,11 @@ import Search from "./Search.svelte";
 const className = Astro.props.class;
 const links = resolveNavBarLinks(navBarConfig.links);
 const currentPageKey = resolvePageKey(Astro.url);
+const visitorBadgeEnabled =
+	umamiConfig.visitorBadge === true &&
+	resolveUmamiOptions(umamiConfig) !== null;
+const visitorCountPrefix = i18n(I18nKey.visitorCountPrefix);
+const visitorCountSuffix = i18n(I18nKey.visitorCountSuffix);
 
 function hrefFor(path?: string) {
 	return path ? url(path) : undefined;
@@ -85,6 +93,9 @@ function isActive(link: (typeof links)[number]): boolean {
 			})}
 		</nav>
 		<div class="flex-1"></div>
+		{visitorBadgeEnabled && (
+			<VisitorBadge prefix={visitorCountPrefix} suffix={visitorCountSuffix} />
+		)}
 		<Search client:only="svelte"></Search>
 		{!siteConfig.themeColor.fixed && (
 			<IconButton id="display-settings-switch" label="Display Settings" class="shrink-0">

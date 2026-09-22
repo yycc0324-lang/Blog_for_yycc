@@ -14,6 +14,41 @@
 		min-height: 2rem;
 	}
 
+	.shirone-umami-stats--badge {
+		display: none;
+		align-items: center;
+		gap: var(--m3e-space-1);
+		min-height: 2rem;
+		padding-inline: var(--m3e-space-2);
+		border-radius: var(--shape-corner-full);
+		background: var(--surface-container-high);
+		color: var(--on-surface-variant);
+		white-space: nowrap;
+	}
+
+	@media (min-width: 480px) {
+		.shirone-umami-stats--badge {
+			display: inline-flex;
+		}
+	}
+
+	.shirone-umami-stats--badge > svg {
+		display: block;
+		inline-size: 1rem;
+		block-size: 1rem;
+		flex: 0 0 auto;
+	}
+
+	.shirone-umami-stats[data-shirone-umami-badge] [data-shirone-umami-display] {
+		display: inline-flex;
+		flex-wrap: nowrap;
+		align-items: baseline;
+		gap: 0;
+		font: var(--m3e-type-body-small);
+		font-weight: 500;
+		white-space: nowrap;
+	}
+
 	.shirone-umami-stats [data-shirone-umami-display] {
 		display: inline-flex;
 		flex-wrap: wrap;
@@ -163,21 +198,40 @@
 							? stats.pageviews
 							: 0;
 						const visits = Number.isFinite(stats.visits) ? stats.visits : 0;
+						const visitors = Number.isFinite(stats.visitors)
+							? stats.visitors
+							: 0;
 						const pageViewsDisplay = root.querySelector(
 							"[data-shirone-umami-pageviews]",
 						);
 						const visitsDisplay = root.querySelector(
 							"[data-shirone-umami-visits]",
 						);
+						const visitorsDisplay = root.querySelector(
+							"[data-shirone-umami-visitors]",
+						);
 						const display = root.querySelector(
 							"[data-shirone-umami-display]",
 						);
-						if (!pageViewsDisplay || !visitsDisplay || !display) return;
+						if (
+							!display ||
+							(!pageViewsDisplay && !visitsDisplay && !visitorsDisplay)
+						) {
+							return;
+						}
 
-						pageViewsDisplay.textContent = formatCount(pageViews);
-						pageViewsDisplay.setAttribute("title", String(pageViews));
-						visitsDisplay.textContent = formatCount(visits);
-						visitsDisplay.setAttribute("title", String(visits));
+						if (pageViewsDisplay) {
+							pageViewsDisplay.textContent = formatCount(pageViews);
+							pageViewsDisplay.setAttribute("title", String(pageViews));
+						}
+						if (visitsDisplay) {
+							visitsDisplay.textContent = formatCount(visits);
+							visitsDisplay.setAttribute("title", String(visits));
+						}
+						if (visitorsDisplay) {
+							visitorsDisplay.textContent = formatCount(visitors);
+							visitorsDisplay.setAttribute("title", String(visitors));
+						}
 						display.setAttribute("aria-busy", "false");
 						root.dataset.umamiLoaded = "true";
 					} catch {

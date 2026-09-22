@@ -17,8 +17,8 @@ export type { RainyDayConfig, ResolvedRainyDayOptions };
  * 本仓库默认开启（`enable: true`）：构建后访客首次进入即看到雨幕，也可随时在
  * 「显示设置」里关掉（存 localStorage）。不想用时把 `enable` 改为 `false` —— 关闭时
  * 遵循「关闭零开销」：不渲染组件（零 DOM）、不加载特效库（含 Three.js）、不输出任何
- * 样式与 DOM、产物里零 chunk。纯色背景（`wallpaperMode: none`）、移动端非首页与
- * 弱网/减少动效环境下不会挂载。
+ * 样式与 DOM、产物里零 chunk。纯色背景（`wallpaperMode: none`）、移动端非首页、
+ * 弱网与减少动效环境下不会挂载；手机端首页默认挂载，并在手机视口自动降低渲染负载。
  *
  * 参数范围：intensity 0-1、speed 0-10、brightness 0-1、normal 0-3、zoom 0.1-3、
  * blurIntensity 0-10、blurIterations 1-64、fps 15-120、mistStrength 0-1、mistFadeVh 0-100；
@@ -40,7 +40,7 @@ export const rainyDayConfig: RainyDayConfig = withUserConfig("rainyDay", {
 	postProcessing: true, // 后处理
 	fps: 30, // 限帧，省电关键
 
-	mobile: false, // 移动端默认不启用
+	mobile: true, // 移动端默认启用；组件会在手机视口自动降低渲染负载（fps / 后处理 / 模糊）
 	respectReducedMotion: true, // 系统开了「减少动效」就不渲染
 	skipOnSlowNetwork: true, // 弱网 / 省流不加载
 	pauseWhenHidden: true, // 切到后台标签页暂停渲染
@@ -132,6 +132,7 @@ export function resolveRainyDayOptions(
 			blurIterations: 12,
 			postProcessing: true,
 			fps: 30,
+			mobile: true,
 			mistStrength: 0.4,
 			mistFadeVh: 12,
 			bgFadeMs: 500,
@@ -154,7 +155,7 @@ export function resolveRainyDayOptions(
 		panning: boolOption(config.panning, false),
 		postProcessing: boolOption(config.postProcessing, true),
 		fps: clampNumber(config.fps, 30, 15, 120, true),
-		mobile: boolOption(config.mobile, false),
+		mobile: boolOption(config.mobile, true),
 		respectReducedMotion: boolOption(config.respectReducedMotion, true),
 		skipOnSlowNetwork: boolOption(config.skipOnSlowNetwork, true),
 		pauseWhenHidden: boolOption(config.pauseWhenHidden, true),

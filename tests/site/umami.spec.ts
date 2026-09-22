@@ -3,6 +3,7 @@ import { resolveUmamiOptions, umamiConfig } from "../../src/config/umamiConfig";
 import type { UmamiConfig } from "../../src/types/umamiConfig";
 
 const umamiEnabled = resolveUmamiOptions(umamiConfig) !== null;
+const visitorBadgeEnabled = umamiEnabled && umamiConfig.visitorBadge === true;
 const TEST_API_PATTERN = "http://127.0.0.1:4321/api/**";
 const POST_PATH = "/posts/guide/";
 
@@ -98,6 +99,11 @@ test.describe("Umami analytics", () => {
 		});
 	});
 
+	test("visitor badge is opt-in and disabled by default", () => {
+		test.skip(visitorBadgeEnabled, "visitorBadge is enabled in this config");
+		expect(umamiConfig.visitorBadge).toBe(false);
+	});
+
 	test("disabled mode has no analytics DOM, runtime, or requests", async ({
 		page,
 	}) => {
@@ -113,6 +119,7 @@ test.describe("Umami analytics", () => {
 		await page.waitForTimeout(500);
 
 		await expect(page.locator("[data-shirone-umami]")).toHaveCount(0);
+		await expect(page.locator("[data-shirone-umami-badge]")).toHaveCount(0);
 		await expect(page.locator("style[data-shirone-umami-runtime]")).toHaveCount(
 			0,
 		);
@@ -218,6 +225,28 @@ test.describe("Umami analytics", () => {
 		await expect(display).toBeVisible();
 		await expect(display).toHaveCSS("flex-wrap", "nowrap");
 		await expect(display).toHaveCSS("white-space", "nowrap");
+	});
+
+	test("visitor badge shows unique visitors when enabled", async ({ page }) => {
+		test.skip(
+			!visitorBadgeEnabled,
+			"Enable Umami and set visitorBadge: true to run this assertion",
+		);
+		await page.addInitScript(() => localStorage.clear());
+		const releaseStats = await mockUmamiApi(page);
+		await page.goto("/", { waitUntil: "domcontentloaded" });
+
+		const badge = page.locator("[data-shirone-umami-badge]");
+		await expect(badge).toBeVisible();
+		await expect(badge.locator("[data-shirone-umami-visitors]")).toHaveText(
+			"--",
+		);
+
+		releaseStats();
+		await expect(badge).toHaveAttribute("data-umami-loaded", "true");
+		await expect(
+			badge.locator("[data-shirone-umami-visitors]"),
+		).toHaveAttribute("title", "3210");
 	});
 
 	test("enabled runtime loads article stats after Swup navigation", async ({

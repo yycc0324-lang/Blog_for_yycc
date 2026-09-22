@@ -123,7 +123,7 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 | `articleConfig.ts` | 文章详情：最后更新提示、延伸阅读（相关/随机文章抽样）、以及文章尾部分享区块（总开关、海报生成与封面配置） |
 | `commentConfig.ts` | 评论系统：全局开关（默认关闭）、Provider 选择（Twikoo / Giscus）、视口懒加载与服务凭据配置；Giscus 基于 GitHub Discussions（需公开仓库 + 安装 giscus App + 从 giscus.app 取 repoId/categoryId），主题明暗双值跟随站点切换 |
 | `contextMenuConfig.ts` | 桌面端右键增强：可选开关（当前默认开启）；配置允许页面与操作顺序，关闭时零 DOM、零监听器、零客户端资源 |
-| `umamiConfig.ts` | Umami 统计：全局开关（默认关闭）、公开分享统计读取，以及可选的官方访问采集脚本配置；支持内容仓 `config/umami.yaml` 覆盖（领域键 `umami`） |
+| `umamiConfig.ts` | Umami 统计：全局开关（默认关闭）、公开分享统计读取、可选的官方访问采集脚本配置与顶栏唯一访客徽标 `visitorBadge`（默认关闭）；支持内容仓 `config/umami.yaml` 覆盖（领域键 `umami`） |
 | `integrationsConfig.ts` | 两个 Astro 配置入口（本仓 `astro.config.mjs` 与 npm 包模式的 `src/integration/index.ts`）共享的集成选项：swup / astro-icon / expressive-code / svelte / mdx 的选项、`vite.build` 共用部分、`trailingSlash` 与 `image.endpoint.route` 的配对、音乐侧栏虚拟模块 id。**本目录里唯一的例外**：不走 barrel、不经 `withUserConfig`、也不被 `loadConfigModule` 动态加载（包模式在构建期把它打进 `dist/index.js`），所以它没有用户覆盖层，用户项目里的那份拷贝是死的 |
 | `sitemapFilter.ts` | 由 `*Config.enable === false` 推导被关闭的页面清单，供 `sitemap()` 的 `filter` 排除它们。包模式通过 `loadConfigModule` 加载，用户可自行覆盖 |
 | `skillsConfig.ts` | 技能页行为控制：页面总开关、分类清单与单项禁用列表（技能内容维护在 `src/data/skills.ts`）；关闭页面时导航入口同步隐藏 |

@@ -446,6 +446,11 @@ test.describe("banner wallpaper", () => {
 		await expectWavesAnimated(page, true);
 		await expectBannerOverlap(page);
 		await expectWaveGeometry(page, "0.72");
+		// 手机端壁纸用 contain 完整展示，不允许被 cover 裁掉画面
+		await expect(page.locator(".banner-stage__image--front")).toHaveCSS(
+			"object-fit",
+			"contain",
+		);
 		expect(requests.some((request) => isBannerVariant(request, "mobile"))).toBe(
 			true,
 		);

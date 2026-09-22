@@ -179,6 +179,8 @@ export const ja: Translation = {
 	[Key.statsDaysAgo]: "{days}日前",
 	[Key.profileStatsPageViews]: "ページビュー",
 	[Key.profileStatsVisits]: "訪問数",
+	[Key.visitorCountPrefix]: "これまでに ",
+	[Key.visitorCountSuffix]: " 人が訪問",
 	[Key.profileAboutGuide]: "ここをクリック",
 
 	[Key.calendar]: "カレンダー",

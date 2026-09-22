@@ -30,16 +30,21 @@ describe("Rainy day window config", () => {
 		assert.equal(options.defaultEnabled, true);
 		assert.equal(options.intensity, 0.2);
 		assert.equal(options.fps, 30);
-		assert.equal(options.mobile, false);
+		assert.equal(options.mobile, true);
 		assert.equal(options.lazy, true);
 	});
 
-	it("对象缺省字段时取默认值，enable 缺省即启用", () => {
+	it("对象缺省字段时取默认值，enable / mobile 缺省即启用", () => {
 		const options = resolveRainyDayOptions({ intensity: 0.5 });
 		assert.equal(options.enable, true);
+		assert.equal(options.mobile, true);
 		assert.equal(options.intensity, 0.5);
 		assert.equal(options.speed, 1);
 		assert.equal(options.postProcessing, true);
+	});
+
+	it("mobile: false 可只为桌面端启用", () => {
+		assert.equal(resolveRainyDayOptions({ mobile: false }).mobile, false);
 	});
 
 	it("enable: false 明确关闭", () => {

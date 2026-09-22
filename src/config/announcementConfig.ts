@@ -9,7 +9,7 @@ export const announcementConfig: AnnouncementConfig = withUserConfig(
 	"announcement",
 	{
 		title: "", // 公告标题，填空使用 i18n 字符串 Key.announcement
-		content: "域名正在备案", // 公告内容
+		content: "域名正在备案\n播放器待备案后功能开放", // 公告内容，支持 \n 换行；换行后按 pre-line 渲染
 		closable: true, // 允许用户关闭公告
 		link: {
 			enable: true, // 启用链接

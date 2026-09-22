@@ -290,7 +290,10 @@ const hasMonoFont =
 		html[data-wallpaper-mode="banner"] body[data-current-page="home"][data-banner-has-mobile="true"] #top-row { height: calc(var(--banner-stage-height) - 4.5rem); }
 		body[data-banner-layout="compact"] #top-row { height: auto; }
 	}
-	@media (min-width: 480px) and (max-width: 767.98px) { :root { --banner-stage-height: max(75vh, 31.25rem); } }
+	/* 手机端使用竖版壁纸的 2:3 比例：高度取 min(80svh, 150vw)。
+	   390×844 等常见竖屏高度恰好铺满全宽；较矮的视口用 80svh 封顶，
+	   配合 BannerStage 的 object-fit: contain，至少保证整张壁纸不被裁切。 */
+	@media (max-width: 767.98px) { :root { --banner-stage-height: min(80svh, 150vw); } }
 	@media (min-width: 768px) and (max-width: 1023.98px) { :root { --banner-stage-height: max(70vh, 31.25rem); } }
 </style>
 

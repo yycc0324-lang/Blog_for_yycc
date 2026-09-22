@@ -1,0 +1,53 @@
+---
+/**
+ * 顶栏访客徽标：展示 Umami 统计的唯一访客数。
+ * 仅提供 SSR 结构与文案；数值由 UmamiRuntime 复用已有的 getSiteStats 请求填充，
+ * 不新增接口、不新增依赖，也不会在功能关闭时输出任何 DOM。
+ */
+import { Icon } from "astro-icon/components";
+
+interface Props {
+	/** 数字前缀（由调用方传入 i18n 文案，如「已有：」） */
+	prefix: string;
+	/** 数字后缀（由调用方传入 i18n 文案，如「位不同用户访问」） */
+	suffix: string;
+	class?: string;
+}
+
+const { prefix, suffix, class: className } = Astro.props;
+const rootClass = [
+	"shirone-umami-stats",
+	"shirone-umami-stats--badge",
+	className,
+]
+	.filter(Boolean)
+	.join(" ");
+---
+
+<span
+	class={rootClass}
+	data-shirone-umami
+	data-shirone-umami-badge
+>
+	<Icon
+		name="material-symbols:group-outline-rounded"
+		aria-hidden="true"
+		is:inline
+	/>
+	<span
+		class="shirone-umami-stats__badge-text"
+		data-shirone-umami-display
+		aria-live="polite"
+		aria-atomic="true"
+		aria-busy="true"
+	>
+		<span class="shirone-umami-stats__badge-copy">{prefix}</span>
+		<span
+			class="shirone-umami-stats__badge-count"
+			data-shirone-umami-visitors
+			data-shirone-umami-value
+			title="--"
+		>--</span>
+		<span class="shirone-umami-stats__badge-copy">{suffix}</span>
+	</span>
+</span>

@@ -53,7 +53,7 @@ themeColor:
 
 各配置领域的可用字段、默认值与逐项注释均以代码仓中的 `src/config/<domain>Config.ts` 为准。系统同样支持 `.yml` 后缀；空文件与纯注释文件视作不覆盖。
 
-`config/umami.yaml` 的 `websiteId` 与 `scriptUrl` 是可选的成对字段。省略两者时，`enable` 与 `shareUrl` 仍会启用公开统计读取；只有需要向 Umami 上报访问时才同时填写两者，单独填写任一字段不会加载采集脚本。
+`config/umami.yaml` 的 `websiteId` 与 `scriptUrl` 是可选的成对字段。省略两者时，`enable` 与 `shareUrl` 仍会启用公开统计读取；只有需要向 Umami 上报访问时才同时填写两者，单独填写任一字段不会加载采集脚本。`visitorBadge: true` 可在顶栏右上角显示唯一访客数，默认关闭且不产生额外请求。
 
 `config/comment.yaml` 通过 `provider` 在 Twikoo 与 Giscus 之间二选一。选择 Giscus（基于 GitHub Discussions）时需同时填写 `giscus.repo`、`giscus.repoId` 与 `giscus.categoryId` 三个必填字段（从 giscus.app 配置生成器获取）；任一必填缺失时 `resolveCommentOptions()` 返回 `null`，评论区静默关闭、零额外负担。`giscus.theme` 是明暗双值对象，可以只覆盖 `dark` 一侧，另一侧沿用主题默认值（嵌套对象递归合并）。
 

@@ -181,6 +181,8 @@ export const es: Translation = {
 	[Key.statsDaysAgo]: "hace {days} días",
 	[Key.profileStatsPageViews]: "Vistas",
 	[Key.profileStatsVisits]: "Visitas",
+	[Key.visitorCountPrefix]: "Visitado por ",
+	[Key.visitorCountSuffix]: " usuarios",
 	[Key.profileAboutGuide]: "Haz clic aquí",
 
 	[Key.calendar]: "Calendario",

@@ -12,6 +12,7 @@ import { i18n } from "../../src/i18n/translation.ts";
  *   保证任一种配置下套件都是绿的（见 docs/on-demand-loading.md §4.3）。
  */
 const rainyDayEnabled = resolveRainyDayOptions().enable;
+const rainyMobileEnabled = resolveRainyDayOptions().mobile;
 
 const LAYER = "[data-rainy-day-layer]";
 
@@ -40,6 +41,18 @@ test.describe("Rainy window layer — 开启后", () => {
 		!rainyDayEnabled,
 		"全页雨幕未启用（rainyDayConfig.enable: false），启用后运行 UI 用例",
 	);
+
+	test("手机端启用后同样挂载雨幕", async ({ page }) => {
+		test.skip(!rainyMobileEnabled, "rainyDayConfig.mobile 为 false");
+		await page.setViewportSize({ width: 390, height: 700 });
+		await page.goto("/", { waitUntil: "networkidle" });
+
+		const layer = page.locator(LAYER);
+		await expect(layer).toHaveAttribute("data-rainy-day-active", "true", {
+			timeout: 15000,
+		});
+		await expect(layer.locator("canvas")).toHaveCount(1);
+	});
 
 	test("全页雨层：固定覆盖视口、位于内容之下且不拦截交互", async ({ page }) => {
 		await page.goto("/", { waitUntil: "networkidle" });

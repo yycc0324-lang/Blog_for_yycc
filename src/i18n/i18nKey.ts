@@ -171,6 +171,10 @@ enum I18nKey {
 	statsDaysAgo = "statsDaysAgo",
 	profileStatsPageViews = "profileStatsPageViews",
 	profileStatsVisits = "profileStatsVisits",
+	/** 顶栏访客徽标：数字前缀（如「已有：」） */
+	visitorCountPrefix = "visitorCountPrefix",
+	/** 顶栏访客徽标：数字后缀（如「位不同用户访问」） */
+	visitorCountSuffix = "visitorCountSuffix",
 
 	/** 资料卡头像「点这里」引导 */
 	profileAboutGuide = "profileAboutGuide",

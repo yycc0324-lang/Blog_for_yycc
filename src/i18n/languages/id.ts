@@ -182,6 +182,8 @@ export const id: Translation = {
 	[Key.statsDaysAgo]: "{days} hari lalu",
 	[Key.profileStatsPageViews]: "Tampilan",
 	[Key.profileStatsVisits]: "Kunjungan",
+	[Key.visitorCountPrefix]: "Dikunjungi ",
+	[Key.visitorCountSuffix]: " pengguna",
 	[Key.profileAboutGuide]: "Klik di sini",
 
 	[Key.calendar]: "Kalender",

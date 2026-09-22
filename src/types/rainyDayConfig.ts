@@ -38,7 +38,7 @@ export interface RainyDayConfig {
 	/** 限帧 15-120（省电关键） */
 	fps?: number;
 
-	/** 移动端是否启用（默认关闭，省电） */
+	/** 移动端是否启用（默认开启；手机视口会自动降低 fps、关闭后处理并减少模糊） */
 	mobile?: boolean;
 	/** 尊重系统「减少动效」设置（默认开） */
 	respectReducedMotion?: boolean;

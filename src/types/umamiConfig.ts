@@ -10,6 +10,12 @@ export type UmamiConfig = {
 	websiteId?: string;
 	/** Umami 采集脚本 URL；与 websiteId 同时配置时启用访问采集。 */
 	scriptUrl?: string;
+	/**
+	 * 顶栏访客徽标：true 时在顶栏右上角显示 Umami 统计的唯一访客数。
+	 * 依赖 shareUrl 读取数据；建议同时配置 websiteId 与 scriptUrl 以采集新访客。
+	 * 默认 false，关闭时不产生任何额外 DOM 与请求。
+	 */
+	visitorBadge?: boolean;
 };
 
 /**

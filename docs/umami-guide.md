@@ -18,6 +18,8 @@ export const umamiConfig: UmamiConfig = withUserConfig("umami", {
   // 可选：同时配置以下两项后，页面会加载官方 Umami 脚本采集访问数据。
   websiteId: "your-website-id",
   scriptUrl: "https://your-umami-instance.com/script.js",
+  // 可选：在顶栏右上角显示唯一访客数（默认 false）。
+  visitorBadge: true,
 });
 ```
 
@@ -31,6 +33,8 @@ shareUrl: https://your-umami-instance.com/share/<shareId>
 # 可选：只有需要向 Umami 上报访问时才同时填写以下两项。
 # websiteId: your-website-id
 # scriptUrl: https://your-umami-instance.com/script.js
+# 可选：顶栏右上角显示唯一访客数。
+# visitorBadge: true
 ```
 
 配置覆盖会在 `content:sync` 时自动编译并合并到主题默认值；未填写的字段继续使用默认值。
@@ -53,10 +57,21 @@ shareUrl: https://your-umami-instance.com/share/<shareId>
 `shareUrl` 只负责读取公开分享统计。需要让 Shirone 页面本身向 Umami 上报访问时，
 再同时配置 `websiteId` 与 `scriptUrl`。只配置其中一项不会加载采集脚本。
 
+### 4. 顶栏唯一访客徽标（可选）
+
+设置 `visitorBadge: true` 后，顶栏右上角会显示 Umami 的 `visitors`（唯一访客数）。
+该数字由 Umami 服务端为每个访客生成的匿名标识去重统计，不需要项目新增接口或数据库；
+运行时复用现有 `getSiteStats()` 请求，结果按 oddmisc 默认缓存策略缓存。
+
+需要让新访客持续累加，必须同时配置 `websiteId` 与 `scriptUrl`；否则徽标只能读取
+Umami 中已有的历史公开统计。徽标在 `<480px` 的视口自动隐藏，避免挤压移动端顶栏；
+关闭 `visitorBadge` 或 `enable: false` 时不产生任何访客徽标 DOM 与额外请求。
+
 ## 零额外负担原则
 
 - `enable: false` 时：零网络请求、零 DOM、零客户端脚本与样式
 - 仅当 `enable: true` 且 `shareUrl` 有效时才注入 oddmisc 运行时与统计 UI
+- `visitorBadge` 默认 `false`；关闭时零额外 DOM、零额外请求，开启后复用同一份站点统计缓存
 - UI 由 SSR 直接输出稳定数值槽，异步数据只替换槽内文本，不改变布局
 - 官方 Umami 采集脚本仅在 `websiteId` 与 `scriptUrl` 都有效时加载
 
