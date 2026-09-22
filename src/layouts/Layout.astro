@@ -265,6 +265,13 @@ const hasMonoFont =
 	'banner-panel-overlap': `${MAIN_PANEL_OVERLAPS_BANNER_HEIGHT}rem`,
 }}>
 @reference "../styles/main.css";
+	html,
+	body {
+		background-color: var(--page-bg);
+	}
+	[data-rainy-day-layer] canvas {
+		display: block;
+	}
 	@layer components {
 		:root {
 			--banner-stage-height: var(--banner-height-home);
@@ -296,13 +303,12 @@ const hasMonoFont =
 	@media (max-width: 767.98px) { :root { --banner-stage-height: min(80svh, 150vw); } }
 	@media (min-width: 768px) and (max-width: 1023.98px) { :root { --banner-stage-height: max(70vh, 31.25rem); } }
 
-	/* 手机端雨幕开启后，首页文章卡改为磨砂半透明，让固定的雨层能透出卡片，
-	   避免下滑时整屏被纯白卡片盖住。仅在雨幕激活 + 手机视口生效，关闭雨滴即恢复原卡片色。 */
+	/* 手机端雨幕开启后，首页文章卡改为半透明，让固定的雨层能透出卡片，
+	   避免下滑时整屏被纯白卡片盖住。仅在雨幕激活 + 手机视口生效，关闭雨滴即恢复原卡片色。
+	   不要在这里加 backdrop-filter：移动端 Chrome/Safari 在滚动时容易因多层合成闪白。 */
 	@media (max-width: 767.98px) {
 		html[data-rainy-active="true"] .m3-blog-postcard {
-			background: color-mix(in oklab, var(--card-bg) 74%, transparent);
-			-webkit-backdrop-filter: blur(10px) saturate(1.06);
-			backdrop-filter: blur(10px) saturate(1.06);
+			background: color-mix(in oklab, var(--card-bg) 78%, transparent);
 		}
 	}
 </style>

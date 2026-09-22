@@ -11,7 +11,7 @@ export const devicesData: DeviceItem[] = [
 		brand: "Apple",
 		category: "desk",
 		status: "active",
-		specs: "M4 / 16GB / 256GB",
+		specs: "M4 / 16GB / 512GB",
 		description: "主力开发与日常办公的轻薄本，M4 芯片 + 16GB 内存，非常喜欢，很方便轻薄",
 		icon: "material-symbols:laptop-mac-rounded",
 		featured: true,

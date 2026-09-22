@@ -58,7 +58,7 @@ const mistMask = [
 	class="rainy-window-layer"
 	data-rainy-day-layer
 	aria-hidden="true"
-	style={`position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; opacity: 0; -webkit-mask-image: ${mistMask}; mask-image: ${mistMask};`}
+	style={`position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; opacity: 0; background: var(--page-bg); transform: translateZ(0); backface-visibility: hidden; -webkit-mask-image: ${mistMask}; mask-image: ${mistMask};`}
 	data-rainy-options={JSON.stringify(options)}
 ></div>
 
