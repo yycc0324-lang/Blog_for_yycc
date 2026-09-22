@@ -52,6 +52,13 @@ test.describe("Rainy window layer — 开启后", () => {
 			timeout: 15000,
 		});
 		await expect(layer.locator("canvas")).toHaveCount(1);
+		// 手机端雨幕激活后，首页文章卡必须透出雨层，不能再是纯白不透明卡片
+		expect(
+			await page
+				.locator(".m3-blog-postcard")
+				.first()
+				.evaluate((el) => getComputedStyle(el).backgroundColor),
+		).not.toBe("rgb(255, 255, 255)");
 	});
 
 	test("全页雨层：固定覆盖视口、位于内容之下且不拦截交互", async ({ page }) => {
