@@ -6,7 +6,7 @@ description: "最后一篇拆质量保障、评估监控、护栏、人类在环
 tags: [Agent, 设计模式, AI, 评估, 教程]
 category: 教程
 lang: zh_CN
-draft: true
+draft: false
 ---
 
 评估与监控这一节，我看到一个很实际的问题：

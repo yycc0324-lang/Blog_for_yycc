@@ -6,7 +6,7 @@ description: "把 20 种 Agent 设计模式里最容易混淆的提示词链、�
 tags: [Agent, 设计模式, 多Agent, AI, 教程]
 category: 教程
 lang: zh_CN
-draft: true
+draft: =false
 ---
 
 常见的 Agent 组织方式我整理成了 20 个模式。

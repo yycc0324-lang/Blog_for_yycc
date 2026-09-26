@@ -6,7 +6,7 @@ description: "继续拆 20 种 Agent 设计模式：中央协调者、共享记�
 tags: [Agent, 设计模式, 多Agent, Swarm, AI, 教程]
 category: 教程
 lang: zh_CN
-draft: true
+draft: false
 ---
 
 有个问题我后来被问过好几次：
