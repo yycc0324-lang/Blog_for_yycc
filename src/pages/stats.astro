@@ -1,0 +1,52 @@
+---
+/**
+ * 独立访问统计页（/stats/）。
+ *
+ * 静态至上：本页不引入任何常驻服务端。Umami 公开分享链接与访问密码都来自
+ * 构建期环境变量（`.env` / 服务器环境），页面在构建时用密码把 shareUrl
+ * 加密成 AES-GCM 密文，产物里不含明文密码或分享链接；浏览器解密后才按需
+ * 加载 oddmisc 读取统计。未配置环境变量时整页重定向到 404。
+ *
+ * 环境变量：
+ *   VISITOR_STATS_SHARE_URL — Umami 分享链接（必填）
+ *   VISITOR_STATS_PASSWORD  — 页面访问密码（必填）
+ *   VISITOR_STATS_HINT      — 密码提示（可选）
+ */
+import VisitorStats from "@components/organisms/VisitorStats.svelte";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { encryptProtectedContent } from "@utils/password-protection";
+import type { ProtectedPayload } from "@/types/protectedContent";
+
+const STATS_SCOPE = "stats:visitors";
+
+const shareUrl = (
+	import.meta.env.VISITOR_STATS_SHARE_URL as string | undefined
+)?.trim();
+const password = (
+	import.meta.env.VISITOR_STATS_PASSWORD as string | undefined
+)?.trim();
+const hint =
+	(import.meta.env.VISITOR_STATS_HINT as string | undefined)?.trim() || "";
+
+if (!shareUrl || !password) {
+	return Astro.redirect("/404/");
+}
+
+const payload: ProtectedPayload = await encryptProtectedContent(
+	JSON.stringify({ shareUrl }),
+	password,
+	STATS_SCOPE,
+	"application/json",
+);
+---
+
+<MainGridLayout
+	title={i18n(I18nKey.statsPageTitle)}
+	description={i18n(I18nKey.statsPageDescription)}
+	page="stats"
+>
+	<meta slot="head" name="robots" content="noindex, nofollow" />
+	<VisitorStats payload={payload} scope={STATS_SCOPE} hint={hint} client:only="svelte" />
+</MainGridLayout>

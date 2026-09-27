@@ -65,7 +65,11 @@
     "meting:refresh": "bash scripts/deploy-meting.sh refresh",
     "meting:logs": "bash scripts/deploy-meting.sh logs",
     "meting:cookie": "bash scripts/update-meting-cookie.sh",
-    "music:audit": "node scripts/music/audit-playlist.mjs"
+    "music:audit": "node scripts/music/audit-playlist.mjs",
+    "stats:check": "node scripts/check-visitor-stats-env.mjs",
+    "umami:deploy": "bash scripts/deploy-umami.sh up",
+    "umami:test": "bash scripts/deploy-umami.sh test",
+    "umami:logs": "bash scripts/deploy-umami.sh logs"
   },
   "dependencies": {
     "@arayui/rainy-day": "^1.0.6",

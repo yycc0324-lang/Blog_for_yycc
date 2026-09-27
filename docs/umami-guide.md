@@ -2,6 +2,9 @@
 
 本项目使用 [oddmisc](https://www.npmjs.com/package/oddmisc) 集成 Umami 网站统计。
 
+> 服务器自建 Umami 的完整步骤（Docker + PostgreSQL + Nginx + HTTPS + 博客接入）见
+> [`docs/DEPLOYMENT_UMAMI.md`](./DEPLOYMENT_UMAMI.md)。
+
 ## 快速开始
 
 ### 1. 启用统计
@@ -55,7 +58,10 @@ shareUrl: https://your-umami-instance.com/share/<shareId>
 ### 3. 可选访问采集
 
 `shareUrl` 只负责读取公开分享统计。需要让 Shirone 页面本身向 Umami 上报访问时，
-再同时配置 `websiteId` 与 `scriptUrl`。只配置其中一项不会加载采集脚本。
+在 `enable: true` 的前提下再同时配置 `websiteId` 与 `scriptUrl`；只配置其中一项不会加载采集脚本。
+
+采集脚本与 `shareUrl` 已解耦：你可以只配 `websiteId` + `scriptUrl` 而**不配** `shareUrl`，
+让访问正常被记录、同时不把分享链接注入全站（私密统计页 `/stats/` 正是靠这一点保持分享链接不公开）。
 
 ### 4. 顶栏唯一访客徽标（可选）
 
@@ -66,6 +72,43 @@ shareUrl: https://your-umami-instance.com/share/<shareId>
 需要让新访客持续累加，必须同时配置 `websiteId` 与 `scriptUrl`；否则徽标只能读取
 Umami 中已有的历史公开统计。徽标在 `<480px` 的视口自动隐藏，避免挤压移动端顶栏；
 关闭 `visitorBadge` 或 `enable: false` 时不产生任何访客徽标 DOM 与额外请求。
+
+### 5. 独立访问统计页 `/stats/`（密码保护，可选）
+
+除了顶栏徽标，还可以生成一个**独立跳转、需要密码**的统计页：
+
+```bash
+# .env（已 gitignore，不会提交；服务器上构建时同样需要）
+VISITOR_STATS_SHARE_URL="https://your-umami-instance.com/share/<shareId>"
+VISITOR_STATS_PASSWORD="一个足够长的密码"
+# VISITOR_STATS_HINT="可选：显示在密码框下方的提示"
+```
+
+构建后访问 `https://your-domain/stats/`，输入密码即可查看：
+
+| 区间 | 指标 |
+|---|---|
+| 今日 / 近 7 天 / 近 30 天 / 全部时间 | 访客数（`visitors`，匿名去重）、页面浏览、访问次数 |
+| 实时 | 当前在线人数（`getActiveVisitors`） |
+| 近 30 天 | 按天 pageviews 迷你趋势图 |
+
+实现方式与安全边界：
+
+- **静态至上**：不新增任何常驻服务端。分享链接与密码只通过**构建期环境变量**注入；
+  页面在构建时用密码把 `shareUrl` 加密成 AES-GCM 密文（复用
+  `utils/password-protection` 与 `PasswordGate`），产物 HTML 中既没有明文密码，
+  也没有明文分享链接。
+- **按需加载**：只有密码解密成功后才 `import("oddmisc")` 拉取统计；未解锁时
+  对统计接口零请求，且 oddmisc 不进入首屏包。
+- **未配置即关闭**：`VISITOR_STATS_SHARE_URL` 或 `VISITOR_STATS_PASSWORD` 任一缺失时，
+  `/stats/` 直接重定向到 404，页面不进导航、`noindex`。
+- **区间不可相加**：今日 / 7 天 / 30 天区间互相包含，各自是「该区间内去重人数」，
+  不要相加当总量。
+- **密码强度**：这是纯静态页面的门控，密文随产物公开，属于「防君子不防小人」。
+  请使用足够长的随机密码；如需真正的访问控制，应在托管层启用
+  Vercel / Netlify 的密码保护或 Cloudflare Access。
+- **数据口径**：`visitors` 是 Umami 用匿名访客 ID 去重的「浏览器档案数」，
+  同一人换浏览器 / 清缓存会算新访客，不是自然人身份。
 
 ## 零额外负担原则
 

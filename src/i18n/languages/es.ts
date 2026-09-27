@@ -183,6 +183,22 @@ export const es: Translation = {
 	[Key.profileStatsVisits]: "Visitas",
 	[Key.visitorCountPrefix]: "Visitado por ",
 	[Key.visitorCountSuffix]: " usuarios",
+
+	[Key.statsPageTitle]: "Estadísticas de visitas",
+	[Key.statsPageDescription]:
+		"Resumen de visitantes y páginas vistas de este blog.",
+	[Key.statsVisitors]: "Visitantes",
+	[Key.statsLast7Days]: "Últimos 7 días",
+	[Key.statsLast30Days]: "Últimos 30 días",
+	[Key.statsAllTime]: "Todo el tiempo",
+	[Key.statsActiveNow]: "En línea ahora",
+	[Key.statsRetry]: "Reintentar",
+	[Key.statsPasswordTitle]: "Estadísticas protegidas",
+	[Key.statsPasswordDescription]:
+		"Introduce la contraseña para ver las estadísticas de visitas.",
+	[Key.statsPasswordInvalid]: "Contraseña incorrecta",
+	[Key.statsPasswordUnlock]: "Desbloquear estadísticas",
+	[Key.statsPasswordUnlocking]: "Desbloqueando…",
 	[Key.profileAboutGuide]: "Haz clic aquí",
 
 	[Key.calendar]: "Calendario",

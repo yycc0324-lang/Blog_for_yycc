@@ -1,0 +1,57 @@
+# Umami 自托管（PostgreSQL + Umami v2）
+#
+# 用法见 docs/DEPLOYMENT_UMAMI.md。核心约定：
+# - 容器端口只绑到宿主机回环地址（127.0.0.1），对外由 Nginx 反代 + HTTPS；
+# - 数据库数据放在命名卷 umami-db-data 里，`docker compose down` 不会删；
+#   只有 `docker compose down -v` 才会清空，谨慎使用。
+# - 镜像版本固定用 `postgresql-latest`；要升级 Umami 时改这一行后
+#   `docker compose pull && docker compose up -d`。
+
+services:
+  umami:
+    image: ghcr.io/umami-software/umami:postgresql-latest
+    container_name: shirone-umami
+    restart: unless-stopped
+    environment:
+      DATABASE_TYPE: postgresql
+      DATABASE_URL: postgresql://umami:${POSTGRES_PASSWORD}@umami-db:5432/umami
+      APP_SECRET: ${APP_SECRET}
+      TZ: ${TZ:-Asia/Shanghai}
+    depends_on:
+      umami-db:
+        condition: service_healthy
+    ports:
+      # 只暴露到本机，公网访问一律走 Nginx 反代
+      - "127.0.0.1:${UMAMI_PORT:-3000}:3000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/heartbeat').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  umami-db:
+    image: postgres:16-alpine
+    container_name: shirone-umami-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      TZ: ${TZ:-Asia/Shanghai}
+    volumes:
+      - umami-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U umami -d umami"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  umami-db-data:

@@ -176,6 +176,33 @@ enum I18nKey {
 	/** 顶栏访客徽标：数字后缀（如「位不同用户访问」） */
 	visitorCountSuffix = "visitorCountSuffix",
 
+	/** 独立访问统计页：页面标题 */
+	statsPageTitle = "statsPageTitle",
+	/** 独立访问统计页：页面描述 */
+	statsPageDescription = "statsPageDescription",
+	/** 访问统计指标：访客数（Umami visitors，匿名去重） */
+	statsVisitors = "statsVisitors",
+	/** 访问统计区间：近 7 天 */
+	statsLast7Days = "statsLast7Days",
+	/** 访问统计区间：近 30 天 */
+	statsLast30Days = "statsLast30Days",
+	/** 访问统计区间：全部时间 */
+	statsAllTime = "statsAllTime",
+	/** 实时在线人数 */
+	statsActiveNow = "statsActiveNow",
+	/** 加载失败后的重试按钮 */
+	statsRetry = "statsRetry",
+	/** 统计页密码门：标题 */
+	statsPasswordTitle = "statsPasswordTitle",
+	/** 统计页密码门：描述 */
+	statsPasswordDescription = "statsPasswordDescription",
+	/** 统计页密码门：密码错误 */
+	statsPasswordInvalid = "statsPasswordInvalid",
+	/** 统计页密码门：解锁按钮 */
+	statsPasswordUnlock = "statsPasswordUnlock",
+	/** 统计页密码门：解锁中 */
+	statsPasswordUnlocking = "statsPasswordUnlocking",
+
 	/** 资料卡头像「点这里」引导 */
 	profileAboutGuide = "profileAboutGuide",
 

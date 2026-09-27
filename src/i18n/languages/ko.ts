@@ -180,6 +180,21 @@ export const ko: Translation = {
 	[Key.profileStatsVisits]: "방문",
 	[Key.visitorCountPrefix]: "지금까지 ",
 	[Key.visitorCountSuffix]: "명이 방문",
+
+	[Key.statsPageTitle]: "방문 통계",
+	[Key.statsPageDescription]: "이 블로그의 방문자와 페이지뷰 개요입니다.",
+	[Key.statsVisitors]: "방문자",
+	[Key.statsLast7Days]: "최근 7일",
+	[Key.statsLast30Days]: "최근 30일",
+	[Key.statsAllTime]: "전체 기간",
+	[Key.statsActiveNow]: "현재 접속 중",
+	[Key.statsRetry]: "다시 시도",
+	[Key.statsPasswordTitle]: "보호된 통계",
+	[Key.statsPasswordDescription]:
+		"비밀번호를 입력하면 방문 통계를 볼 수 있습니다.",
+	[Key.statsPasswordInvalid]: "비밀번호가 올바르지 않습니다",
+	[Key.statsPasswordUnlock]: "통계 잠금 해제",
+	[Key.statsPasswordUnlocking]: "잠금 해제 중…",
 	[Key.profileAboutGuide]: "여기를 클릭",
 
 	[Key.calendar]: "캘린더",

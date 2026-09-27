@@ -181,6 +181,21 @@ export const ja: Translation = {
 	[Key.profileStatsVisits]: "訪問数",
 	[Key.visitorCountPrefix]: "これまでに ",
 	[Key.visitorCountSuffix]: " 人が訪問",
+
+	[Key.statsPageTitle]: "アクセス統計",
+	[Key.statsPageDescription]: "このブログの訪問者とページビューの概要です。",
+	[Key.statsVisitors]: "訪問者",
+	[Key.statsLast7Days]: "過去7日間",
+	[Key.statsLast30Days]: "過去30日間",
+	[Key.statsAllTime]: "全期間",
+	[Key.statsActiveNow]: "現在オンライン",
+	[Key.statsRetry]: "再試行",
+	[Key.statsPasswordTitle]: "保護された統計",
+	[Key.statsPasswordDescription]:
+		"パスワードを入力するとアクセス統計を表示します。",
+	[Key.statsPasswordInvalid]: "パスワードが正しくありません",
+	[Key.statsPasswordUnlock]: "統計を解除",
+	[Key.statsPasswordUnlocking]: "解除中…",
 	[Key.profileAboutGuide]: "ここをクリック",
 
 	[Key.calendar]: "カレンダー",

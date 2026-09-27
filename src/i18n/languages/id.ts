@@ -184,6 +184,22 @@ export const id: Translation = {
 	[Key.profileStatsVisits]: "Kunjungan",
 	[Key.visitorCountPrefix]: "Dikunjungi ",
 	[Key.visitorCountSuffix]: " pengguna",
+
+	[Key.statsPageTitle]: "Statistik Kunjungan",
+	[Key.statsPageDescription]:
+		"Ringkasan pengunjung dan tampilan halaman blog ini.",
+	[Key.statsVisitors]: "Pengunjung",
+	[Key.statsLast7Days]: "7 hari terakhir",
+	[Key.statsLast30Days]: "30 hari terakhir",
+	[Key.statsAllTime]: "Sepanjang waktu",
+	[Key.statsActiveNow]: "Online sekarang",
+	[Key.statsRetry]: "Coba lagi",
+	[Key.statsPasswordTitle]: "Statistik Terlindungi",
+	[Key.statsPasswordDescription]:
+		"Masukkan kata sandi untuk melihat statistik kunjungan.",
+	[Key.statsPasswordInvalid]: "Kata sandi salah",
+	[Key.statsPasswordUnlock]: "Buka statistik",
+	[Key.statsPasswordUnlocking]: "Membuka…",
 	[Key.profileAboutGuide]: "Klik di sini",
 
 	[Key.calendar]: "Kalender",

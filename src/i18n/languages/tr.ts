@@ -183,6 +183,21 @@ export const tr: Translation = {
 	[Key.profileStatsVisits]: "Ziyaret",
 	[Key.visitorCountPrefix]: "Toplam ",
 	[Key.visitorCountSuffix]: " kullanıcı ziyaret etti",
+
+	[Key.statsPageTitle]: "Trafik İstatistikleri",
+	[Key.statsPageDescription]: "Bu blogun ziyaretçi ve sayfa görüntüleme özeti.",
+	[Key.statsVisitors]: "Ziyaretçiler",
+	[Key.statsLast7Days]: "Son 7 gün",
+	[Key.statsLast30Days]: "Son 30 gün",
+	[Key.statsAllTime]: "Tüm zamanlar",
+	[Key.statsActiveNow]: "Şu an çevrimiçi",
+	[Key.statsRetry]: "Yeniden dene",
+	[Key.statsPasswordTitle]: "Korumalı İstatistikler",
+	[Key.statsPasswordDescription]:
+		"Trafik istatistiklerini görmek için parolayı girin.",
+	[Key.statsPasswordInvalid]: "Parola yanlış",
+	[Key.statsPasswordUnlock]: "İstatistiklerin kilidini aç",
+	[Key.statsPasswordUnlocking]: "Kilit açılıyor…",
 	[Key.profileAboutGuide]: "Buraya tıkla",
 
 	[Key.calendar]: "Takvim",

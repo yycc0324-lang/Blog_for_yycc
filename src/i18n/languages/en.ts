@@ -182,6 +182,21 @@ export const en: Translation = {
 	[Key.profileStatsVisits]: "Visits",
 	[Key.visitorCountPrefix]: "Visited by ",
 	[Key.visitorCountSuffix]: " users",
+
+	[Key.statsPageTitle]: "Traffic Statistics",
+	[Key.statsPageDescription]: "Visitor and page view overview for this blog.",
+	[Key.statsVisitors]: "Visitors",
+	[Key.statsLast7Days]: "Last 7 days",
+	[Key.statsLast30Days]: "Last 30 days",
+	[Key.statsAllTime]: "All time",
+	[Key.statsActiveNow]: "Online now",
+	[Key.statsRetry]: "Retry",
+	[Key.statsPasswordTitle]: "Protected Statistics",
+	[Key.statsPasswordDescription]:
+		"Enter the password to view traffic statistics.",
+	[Key.statsPasswordInvalid]: "Incorrect password",
+	[Key.statsPasswordUnlock]: "Unlock statistics",
+	[Key.statsPasswordUnlocking]: "Unlocking…",
 	[Key.profileAboutGuide]: "Click here",
 
 	[Key.calendar]: "Calendar",

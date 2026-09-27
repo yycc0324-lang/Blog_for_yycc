@@ -14,6 +14,60 @@ import {
 import { onMount } from "svelte";
 import type { ProtectedPayload } from "@/types/protectedContent";
 
+type GateVariant = "post" | "album" | "stats";
+
+interface GateCopy {
+	title: I18nKey;
+	description: I18nKey;
+	label: I18nKey;
+	show: I18nKey;
+	hide: I18nKey;
+	required: I18nKey;
+	invalid: I18nKey;
+	unlock: I18nKey;
+	unlocking: I18nKey;
+	icon: string;
+}
+
+const GATE_COPY: Record<GateVariant, GateCopy> = {
+	post: {
+		title: I18nKey.postPasswordTitle,
+		description: I18nKey.postPasswordDescription,
+		label: I18nKey.postPasswordLabel,
+		show: I18nKey.postPasswordShow,
+		hide: I18nKey.postPasswordHide,
+		required: I18nKey.postPasswordRequired,
+		invalid: I18nKey.postPasswordInvalid,
+		unlock: I18nKey.postPasswordUnlock,
+		unlocking: I18nKey.postPasswordUnlocking,
+		icon: "material-symbols:article-outline-rounded",
+	},
+	album: {
+		title: I18nKey.albumPasswordTitle,
+		description: I18nKey.albumPasswordDescription,
+		label: I18nKey.albumPasswordLabel,
+		show: I18nKey.albumPasswordShow,
+		hide: I18nKey.albumPasswordHide,
+		required: I18nKey.albumPasswordRequired,
+		invalid: I18nKey.albumPasswordInvalid,
+		unlock: I18nKey.albumPasswordUnlock,
+		unlocking: I18nKey.albumPasswordUnlocking,
+		icon: "material-symbols:photo-library-outline-rounded",
+	},
+	stats: {
+		title: I18nKey.statsPasswordTitle,
+		description: I18nKey.statsPasswordDescription,
+		label: I18nKey.postPasswordLabel,
+		show: I18nKey.postPasswordShow,
+		hide: I18nKey.postPasswordHide,
+		required: I18nKey.postPasswordRequired,
+		invalid: I18nKey.statsPasswordInvalid,
+		unlock: I18nKey.statsPasswordUnlock,
+		unlocking: I18nKey.statsPasswordUnlocking,
+		icon: "material-symbols:monitoring-outline-rounded",
+	},
+};
+
 let {
 	payload,
 	scope,
@@ -21,6 +75,7 @@ let {
 	title = "",
 	description = "",
 	headingIcon = "",
+	variant,
 	onunlocked,
 }: {
 	payload: ProtectedPayload;
@@ -29,6 +84,8 @@ let {
 	title?: string;
 	description?: string;
 	headingIcon?: string;
+	/** 门控语义变体；省略时按 scope 前缀推断（post: / stats: / 其余为相册） */
+	variant?: GateVariant;
 	onunlocked: (content: string) => void;
 } = $props();
 
@@ -37,22 +94,18 @@ let error = $state("");
 let loading = $state(false);
 let passwordVisible = $state(false);
 
-const isPostScope = scope.startsWith("post:");
-const resolvedTitle =
-	title ||
-	(isPostScope
-		? i18n(I18nKey.postPasswordTitle)
-		: i18n(I18nKey.albumPasswordTitle));
-const resolvedDescription =
-	description ||
-	(isPostScope
-		? i18n(I18nKey.postPasswordDescription)
-		: i18n(I18nKey.albumPasswordDescription));
-const resolvedHeadingIcon =
-	headingIcon ||
-	(isPostScope
-		? "material-symbols:article-outline-rounded"
-		: "material-symbols:photo-library-outline-rounded");
+const resolvedVariant: GateVariant =
+	variant ??
+	(scope.startsWith("post:")
+		? "post"
+		: scope.startsWith("stats:")
+			? "stats"
+			: "album");
+const copy = GATE_COPY[resolvedVariant];
+const isPostScope = resolvedVariant === "post";
+const resolvedTitle = title || i18n(copy.title);
+const resolvedDescription = description || i18n(copy.description);
+const resolvedHeadingIcon = headingIcon || copy.icon;
 
 const inputId = `password-gate-${scope.replace(/[^a-zA-Z0-9_-]/g, "-")}`;
 const headingId = `${inputId}-title`;
@@ -71,9 +124,7 @@ function clearError() {
 
 async function unlock() {
 	if (!password.trim()) {
-		error = isPostScope
-			? i18n(I18nKey.postPasswordRequired)
-			: i18n(I18nKey.albumPasswordRequired);
+		error = i18n(copy.required);
 		return;
 	}
 	error = "";
@@ -84,9 +135,7 @@ async function unlock() {
 		writeProtectedSession(scope, payloadId, content);
 		onunlocked(content);
 	} catch {
-		error = isPostScope
-			? i18n(I18nKey.postPasswordInvalid)
-			: i18n(I18nKey.albumPasswordInvalid);
+		error = i18n(copy.invalid);
 	} finally {
 		loading = false;
 	}
@@ -141,12 +190,8 @@ async function unlock() {
 					name="password"
 					type={passwordVisible ? "text" : "password"}
 					bind:value={password}
-					label={isPostScope
-						? i18n(I18nKey.postPasswordLabel)
-						: i18n(I18nKey.albumPasswordLabel)}
-					placeholder={isPostScope
-						? i18n(I18nKey.postPasswordLabel)
-						: i18n(I18nKey.albumPasswordLabel)}
+					label={i18n(copy.label)}
+					placeholder={i18n(copy.label)}
 					variant="outlined"
 					autocomplete="current-password"
 					disabled={loading}
@@ -161,11 +206,7 @@ async function unlock() {
 							? "material-symbols:visibility-off-rounded"
 							: "material-symbols:visibility-rounded"}
 						size="small"
-						label={i18n(
-							passwordVisible
-								? (isPostScope ? I18nKey.postPasswordHide : I18nKey.albumPasswordHide)
-								: (isPostScope ? I18nKey.postPasswordShow : I18nKey.albumPasswordShow),
-						)}
+						label={i18n(passwordVisible ? copy.hide : copy.show)}
 						disabled={loading}
 						onclick={() => (passwordVisible = !passwordVisible)}
 					/>
@@ -173,13 +214,7 @@ async function unlock() {
 			</div>
 			<Button
 				type="submit"
-				label={loading
-					? (isPostScope
-							? i18n(I18nKey.postPasswordUnlocking)
-							: i18n(I18nKey.albumPasswordUnlocking))
-					: (isPostScope
-							? i18n(I18nKey.postPasswordUnlock)
-							: i18n(I18nKey.albumPasswordUnlock))}
+				label={i18n(loading ? copy.unlocking : copy.unlock)}
 				icon={loading
 					? "material-symbols:progress-activity"
 					: "material-symbols:lock-open-rounded"}

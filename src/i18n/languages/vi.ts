@@ -183,6 +183,21 @@ export const vi: Translation = {
 	[Key.profileStatsVisits]: "Lượt truy cập",
 	[Key.visitorCountPrefix]: "Đã có ",
 	[Key.visitorCountSuffix]: " người truy cập",
+
+	[Key.statsPageTitle]: "Thống kê truy cập",
+	[Key.statsPageDescription]:
+		"Tổng quan khách truy cập và lượt xem trang của blog này.",
+	[Key.statsVisitors]: "Khách truy cập",
+	[Key.statsLast7Days]: "7 ngày qua",
+	[Key.statsLast30Days]: "30 ngày qua",
+	[Key.statsAllTime]: "Tất cả thời gian",
+	[Key.statsActiveNow]: "Đang trực tuyến",
+	[Key.statsRetry]: "Thử lại",
+	[Key.statsPasswordTitle]: "Thống kê được bảo vệ",
+	[Key.statsPasswordDescription]: "Nhập mật khẩu để xem thống kê truy cập.",
+	[Key.statsPasswordInvalid]: "Mật khẩu không đúng",
+	[Key.statsPasswordUnlock]: "Mở khóa thống kê",
+	[Key.statsPasswordUnlocking]: "Đang mở khóa…",
 	[Key.profileAboutGuide]: "Nhấn vào đây",
 
 	[Key.calendar]: "Lịch",
