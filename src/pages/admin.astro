@@ -1,0 +1,303 @@
+---
+import Layout from "@layouts/Layout.astro";
+import { url } from "@utils/url-utils";
+import { adminConfig, resolveUmamiOptions, umamiConfig } from "@/config";
+
+if (!adminConfig.enable) {
+	return Astro.redirect("/404/");
+}
+
+const umamiReady = resolveUmamiOptions(umamiConfig) !== null;
+const pageTitle = adminConfig.title || "访问统计";
+const pageDescription =
+	adminConfig.description || "站点访问数据总览（数据来源：Umami 公开分享统计）";
+const accessKey = adminConfig.accessKey?.trim() || "";
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+	<meta slot="head" name="robots" content="noindex,nofollow" />
+	<main class="min-h-screen flex justify-center px-4 py-10 md:py-16 text-[var(--on-surface)]">
+		<div class="w-full max-w-5xl">
+			<header class="text-center mb-10">
+				<p class="text-sm font-bold tracking-[0.18em] uppercase text-[var(--primary)]">
+					Shirone Admin
+				</p>
+				<h1 class="mt-2 text-3xl md:text-4xl font-bold">{pageTitle}</h1>
+				<p class="mt-3 mx-auto max-w-2xl text-[var(--on-surface-variant)]">
+					{pageDescription}
+				</p>
+			</header>
+
+			{!umamiReady ? (
+				<section class="rounded-3xl border border-[var(--outline-variant)] bg-[var(--surface-container-high)] p-6 md:p-8">
+					<h2 class="text-xl font-semibold">尚未启用 Umami 统计</h2>
+					<p class="mt-3 leading-7 text-[var(--on-surface-variant)]">
+						后台统计页复用站内已有的 Umami 集成。请先在
+						<code class="rounded bg-[var(--surface-container-highest)] px-1.5 py-0.5">src/config/umamiConfig.ts</code>
+						中填写 <code class="rounded bg-[var(--surface-container-highest)] px-1.5 py-0.5">shareUrl</code>，
+						建议同时填写 <code class="rounded bg-[var(--surface-container-highest)] px-1.5 py-0.5">websiteId</code>
+						与 <code class="rounded bg-[var(--surface-container-highest)] px-1.5 py-0.5">scriptUrl</code>
+						以采集新访问，并将 <code class="rounded bg-[var(--surface-container-highest)] px-1.5 py-0.5">enable</code>
+						置为 <code class="rounded bg-[var(--surface-container-highest)] px-1.5 py-0.5">true</code>。
+					</p>
+				</section>
+			) : (
+				<>
+					{accessKey && (
+						<section
+							class="admin-gate is-hidden rounded-3xl border border-[var(--outline-variant)] bg-[var(--surface-container-high)] p-6 md:p-8"
+							data-admin-gate
+							aria-labelledby="admin-gate-title"
+						>
+							<h2 id="admin-gate-title" class="text-xl font-semibold">
+								需要访问口令
+							</h2>
+							<p class="mt-3 text-[var(--on-surface-variant)]">
+								请输入后台访问口令以查看统计。
+							</p>
+							<form class="mt-5 grid gap-3" data-admin-gate-form>
+								<label for="admin-access-key" class="font-semibold">
+									访问口令
+								</label>
+								<input
+									id="admin-access-key"
+									data-admin-gate-input
+									type="password"
+									autocomplete="current-password"
+									placeholder="请输入口令"
+									class="rounded-xl border border-[var(--outline)] bg-[var(--surface)] px-4 py-3 text-[var(--on-surface)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
+								/>
+								<button
+									type="submit"
+									class="w-fit rounded-full bg-[var(--primary)] px-5 py-3 font-bold text-[var(--on-primary)]"
+								>
+									进入后台
+								</button>
+								<p class="font-semibold text-[var(--error)]" data-admin-gate-error hidden>
+									口令错误，请重试。
+								</p>
+							</form>
+						</section>
+					)}
+
+					<section
+						class:list={[
+							"admin-dashboard rounded-3xl border border-[var(--outline-variant)] bg-[var(--surface-container-high)] p-6 md:p-8",
+							{ "is-hidden": accessKey },
+						]}
+						data-admin-dashboard
+						aria-busy="true"
+					>
+						<p class="mb-5 text-center text-lg font-semibold">
+							已有 <strong data-admin-stat="visitors">--</strong> 位不同用户，总计&nbsp;<strong data-admin-stat="visits">--</strong> 次访问
+						</p>
+						<div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+							<article class="rounded-2xl border border-[var(--outline-variant)] bg-[var(--surface-container)] p-5">
+								<span class="text-sm font-semibold text-[var(--on-surface-variant)]">
+									不同访客
+								</span>
+								<strong
+									class="mt-1 block text-3xl font-extrabold tabular-nums"
+									data-admin-stat="visitors"
+								>--</strong>
+								<span class="mt-1 block text-xs text-[var(--on-surface-variant)]">
+									独立访客数（visitors）
+								</span>
+							</article>
+							<article class="rounded-2xl border border-[var(--outline-variant)] bg-[var(--surface-container)] p-5">
+								<span class="text-sm font-semibold text-[var(--on-surface-variant)]">
+									总访问次数
+								</span>
+								<strong
+									class="mt-1 block text-3xl font-extrabold tabular-nums"
+									data-admin-stat="visits"
+								>--</strong>
+								<span class="mt-1 block text-xs text-[var(--on-surface-variant)]">
+									访问会话数（visits）
+								</span>
+							</article>
+							<article class="rounded-2xl border border-[var(--outline-variant)] bg-[var(--surface-container)] p-5">
+								<span class="text-sm font-semibold text-[var(--on-surface-variant)]">
+									页面浏览量
+								</span>
+								<strong
+									class="mt-1 block text-3xl font-extrabold tabular-nums"
+									data-admin-stat="pageviews"
+								>--</strong>
+								<span class="mt-1 block text-xs text-[var(--on-surface-variant)]">
+									PV（pageviews）
+								</span>
+							</article>
+							<article class="rounded-2xl border border-[var(--outline-variant)] bg-[var(--surface-container)] p-5">
+								<span class="text-sm font-semibold text-[var(--on-surface-variant)]">
+									当前在线
+								</span>
+								<strong
+									class="mt-1 block text-3xl font-extrabold tabular-nums"
+									data-admin-stat="active"
+								>--</strong>
+								<span class="mt-1 block text-xs text-[var(--on-surface-variant)]">
+									实时活跃访客
+								</span>
+							</article>
+						</div>
+
+						<p class="mt-5 text-xs text-[var(--on-surface-variant)]">
+							数据来自 Umami，打开页面时会读取最新统计；点击数字可查看完整精确值。
+						</p>
+						<p
+							class="mt-4 font-semibold text-[var(--error)]"
+							data-admin-error
+							hidden
+						></p>
+					</section>
+				</>
+			)}
+
+			<footer class="mt-8 flex justify-center gap-5 text-sm">
+				<a class="text-[var(--primary)] hover:underline" href={url("/")}>
+					← 返回首页
+				</a>
+				<a class="text-[var(--primary)] hover:underline" href={url("/about/")}>
+					关于本站
+				</a>
+			</footer>
+		</div>
+	</main>
+
+	<script is:inline define:vars={{ accessKey }}>
+		(() => {
+			const ACCESS_KEY = accessKey;
+			const SESSION_KEY = "shirone-admin-access";
+			const dashboard = document.querySelector("[data-admin-dashboard]");
+			const gate = document.querySelector("[data-admin-gate]");
+			const form = document.querySelector("[data-admin-gate-form]");
+			const input = document.querySelector("[data-admin-gate-input]");
+			const gateError = document.querySelector("[data-admin-gate-error]");
+			const loadError = document.querySelector("[data-admin-error]");
+			let loaded = false;
+
+			const setVisible = (element, visible) => {
+				if (!element) return;
+				element.classList.toggle("is-hidden", !visible);
+			};
+
+			const setText = (name, value) => {
+				const elements = document.querySelectorAll(
+					`[data-admin-stat="${name}"]`,
+				);
+				if (elements.length === 0) return;
+				const count = Number(value);
+				const text = Number.isFinite(count)
+					? count.toLocaleString("zh-CN")
+					: "--";
+				for (const element of elements) {
+					element.textContent = text;
+					if (Number.isFinite(count)) {
+						element.setAttribute("title", String(count));
+					}
+				}
+			};
+
+			const waitForClient = async () => {
+				if (
+					window.oddmisc &&
+					typeof window.oddmisc.getSiteStats === "function"
+				) {
+					return;
+				}
+				await new Promise((resolve, reject) => {
+					const onReady = () => {
+						window.clearTimeout(timer);
+						resolve();
+					};
+					const timer = window.setTimeout(() => {
+						window.removeEventListener("oddmisc-ready", onReady);
+						reject(new Error("Umami 运行时未就绪"));
+					}, 10000);
+					window.addEventListener("oddmisc-ready", onReady, {
+						once: true,
+					});
+				});
+			};
+
+			const loadStats = async () => {
+				if (loaded) return;
+				loaded = true;
+				if (loadError) loadError.hidden = true;
+				dashboard?.setAttribute("aria-busy", "true");
+				try {
+					await waitForClient();
+					const activePromise =
+						typeof window.oddmisc.getActiveVisitors === "function"
+							? window.oddmisc.getActiveVisitors().catch(() => null)
+							: Promise.resolve(null);
+					const [stats, active] = await Promise.all([
+						window.oddmisc.getSiteStats(),
+						activePromise,
+					]);
+					setText("visitors", stats.visitors);
+					setText("visits", stats.visits);
+					setText("pageviews", stats.pageviews);
+					if (active !== null) setText("active", active);
+				} catch (error) {
+					loaded = false;
+					if (loadError) {
+						loadError.hidden = false;
+						loadError.textContent = `统计加载失败：${
+							error && error.message ? error.message : error
+						}`;
+					}
+				} finally {
+					dashboard?.setAttribute("aria-busy", "false");
+				}
+			};
+
+			const unlock = () => {
+				try {
+					sessionStorage.setItem(SESSION_KEY, "1");
+				} catch {}
+				setVisible(gate, false);
+				setVisible(dashboard, true);
+				void loadStats();
+			};
+
+			if (!ACCESS_KEY) {
+				setVisible(dashboard, true);
+				void loadStats();
+				return;
+			}
+
+			let unlocked = false;
+			try {
+				unlocked = sessionStorage.getItem(SESSION_KEY) === "1";
+			} catch {}
+			if (unlocked) {
+				unlock();
+				return;
+			}
+
+			setVisible(gate, true);
+			setVisible(dashboard, false);
+			form?.addEventListener("submit", (event) => {
+				event.preventDefault();
+				if (!input) return;
+				if (input.value === ACCESS_KEY) {
+					if (gateError) gateError.hidden = true;
+					unlock();
+					return;
+				}
+				input.value = "";
+				if (gateError) gateError.hidden = false;
+				input.focus();
+			});
+		})();
+	</script>
+</Layout>
+
+<style>
+	.admin-dashboard.is-hidden,
+	.admin-gate.is-hidden {
+		display: none !important;
+	}
+</style>

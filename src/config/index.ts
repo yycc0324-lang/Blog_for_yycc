@@ -8,6 +8,7 @@
  */
 
 export { aboutConfig } from "./aboutConfig";
+export { adminConfig } from "./adminConfig";
 export { albumsConfig } from "./albumsConfig";
 export {
 	animeConfig,

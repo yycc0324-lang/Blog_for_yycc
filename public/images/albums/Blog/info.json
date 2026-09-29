@@ -1,0 +1,10 @@
+{
+	"title": "Blog相册",
+	"description": "记录日常与追番的瞬间。",
+	"date": "2026-09-27",
+	"location": "",
+	"tags": ["日常", "追番"],
+	"layout": "masonry",
+	"columns": 3,
+	"hidden": false
+}

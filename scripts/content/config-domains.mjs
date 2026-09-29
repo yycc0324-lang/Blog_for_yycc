@@ -159,6 +159,12 @@ export const CONFIG_DOMAINS = Object.freeze([
 		module: "@/types/umamiConfig",
 	},
 	{
+		key: "admin",
+		file: "admin",
+		type: "AdminConfig",
+		module: "@/types/adminConfig",
+	},
+	{
 		key: "about",
 		file: "about",
 		type: "AboutConfig",

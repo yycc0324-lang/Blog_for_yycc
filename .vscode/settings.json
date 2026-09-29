@@ -143,6 +143,10 @@
     "./.vscode/schemas/rainy-day.schema.json": [
       "config/rainy-day.yaml",
       "config/rainy-day.yml"
+    ],
+    "./.vscode/schemas/admin.schema.json": [
+      "config/admin.yaml",
+      "config/admin.yml"
     ]
   }
 }
