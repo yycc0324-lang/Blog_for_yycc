@@ -8,6 +8,44 @@ export type WallpaperMode = "banner" | "none";
 
 export type TopAppBarContentAlign = "left" | "center";
 
+/**
+ * 浏览器标签页标题的「离开提醒」效果配置。
+ *
+ * 开启后访客切到其他标签 / 最小化窗口时，标题临时替换为 awayText；
+ * 回到本页时自动恢复为当前页面原本的标题（含 swup 无刷新跳转后的新标题）。
+ */
+export type TabTitleConfig = {
+	/** 是否启用标签页离开提醒（默认关闭时零脚本、零 DOM） */
+	enable: boolean;
+	/** 离开标签页时显示的文案（颜文字 + 提示语） */
+	awayText: string;
+};
+
+/**
+ * 首页 Banner 副标题的「IP 归属地欢迎语」配置。
+ *
+ * 开启后副标题由原本的静态文本替换为按访客 IP 归属地生成的问候语，
+ * 例如「欢迎来自广东省深圳市的网友，祝你有所收获」；保留打字机特效。
+ */
+export type IpGreetingConfig = {
+	/** 是否启用（默认关闭时副标题回退到 banner.homeText.subtitle） */
+	enable: boolean;
+	/**
+	 * 文案模板，支持占位符：{region}（省+市智能拼接）、{province}、{city}、
+	 * {district}、{country}。
+	 */
+	template?: string;
+	/** 定位失败或尚未返回时展示的兜底文案 */
+	fallback?: string;
+	/**
+	 * 归属地查询接口列表，按顺序尝试，命中即用（需支持 CORS 与 JSON 响应）。
+	 * 未配置时使用内置的公共接口。
+	 */
+	endpoints?: string[];
+	/** 同一次浏览器会话内的缓存时长（毫秒），默认 6 小时，避免每次跳转重复请求 */
+	cacheTtl?: number;
+};
+
 export type DisplaySettingsConfig = {
 	/** 是否在显示设置面板展示配色风格（9 宫格）选择器（默认 true） */
 	colorStyle?: boolean;
@@ -58,6 +96,8 @@ export type BannerConfig = {
 			/** 完成后是否循环播放（默认 true） */
 			loop: boolean;
 		};
+		/** 首页副标题「IP 归属地欢迎语」（可选，未配置或关闭时使用 subtitle） */
+		ipGreeting?: IpGreetingConfig;
 	};
 	carousel: {
 		enable: boolean;
@@ -83,6 +123,8 @@ export type SiteConfig = {
 	base?: string;
 	title: string;
 	subtitle: string;
+	/** 浏览器标签页「离开提醒」效果（可选，未配置或关闭时不注入任何脚本） */
+	tabTitle?: TabTitleConfig;
 	/** 站点统计：运行天数起点（ISO 8601，建议带时区）。未设置时回退到最早文章发布时间。 */
 	siteStats?: {
 		startDate?: string;

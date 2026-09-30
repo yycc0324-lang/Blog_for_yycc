@@ -184,6 +184,8 @@ export const ko: Translation = {
 	[Key.statsPageTitle]: "방문 통계",
 	[Key.statsPageDescription]: "이 블로그의 방문자와 페이지뷰 개요입니다.",
 	[Key.statsVisitors]: "방문자",
+	[Key.siteStatsTodayVisitors]: "오늘 방문자",
+	[Key.siteStatsTotalVisits]: "누적 방문",
 	[Key.statsLast7Days]: "최근 7일",
 	[Key.statsLast30Days]: "최근 30일",
 	[Key.statsAllTime]: "전체 기간",

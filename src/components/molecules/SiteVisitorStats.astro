@@ -1,0 +1,100 @@
+---
+/**
+ * 页脚「今日访客 / 累计访问」统计条。
+ *
+ * 数据来自 Umami 公开分享统计（umamiConfig.shareUrl），由全局的 UmamiRuntime 填充：
+ *   - 今日访客 → getSiteStats({ startAt: 本地今天 00:00 }) 的 visitors；
+ *   - 累计访问 → getSiteStats({ startAt: 0 }) 的 pageviews。
+ *
+ * 零额外负担：umamiConfig 未启用或缺少 shareUrl 时不输出任何 DOM。
+ */
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import { resolveUmamiOptions, umamiConfig } from "@/config";
+
+interface Props {
+	class?: string;
+	style?: string;
+	/** 累计访问口径："pageviews"（默认，累计浏览量）| "visits"（累计访问次数） */
+	totalMetric?: "pageviews" | "visits";
+}
+
+const { class: className, style, totalMetric = "pageviews" } = Astro.props;
+const enabled = resolveUmamiOptions(umamiConfig) !== null;
+const todayLabel = i18n(I18nKey.siteStatsTodayVisitors);
+const totalLabel = i18n(I18nKey.siteStatsTotalVisits);
+const totalIsVisits = totalMetric === "visits";
+---
+
+{enabled && (
+	<div
+		class:list={["m3-visitor-stats", className]}
+		style={style}
+		data-visitor-stats
+	>
+		<span
+			class="m3-visitor-stats__item"
+			data-shirone-umami
+			data-shirone-umami-range="today"
+		>
+			<span class="m3-visitor-stats__label">{todayLabel}</span>
+			<span
+				class="m3-visitor-stats__value"
+				data-shirone-umami-display
+				aria-live="polite"
+				aria-atomic="true"
+				aria-busy="true"
+			>
+				<span data-shirone-umami-visitors data-shirone-umami-value>--</span>
+			</span>
+		</span>
+		<span class="m3-visitor-stats__divider" aria-hidden="true">·</span>
+		<span
+			class="m3-visitor-stats__item"
+			data-shirone-umami
+			data-shirone-umami-range="total"
+		>
+			<span class="m3-visitor-stats__label">{totalLabel}</span>
+			<span
+				class="m3-visitor-stats__value"
+				data-shirone-umami-display
+				aria-live="polite"
+				aria-atomic="true"
+				aria-busy="true"
+			>
+				{totalIsVisits ? (
+					<span data-shirone-umami-visits data-shirone-umami-value>--</span>
+				) : (
+					<span data-shirone-umami-pageviews data-shirone-umami-value>--</span>
+				)}
+			</span>
+		</span>
+	</div>
+)}
+
+<style lang="stylus">
+.m3-visitor-stats
+	display: inline-flex
+	align-items: center
+	justify-content: center
+	flex-wrap: wrap
+	gap: 0.25rem 0.5rem
+	font: var(--m3e-type-body-small)
+	color: var(--on-surface-variant)
+
+	&__item
+		display: inline-flex
+		align-items: baseline
+		gap: 0.375rem
+
+	&__label
+		opacity: 0.85
+
+	&__value
+		font-weight: 600
+		color: var(--primary)
+		font-variant-numeric: tabular-nums
+
+	&__divider
+		color: var(--outline-variant)
+</style>

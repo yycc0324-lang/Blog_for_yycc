@@ -188,6 +188,8 @@ export const vi: Translation = {
 	[Key.statsPageDescription]:
 		"Tổng quan khách truy cập và lượt xem trang của blog này.",
 	[Key.statsVisitors]: "Khách truy cập",
+	[Key.siteStatsTodayVisitors]: "Khách hôm nay",
+	[Key.siteStatsTotalVisits]: "Tổng lượt truy cập",
 	[Key.statsLast7Days]: "7 ngày qua",
 	[Key.statsLast30Days]: "30 ngày qua",
 	[Key.statsAllTime]: "Tất cả thời gian",

@@ -189,6 +189,8 @@ export const id: Translation = {
 	[Key.statsPageDescription]:
 		"Ringkasan pengunjung dan tampilan halaman blog ini.",
 	[Key.statsVisitors]: "Pengunjung",
+	[Key.siteStatsTodayVisitors]: "Pengunjung hari ini",
+	[Key.siteStatsTotalVisits]: "Total kunjungan",
 	[Key.statsLast7Days]: "7 hari terakhir",
 	[Key.statsLast30Days]: "30 hari terakhir",
 	[Key.statsAllTime]: "Sepanjang waktu",

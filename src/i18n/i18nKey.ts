@@ -182,6 +182,10 @@ enum I18nKey {
 	statsPageDescription = "statsPageDescription",
 	/** 访问统计指标：访客数（Umami visitors，匿名去重） */
 	statsVisitors = "statsVisitors",
+	/** 页脚统计条：今日访客 */
+	siteStatsTodayVisitors = "siteStatsTodayVisitors",
+	/** 页脚统计条：累计访问 */
+	siteStatsTotalVisits = "siteStatsTotalVisits",
 	/** 访问统计区间：近 7 天 */
 	statsLast7Days = "statsLast7Days",
 	/** 访问统计区间：近 30 天 */

@@ -1,4 +1,10 @@
 ---
+interface Props {
+	/** 站点 IANA 时区（如 Asia/Shanghai），用于计算「今日」的自然日起点 */
+	timezone?: string;
+}
+
+const { timezone = "" } = Astro.props;
 // Optional Umami assets are mounted once in the persistent layout shell.
 ---
 
@@ -130,7 +136,7 @@
 	}
 </style>
 
-<script is:inline>
+<script is:inline define:vars={{ timezone }}>
 	(() => {
 		const rootSelector = "[data-shirone-umami]";
 		let scheduled = false;
@@ -161,6 +167,72 @@
 			}
 		}
 
+		/**
+		 * 计算指定 IANA 时区下「今天 00:00」的绝对时间戳（毫秒）。
+		 * 传空字符串时退回浏览器本地时区。用一遍「猜偏移 → 修正」即可覆盖夏令时。
+		 */
+		function startOfDayInTimeZone(zone, now) {
+			if (!zone) {
+				const local = new Date(now);
+				local.setHours(0, 0, 0, 0);
+				return local.getTime();
+			}
+			const offsetAt = (timestamp) => {
+				try {
+					const parts = new Intl.DateTimeFormat("en-US", {
+						timeZone: zone,
+						hourCycle: "h23",
+						year: "numeric",
+						month: "2-digit",
+						day: "2-digit",
+						hour: "2-digit",
+						minute: "2-digit",
+						second: "2-digit",
+					}).formatToParts(new Date(timestamp));
+					const map = {};
+					for (const part of parts) map[part.type] = part.value;
+					return (
+						Date.UTC(
+							Number(map.year),
+							Number(map.month) - 1,
+							Number(map.day),
+							Number(map.hour),
+							Number(map.minute),
+							Number(map.second),
+						) - timestamp
+					);
+				} catch {
+					return null;
+				}
+			};
+			const initialOffset = offsetAt(now);
+			if (initialOffset === null) return startOfDayInTimeZone("", now);
+			const wallClock = new Date(now + initialOffset);
+			wallClock.setUTCHours(0, 0, 0, 0);
+			const candidateOffset = offsetAt(wallClock.getTime() - initialOffset);
+			return wallClock.getTime() - (candidateOffset ?? initialOffset);
+		}
+
+		/**
+		 * 把 data-shirone-umami-range 翻译成 oddmisc 查询参数。
+		 * today：站点时区当天 00:00 起；total：全部时间（startAt: 0）。
+		 * 不传 endAt，交给 oddmisc 使用「5 分钟对齐的当前时间」，这样同一个
+		 * 5 分钟窗口内能命中它自带的缓存，同时保证数据足够新鲜。
+		 */
+		function rangeOptions(range) {
+			if (range === "today") {
+				return { startAt: startOfDayInTimeZone(timezone, Date.now()) };
+			}
+			if (range === "total") return { startAt: 0 };
+			return undefined;
+		}
+
+		function requestStats(client, path, options) {
+			return path
+				? client.getPageStats(path, options)
+				: client.getSiteStats(options);
+		}
+
 		async function loadStats() {
 			const roots = Array.from(document.querySelectorAll(rootSelector)).filter(
 				(root) => !root.dataset.umamiLoaded,
@@ -173,10 +245,14 @@
 				roots.map(async (root) => {
 					root.dataset.umamiLoaded = "loading";
 					const path = root.dataset.umamiPath;
-					const key = path ? `page:${path}` : "site";
-					const request =
-						promises[key] ??=
-							path ? client.getPageStats(path) : client.getSiteStats();
+					const range = root.dataset.shironeUmamiRange;
+					const options = rangeOptions(range);
+					const key = `${path ? `page:${path}` : "site"}${range ? `:${range}` : ""}`;
+					const request = (promises[key] ??= requestStats(
+						client,
+						path,
+						options,
+					));
 
 					try {
 						let stats = await request;
@@ -186,9 +262,7 @@
 							stats._fromCache
 						) {
 							client.clearCache();
-							const refreshed = path
-								? client.getPageStats(path)
-								: client.getSiteStats();
+							const refreshed = requestStats(client, path, options);
 							promises[key] = refreshed;
 							stats = await refreshed;
 						}

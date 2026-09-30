@@ -156,7 +156,19 @@ const rawSubtitles = siteConfig.banner.homeText.subtitle;
 const subtitleArray = Array.isArray(rawSubtitles)
 	? rawSubtitles
 	: [rawSubtitles];
-const defaultInitialSubtitle = subtitleArray[0] ?? "";
+// IP 归属地欢迎语：开启后用「按访客 IP 生成的问候语」替换静态副标题（保留打字机特效）。
+const ipGreeting = siteConfig.banner.homeText.ipGreeting;
+const ipGreetingEnabled = Boolean(ipGreeting?.enable);
+const ipGreetingTemplate =
+	ipGreeting?.template?.trim() || "欢迎来自{region}的网友，祝你有所收获";
+const ipGreetingFallback =
+	ipGreeting?.fallback?.trim() || "欢迎来自远方的网友，祝你有所收获";
+const ipGreetingEndpoints = (ipGreeting?.endpoints ?? []).filter(
+	(endpoint): endpoint is string => Boolean(endpoint?.trim()),
+);
+const ipGreetingCacheTtl = Math.max(ipGreeting?.cacheTtl ?? 21_600_000, 0);
+const displaySubtitles = ipGreetingEnabled ? [ipGreetingFallback] : subtitleArray;
+const defaultInitialSubtitle = displaySubtitles[0] ?? "";
 const typewriter = siteConfig.banner.homeText.typewriter;
 const carouselFadeDuration = Math.min(
 	Math.max(siteConfig.banner.carousel?.fadeDuration ?? 1200, 300),
@@ -193,7 +205,12 @@ const bannerCors = rainyDayEnabled ? "anonymous" : undefined;
 	style={`--banner-fade-duration: ${carouselFadeDuration}ms;`}
 	data-position={siteConfig.banner.position ?? "center"}
 	data-home-title={siteConfig.banner.homeText.title}
-	data-home-subtitles={JSON.stringify(subtitleArray)}
+	data-home-subtitles={JSON.stringify(displaySubtitles)}
+	data-ip-greeting-enabled={String(ipGreetingEnabled)}
+	data-ip-greeting-template={ipGreetingTemplate}
+	data-ip-greeting-fallback={ipGreetingFallback}
+	data-ip-greeting-endpoints={JSON.stringify(ipGreetingEndpoints)}
+	data-ip-greeting-cache-ttl={String(ipGreetingCacheTtl)}
 	data-subtitle-typewriter-enabled={String(typewriter.enable)}
 	data-subtitle-typewriter-loop={String(typewriter.loop)}
 	data-subtitle-typewriter-speed={String(Math.max(typewriter.speed, 1))}
@@ -288,6 +305,7 @@ const bannerCors = rainyDayEnabled ? "anonymous" : undefined;
 		EASING_DECELERATE,
 		prefersReducedMotion,
 	} from "@utils/motion";
+	import { formatIpGreeting, normalizeIpGeo } from "@utils/ip-region";
 	import { getStoredWallpaperMode } from "@utils/setting-utils";
 	import { WALLPAPER_MODE_CHANGE_EVENT, THEME_CHANGE_EVENT } from "@constants/constants";
 	import type { SidebarPage } from "@/types/sidebarConfig";
@@ -456,6 +474,114 @@ const bannerCors = rainyDayEnabled ? "anonymous" : undefined;
 			subtitle.textContent = texts[0] || "";
 			subtitle.dataset.subtitleState = "complete";
 		}
+	}
+
+	// ── IP 归属地欢迎语 ──────────────────────────────────────────────────
+	// 副标题初始先显示 fallback，随后按 IP 定位结果替换为「欢迎来自XX的网友……」并重打字。
+	const IP_GREETING_CACHE_KEY = "shirone:ip-greeting";
+	const ipGreetingActive = stage?.dataset.ipGreetingEnabled === "true";
+	const ipGreetingCacheTtl =
+		Number.parseInt(stage?.dataset.ipGreetingCacheTtl || "0", 10) || 0;
+	let ipGreetingState: "idle" | "loading" | "done" = "idle";
+
+	function readIpGreetingCache(): string | null {
+		try {
+			const raw = window.sessionStorage.getItem(IP_GREETING_CACHE_KEY);
+			if (!raw) return null;
+			const parsed = JSON.parse(raw) as { text?: unknown; at?: unknown };
+			if (
+				typeof parsed.text === "string" &&
+				typeof parsed.at === "number" &&
+				Date.now() - parsed.at < ipGreetingCacheTtl
+			) {
+				return parsed.text;
+			}
+			window.sessionStorage.removeItem(IP_GREETING_CACHE_KEY);
+		} catch {
+			// 隐私模式 / 存储被禁用时忽略缓存
+		}
+		return null;
+	}
+
+	function writeIpGreetingCache(text: string) {
+		try {
+			window.sessionStorage.setItem(
+				IP_GREETING_CACHE_KEY,
+				JSON.stringify({ text, at: Date.now() }),
+			);
+		} catch {
+			// ignore
+		}
+	}
+
+	function applyGreetingText(text: string) {
+		if (!stage || !text) return;
+		const next = JSON.stringify([text]);
+		if (stage.dataset.homeSubtitles === next) return;
+		stage.dataset.homeSubtitles = next;
+		subtitle?.setAttribute("aria-label", text);
+		// 重置页标记，让 startSubtitleTyping 用新文案重新播放一次打字机效果。
+		runtime.subtitlePage = null;
+		const page = currentPage();
+		if (page === "home") startSubtitleTyping(page);
+	}
+
+	async function fetchIpGreeting(): Promise<string | null> {
+		if (!stage) return null;
+		const template = stage.dataset.ipGreetingTemplate || "";
+		const fallback = stage.dataset.ipGreetingFallback || "";
+		let endpoints: string[] = [];
+		try {
+			const parsed = JSON.parse(stage.dataset.ipGreetingEndpoints || "[]");
+			if (Array.isArray(parsed)) {
+				endpoints = parsed.filter(
+					(item): item is string => typeof item === "string" && !!item,
+				);
+			}
+		} catch {
+			endpoints = [];
+		}
+		for (const endpoint of endpoints) {
+			const controller = new AbortController();
+			const timer = window.setTimeout(() => controller.abort(), 8000);
+			try {
+				const response = await fetch(endpoint, {
+					headers: { Accept: "application/json" },
+					signal: controller.signal,
+				});
+				if (!response.ok) continue;
+				const payload: unknown = await response.json();
+				const region = normalizeIpGeo(payload);
+				if (!region) continue;
+				return formatIpGreeting(region, template, fallback);
+			} catch {
+				// 尝试下一个接口
+			} finally {
+				window.clearTimeout(timer);
+			}
+		}
+		return null;
+	}
+
+	function resolveIpGreeting() {
+		if (!ipGreetingActive || ipGreetingState !== "idle") return;
+		const cached = readIpGreetingCache();
+		if (cached) {
+			ipGreetingState = "done";
+			applyGreetingText(cached);
+			return;
+		}
+		ipGreetingState = "loading";
+		void fetchIpGreeting().then((text) => {
+			if (text) {
+				ipGreetingState = "done";
+				writeIpGreetingCache(text);
+				applyGreetingText(text);
+			} else {
+				// 定位失败：保留 fallback，下次导航时再试。
+				ipGreetingState = "idle";
+			}
+		});
 	}
 
 	function readMotionDuration(property: string, fallback: number): number {
@@ -997,6 +1123,7 @@ const bannerCors = rainyDayEnabled ? "anonymous" : undefined;
 
 	if (stage) {
 		syncBanner();
+		resolveIpGreeting();
 		if (!window.__shironeBannerBound) {
 			window.__shironeBannerBound = true;
 			window.addEventListener(WALLPAPER_MODE_CHANGE_EVENT, () => syncBanner());
@@ -1030,6 +1157,7 @@ const bannerCors = rainyDayEnabled ? "anonymous" : undefined;
 			});
 			document.addEventListener("swup:page:view", () => {
 				scheduleNavigationSync(true);
+				resolveIpGreeting();
 			});
 			document.fonts?.ready.then(scheduleContextTitleFit);
 		}

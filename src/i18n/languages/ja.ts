@@ -185,6 +185,8 @@ export const ja: Translation = {
 	[Key.statsPageTitle]: "アクセス統計",
 	[Key.statsPageDescription]: "このブログの訪問者とページビューの概要です。",
 	[Key.statsVisitors]: "訪問者",
+	[Key.siteStatsTodayVisitors]: "今日の訪問者",
+	[Key.siteStatsTotalVisits]: "累計アクセス",
 	[Key.statsLast7Days]: "過去7日間",
 	[Key.statsLast30Days]: "過去30日間",
 	[Key.statsAllTime]: "全期間",

@@ -177,6 +177,8 @@ export const th: Translation = {
 	[Key.statsPageTitle]: "สถิติการเข้าชม",
 	[Key.statsPageDescription]: "ภาพรวมผู้เข้าชมและจำนวนการดูหน้าของบล็อกนี้",
 	[Key.statsVisitors]: "ผู้เข้าชม",
+	[Key.siteStatsTodayVisitors]: "ผู้เข้าชมวันนี้",
+	[Key.siteStatsTotalVisits]: "การเข้าชมทั้งหมด",
 	[Key.statsLast7Days]: "7 วันที่ผ่านมา",
 	[Key.statsLast30Days]: "30 วันที่ผ่านมา",
 	[Key.statsAllTime]: "ทั้งหมด",

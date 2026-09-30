@@ -186,6 +186,8 @@ export const en: Translation = {
 	[Key.statsPageTitle]: "Traffic Statistics",
 	[Key.statsPageDescription]: "Visitor and page view overview for this blog.",
 	[Key.statsVisitors]: "Visitors",
+	[Key.siteStatsTodayVisitors]: "Today's Visitors",
+	[Key.siteStatsTotalVisits]: "Total Visits",
 	[Key.statsLast7Days]: "Last 7 days",
 	[Key.statsLast30Days]: "Last 30 days",
 	[Key.statsAllTime]: "All time",

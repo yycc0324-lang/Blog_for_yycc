@@ -1,0 +1,68 @@
+---
+/**
+ * 标签页「离开提醒」运行时（全局单例，挂在 Layout 里）。
+ *
+ * 访客切到其他标签页 / 最小化窗口时把 document.title 换成 awayText（颜文字 + 文案），
+ * 回到本页时还原为「当前页面原本的标题」。配合 MutationObserver 监听标题变化，
+ * 因此 swup 无刷新跳转后的新标题也会被正确记忆。
+ *
+ * 零额外负担：`siteConfig.tabTitle.enable` 为 false 时不输出任何 DOM 与脚本。
+ */
+import { siteConfig } from "@/config";
+
+const tabTitle = siteConfig.tabTitle;
+const awayText = tabTitle?.awayText?.trim() ?? "";
+const enabled = Boolean(tabTitle?.enable && awayText);
+---
+
+{enabled && (
+	<script is:inline define:vars={{ awayText }}>
+		(() => {
+			if (typeof window === "undefined") return;
+
+			const away = String(awayText ?? "");
+			if (!away) return;
+
+			let baseTitle = document.title;
+			let showingAway = false;
+
+			// 标题被 swup / 页面脚本改写时更新「原标题」；离开态由脚本自己写入的改动要忽略。
+			const observer = new MutationObserver(() => {
+				if (showingAway) return;
+				baseTitle = document.title;
+			});
+			if (document.head) {
+				observer.observe(document.head, {
+					childList: true,
+					subtree: true,
+					characterData: true,
+				});
+			}
+
+			const applyAwayTitle = () => {
+				if (showingAway) return;
+				baseTitle = document.title;
+				if (baseTitle === away) return;
+				showingAway = true;
+				document.title = away;
+			};
+
+			const restoreTitle = () => {
+				if (!showingAway) return;
+				showingAway = false;
+				document.title = baseTitle;
+			};
+
+			document.addEventListener("visibilitychange", () => {
+				if (document.hidden) applyAwayTitle();
+				else restoreTitle();
+			});
+			window.addEventListener("blur", () => {
+				// 部分浏览器切到其他窗口时不触发 visibilitychange，这里补一刀。
+				if (!document.hasFocus()) applyAwayTitle();
+			});
+			window.addEventListener("focus", restoreTitle);
+			window.addEventListener("pageshow", restoreTitle);
+		})();
+	</script>
+)}

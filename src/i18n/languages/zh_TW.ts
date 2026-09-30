@@ -178,6 +178,8 @@ export const zh_TW: Translation = {
 	[Key.statsPageTitle]: "訪問統計",
 	[Key.statsPageDescription]: "本站訪客與瀏覽資料概覽。",
 	[Key.statsVisitors]: "訪客",
+	[Key.siteStatsTodayVisitors]: "今日訪客",
+	[Key.siteStatsTotalVisits]: "累計訪問",
 	[Key.statsLast7Days]: "近 7 天",
 	[Key.statsLast30Days]: "近 30 天",
 	[Key.statsAllTime]: "全部時間",

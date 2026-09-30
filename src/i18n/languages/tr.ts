@@ -187,6 +187,8 @@ export const tr: Translation = {
 	[Key.statsPageTitle]: "Trafik İstatistikleri",
 	[Key.statsPageDescription]: "Bu blogun ziyaretçi ve sayfa görüntüleme özeti.",
 	[Key.statsVisitors]: "Ziyaretçiler",
+	[Key.siteStatsTodayVisitors]: "Bugünkü ziyaretçiler",
+	[Key.siteStatsTotalVisits]: "Toplam ziyaret",
 	[Key.statsLast7Days]: "Son 7 gün",
 	[Key.statsLast30Days]: "Son 30 gün",
 	[Key.statsAllTime]: "Tüm zamanlar",

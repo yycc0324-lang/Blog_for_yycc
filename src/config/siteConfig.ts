@@ -21,6 +21,11 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 		// 运行天数起点；按当前需求从 9 天前开始计算，之后随日期自然递增。
 		startDate: "2026-09-08T00:00:00+08:00",
 	},
+	// 浏览器标签页「离开提醒」：切到其他标签页时标题变成 awayText，回来自动还原。
+	tabTitle: {
+		enable: true,
+		awayText: "等等不要走！再看看呗~",
+	},
 	// 电脑端顶栏标题与导航内容区域："left" 左对齐，"center" 居中。
 	topAppBar: {
 		contentAlign: "center",
@@ -105,6 +110,21 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 				pauseTime: 2000,
 				// 完成后是否循环播放；关闭表示只播放一次。
 				loop: true,
+			},
+			// 副标题「IP 归属地欢迎语」：按访客 IP 生成「欢迎来自XX的网友，祝你有所收获」，
+			// 保留上方打字机特效；接口失败或未返回前显示 fallback。
+			ipGreeting: {
+				enable: true,
+				template: "欢迎来自{region}的网友，祝你有所收获",
+				fallback: "欢迎来自远方的网友，祝你有所收获",
+				// 按顺序尝试，命中即用；可自行替换为自建接口。
+				endpoints: [
+					"https://api.vore.top/api/IPdata",
+					"https://qifu-api.baidubce.com/ip/local/geo/v1/district",
+					"https://ipapi.co/json/",
+				],
+				// 同一浏览器会话内缓存 6 小时，避免每次跳转都请求。
+				cacheTtl: 21600000,
 			},
 		},
 		carousel: {

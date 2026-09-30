@@ -188,6 +188,8 @@ export const es: Translation = {
 	[Key.statsPageDescription]:
 		"Resumen de visitantes y páginas vistas de este blog.",
 	[Key.statsVisitors]: "Visitantes",
+	[Key.siteStatsTodayVisitors]: "Visitantes de hoy",
+	[Key.siteStatsTotalVisits]: "Visitas totales",
 	[Key.statsLast7Days]: "Últimos 7 días",
 	[Key.statsLast30Days]: "Últimos 30 días",
 	[Key.statsAllTime]: "Todo el tiempo",

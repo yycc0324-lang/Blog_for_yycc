@@ -2,6 +2,7 @@
 import { Font } from "astro:assets";
 import Snackbar from "@components/atoms/overlay/Snackbar.svelte";
 import ConfigCarrier from "@components/system/ConfigCarrier.astro";
+import TabTitleRuntime from "@components/system/TabTitleRuntime.astro";
 import UmamiRuntime from "@components/system/UmamiRuntime.astro";
 import { resolveAsset } from "@utils/asset-utils";
 import { pathsEqual, toAbsoluteUrl, url } from "@utils/url-utils";
@@ -248,7 +249,8 @@ const hasMonoFont =
 		data-banner-has-mobile={String(hasMobileBanner)}
 	>
 		<ConfigCarrier></ConfigCarrier>
-		{umamiOptions && <UmamiRuntime />}
+		<TabTitleRuntime />
+		{umamiOptions && <UmamiRuntime timezone={siteConfig.timeZone} />}
 		{textureEnabled && (
 			<div
 				id="m3e-texture-canvas"
