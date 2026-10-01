@@ -2,9 +2,9 @@
  * IP 归属地解析与欢迎语文案生成（纯函数，无副作用，服务端/客户端通用）。
  *
  * 不同公共接口返回的字段名差异很大，这里做一次归一化：
- *   - api.vore.top      → { ipdata: { info1, info2, info3 } }
- *   - 百度企服 qifu      → { data: { province, city, district, country } }
- *   - ipapi.co          → { country_name, country_code, region, city }
+ *   - ip.zxinc.org      → { data: { country: "中国–江苏–南京", location, local } }
+ *   - ipwho.is          → { success, country, country_code, region, city }
+ *   - api.ip.sb/geoip   → { country, country_code, region, city }
  *   - 其他常见结构       → { province, city, district, country } / { data: {...} } ...
  */
 
@@ -49,6 +49,28 @@ export function normalizeIpGeo(payload: unknown): IpRegion | null {
 	const root = asRecord(payload);
 	if (!root) return null;
 
+	// ip.zxinc.org：把 data.country 的「国家–省–市–区」拆开（这是唯一返回中文的接口）。
+	const data = asRecord(root.data);
+	if (
+		data &&
+		typeof data.country === "string" &&
+		asRecord(data.ip) !== null &&
+		/[–—-]/.test(data.country)
+	) {
+		const parts = data.country
+			.split(/[–—-]/)
+			.map((part) => part.trim())
+			.filter(Boolean);
+		if (parts.length >= 2) {
+			return {
+				country: parts[0] ?? "",
+				province: parts[1] ?? "",
+				city: parts[2] ?? "",
+				district: parts[3] ?? "",
+			};
+		}
+	}
+
 	const records = [
 		root,
 		asRecord(root.data),
@@ -89,10 +111,16 @@ function stripSuffix(value: string): string {
 		.replace(/(特别行政区|省|市|地区|盟|自治州|州)$/, "");
 }
 
-function joinUnique(
-	parts: Array<string | undefined>,
-	separator = "",
-): string {
+/** 拉丁字母/数字相邻时补空格，中文之间直接相连（"美国"+"加利福尼亚州" vs "United States"+"California"）。 */
+function smartJoin(parts: string[]): string {
+	return parts.reduce((acc, part) => {
+		if (!acc) return part;
+		const needsSpace = /[0-9A-Za-z]$/.test(acc) && /^[0-9A-Za-z]/.test(part);
+		return needsSpace ? `${acc} ${part}` : `${acc}${part}`;
+	}, "");
+}
+
+function joinUnique(parts: Array<string | undefined>): string {
 	const cleaned = parts.map((part) => part?.trim() ?? "").filter(Boolean);
 	if (cleaned.length === 0) return "";
 	const result: string[] = [];
@@ -108,7 +136,7 @@ function joinUnique(
 		}
 		result.push(part);
 	}
-	return result.join(separator);
+	return smartJoin(result);
 }
 
 /**
@@ -137,7 +165,7 @@ export function formatIpGreeting(
 	if (isChina) {
 		regionText = joinUnique([province, city]) || district;
 	} else {
-		regionText = joinUnique([country, province, city], " ") || country;
+		regionText = joinUnique([country, province, city]) || country;
 	}
 	if (!regionText) return fallback;
 

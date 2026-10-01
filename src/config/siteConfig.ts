@@ -117,11 +117,11 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 				enable: true,
 				template: "欢迎来自{region}的网友，祝你有所收获",
 				fallback: "欢迎来自远方的网友，祝你有所收获",
-				// 按顺序尝试，命中即用；可自行替换为自建接口。
+				// 按顺序尝试，命中即用；前两个实测支持 CORS，第一个返回中文省市区。
 				endpoints: [
-					"https://api.vore.top/api/IPdata",
-					"https://qifu-api.baidubce.com/ip/local/geo/v1/district",
-					"https://ipapi.co/json/",
+					"https://ip.zxinc.org/api.php?type=json",
+					"https://ipwho.is/",
+					"https://api.ip.sb/geoip",
 				],
 				// 同一浏览器会话内缓存 6 小时，避免每次跳转都请求。
 				cacheTtl: 21600000,

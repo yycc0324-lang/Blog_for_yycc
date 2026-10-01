@@ -478,7 +478,7 @@ const bannerCors = rainyDayEnabled ? "anonymous" : undefined;
 
 	// ── IP 归属地欢迎语 ──────────────────────────────────────────────────
 	// 副标题初始先显示 fallback，随后按 IP 定位结果替换为「欢迎来自XX的网友……」并重打字。
-	const IP_GREETING_CACHE_KEY = "shirone:ip-greeting";
+	const IP_GREETING_CACHE_KEY = "shirone:ip-greeting:v2";
 	const ipGreetingActive = stage?.dataset.ipGreetingEnabled === "true";
 	const ipGreetingCacheTtl =
 		Number.parseInt(stage?.dataset.ipGreetingCacheTtl || "0", 10) || 0;
@@ -553,7 +553,11 @@ const bannerCors = rainyDayEnabled ? "anonymous" : undefined;
 				const payload: unknown = await response.json();
 				const region = normalizeIpGeo(payload);
 				if (!region) continue;
-				return formatIpGreeting(region, template, fallback);
+				const text = formatIpGreeting(region, template, fallback);
+				// 没解析出地区时 formatIpGreeting 会原样返回兜底文案，
+				// 这种情况要当作失败（继续试下一个接口），绝不能把兜底文案缓存起来。
+				if (!text || text === fallback) continue;
+				return text;
 			} catch {
 				// 尝试下一个接口
 			} finally {
