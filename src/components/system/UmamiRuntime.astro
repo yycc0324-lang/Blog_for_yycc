@@ -158,6 +158,8 @@ const { timezone = "" } = Astro.props;
 			scheduled = true;
 			const run = () => {
 				scheduled = false;
+				// 内联脚本在 <body> 顶部执行时页脚还没解析出来，所以绑定放在首次调度里。
+				bindRangeRefresh();
 				void loadStats();
 			};
 			if (typeof window.requestAnimationFrame === "function") {
@@ -233,12 +235,62 @@ const { timezone = "" } = Astro.props;
 				: client.getSiteStats(options);
 		}
 
+		// ── 区间统计刷新（今日访客 / 累计访问）────────────────────────────
+		// 首次读取往往早于「本次访问」被 Umami 聚合完成，所以 10 秒后补一次；
+		// 标签页重新可见时也刷新一次，但用最小间隔限流，避免反复切页刷爆接口。
+		const RANGE_ROOT_SELECTOR = "[data-shirone-umami-range]";
+		const RANGE_REFRESH_MIN_INTERVAL = 60_000;
+		let lastRangeRefreshAt = 0;
+
+		function hasRangeRoots() {
+			return document.querySelector(RANGE_ROOT_SELECTOR) !== null;
+		}
+
+		function refreshRangeStats(force) {
+			if (!hasRangeRoots() || !window.oddmisc) return;
+			const now = Date.now();
+			if (!force && now - lastRangeRefreshAt < RANGE_REFRESH_MIN_INTERVAL) {
+				return;
+			}
+			lastRangeRefreshAt = now;
+			const promises = window.__shironeUmamiStatsPromises;
+			document.querySelectorAll(RANGE_ROOT_SELECTOR).forEach((root) => {
+				delete root.dataset.umamiLoaded;
+				// 关键：内存里还留着上一轮已完成的 Promise，不清掉就会直接复用旧结果、不发请求。
+				if (promises) {
+					const path = root.dataset.umamiPath;
+					const range = root.dataset.shironeUmamiRange;
+					const key = `${path ? `page:${path}` : "site"}${range ? `:${range}` : ""}`;
+					delete promises[key];
+				}
+			});
+			schedule();
+		}
+
+		let rangeRefreshBound = false;
+		function bindRangeRefresh() {
+			if (rangeRefreshBound || !hasRangeRoots()) return;
+			rangeRefreshBound = true;
+			// 本次访问发生在本页加载之后，稍等聚合完成再补一次，让「自己刚访问」也能看到。
+			window.setTimeout(() => refreshRangeStats(true), 10_000);
+			// 标签页重新可见时刷新（有最小间隔限流）。
+			document.addEventListener("visibilitychange", () => {
+				if (!document.hidden) refreshRangeStats(false);
+			});
+		}
+
 		async function loadStats() {
 			const roots = Array.from(document.querySelectorAll(rootSelector)).filter(
 				(root) => !root.dataset.umamiLoaded,
 			);
 			const client = window.oddmisc;
 			if (roots.length === 0 || !client) return;
+
+			// 「今日访客 / 累计访问」必须实时：oddmisc 默认把结果缓存 1 小时
+			// （localStorage + 内存），这里在读取区间统计前先清一次，强制走网络。
+			if (roots.some((root) => root.dataset.shironeUmamiRange)) {
+				client.clearCache();
+			}
 
 			const promises = (window.__shironeUmamiStatsPromises ??= {});
 			await Promise.all(
