@@ -5,6 +5,7 @@ import ConfigCarrier from "@components/system/ConfigCarrier.astro";
 import TabTitleRuntime from "@components/system/TabTitleRuntime.astro";
 import UmamiRuntime from "@components/system/UmamiRuntime.astro";
 import { resolveAsset } from "@utils/asset-utils";
+import { listLocalBannerImages } from "@utils/banner-assets";
 import { pathsEqual, toAbsoluteUrl, url } from "@utils/url-utils";
 import {
 	expressiveCodeConfig,
@@ -73,8 +74,11 @@ function hasBannerImages(source: BannerSourceValue | undefined): boolean {
 const defaultSocialImage =
 	siteConfig.ogImage ||
 	getFirstBannerImage(siteConfig.banner.src.desktop) ||
+	listLocalBannerImages("desktop")[0] ||
 	getFirstBannerImage(siteConfig.banner.src.tablet ?? []) ||
+	listLocalBannerImages("tablet")[0] ||
 	getFirstBannerImage(siteConfig.banner.src.mobile) ||
+	listLocalBannerImages("mobile")[0] ||
 	"";
 const candidateOgImage = ogImage || banner || defaultSocialImage;
 const resolvedOgImage = await resolveAsset(candidateOgImage);
@@ -108,11 +112,16 @@ const RainyWindowLayer = rainyDayEnabled
 	? (await import("virtual:shirone-rainy-window")).default
 	: null;
 
-const hasDesktopBanner = hasBannerImages(siteConfig.banner.src.desktop);
+const hasDesktopBanner =
+	hasBannerImages(siteConfig.banner.src.desktop) ||
+	listLocalBannerImages("desktop").length > 0;
+const hasMobileBanner =
+	hasBannerImages(siteConfig.banner.src.mobile) ||
+	listLocalBannerImages("mobile").length > 0;
 const hasTabletBanner =
 	hasBannerImages(siteConfig.banner.src.tablet ?? []) ||
-	hasBannerImages(siteConfig.banner.src.mobile);
-const hasMobileBanner = hasBannerImages(siteConfig.banner.src.mobile);
+	listLocalBannerImages("tablet").length > 0 ||
+	hasMobileBanner;
 
 let pageTitle: string;
 if (title) {

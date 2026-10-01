@@ -2,6 +2,7 @@
 import { getImage } from "astro:assets";
 import BannerWaves from "@components/molecules/BannerWaves.astro";
 import { resolveImageAsset } from "@utils/asset-utils";
+import { listLocalBannerImages } from "@utils/banner-assets";
 import { url } from "@utils/url-utils";
 import { Icon } from "astro-icon/components";
 import { resolveRainyDayOptions, siteConfig } from "@/config";
@@ -112,19 +113,34 @@ function normalizeBannerSource(
 	return { light: [], dark: [] };
 }
 
-const desktopSource = normalizeBannerSource(
+/**
+ * 分组解析优先级：
+ *   1. 配置里显式写了非空数组 → 用配置（可精确控制顺序 / 只挑几张 / 远程图 / 深浅色两套）
+ *   2. 配置为空（[] 或未填）→ 自动扫描 assets/images/banner/<组>/ 下的所有图片，按文件名排序
+ * 这样平时只要往目录里丢图 / 删图即可，无需改配置。
+ */
+const resolveBannerGroup = (
+	explicit: unknown,
+	group: "desktop" | "tablet" | "mobile",
+): { light: string[]; dark: string[] } => {
+	const normalized = normalizeBannerSource(explicit ?? [], group);
+	if (normalized.light.length > 0 || normalized.dark.length > 0) {
+		return normalized;
+	}
+	const auto = listLocalBannerImages(group);
+	return auto.length > 0 ? { light: auto, dark: auto } : normalized;
+};
+
+const desktopSource = resolveBannerGroup(
 	siteConfig.banner.src.desktop,
 	"desktop",
 );
-const mobileSource = normalizeBannerSource(
-	siteConfig.banner.src.mobile,
-	"mobile",
-);
-const tabletSourceNormalized = normalizeBannerSource(
-	siteConfig.banner.src.tablet ?? [],
+const mobileSource = resolveBannerGroup(siteConfig.banner.src.mobile, "mobile");
+const tabletSourceNormalized = resolveBannerGroup(
+	siteConfig.banner.src.tablet,
 	"tablet",
 );
-// 平板组未配置或为空时回退到手机组，保持向后兼容。
+// 平板组为空时回退到手机组，保持向后兼容。
 const tabletSource =
 	tabletSourceNormalized.light.length > 0 ? tabletSourceNormalized : mobileSource;
 
@@ -199,6 +215,23 @@ const carouselFadeDuration = Math.min(
 	3000,
 );
 const carouselAnimation = siteConfig.banner.carousel?.animation ?? "ken-burns";
+// 轮播间隔：通用值 + 三端各自覆盖（未填逐级回退）
+const carouselConfig = siteConfig.banner.carousel;
+const clampCarouselInterval = (value: number | undefined, fallback: number) =>
+	Math.max(value ?? fallback, 3000);
+const carouselInterval = clampCarouselInterval(carouselConfig.interval, 1800000);
+const carouselIntervalDesktop = clampCarouselInterval(
+	carouselConfig.intervalDesktop,
+	carouselInterval,
+);
+const carouselIntervalTablet = clampCarouselInterval(
+	carouselConfig.intervalTablet,
+	carouselIntervalDesktop,
+);
+const carouselIntervalMobile = clampCarouselInterval(
+	carouselConfig.intervalMobile,
+	carouselIntervalTablet,
+);
 const initialDesktopSrc = desktopImages.light[0] ?? "";
 const initialTabletSrc = tabletImages.light[0] ?? "";
 const initialMobileSrc = mobileImages.light[0] ?? "";
@@ -240,7 +273,10 @@ const bannerCors = rainyDayEnabled ? "anonymous" : undefined;
 	data-tablet-images={JSON.stringify(tabletImages)}
 	data-mobile-images={JSON.stringify(mobileImages)}
 	data-carousel-enabled={String(siteConfig.banner.carousel.enable)}
-	data-carousel-interval={String(Math.max(siteConfig.banner.carousel.interval, 3000))}
+	data-carousel-interval={String(carouselInterval)}
+	data-carousel-interval-desktop={String(carouselIntervalDesktop)}
+	data-carousel-interval-tablet={String(carouselIntervalTablet)}
+	data-carousel-interval-mobile={String(carouselIntervalMobile)}
 	data-carousel-fade-duration={String(carouselFadeDuration)}
 	data-carousel-animation={carouselAnimation}
 	style={`--banner-fade-duration: ${carouselFadeDuration}ms; --banner-pos-desktop: ${positionDesktop}; --banner-pos-tablet: ${positionTablet}; --banner-pos-mobile: ${positionMobile};`}
@@ -757,11 +793,22 @@ const bannerCors = rainyDayEnabled ? "anonymous" : undefined;
 		}
 	}
 
+	/** 当前视口的轮播间隔（毫秒）：手机/平板/桌面可各自单独配置，未配则回退通用 interval。 */
 	function getCarouselInterval(): number {
-		return Math.max(
-			Number.parseInt(stage?.dataset.carouselInterval || "6000", 10),
+		const fallback = Math.max(
+			Number.parseInt(stage?.dataset.carouselInterval || "1800000", 10) ||
+				1800000,
 			3000,
 		);
+		const viewport = currentViewport();
+		const perViewport =
+			viewport === "mobile"
+				? stage?.dataset.carouselIntervalMobile
+				: viewport === "tablet"
+					? stage?.dataset.carouselIntervalTablet
+					: stage?.dataset.carouselIntervalDesktop;
+		const value = Number.parseInt(perViewport || "", 10) || fallback;
+		return Math.max(value, 3000);
 	}
 
 	function getFadeDuration(): number {
@@ -911,10 +958,7 @@ const bannerCors = rainyDayEnabled ? "anonymous" : undefined;
 
 	function scheduleRotation(images: string[]) {
 		stopRotation();
-		const interval = Math.max(
-			Number.parseInt(stage?.dataset.carouselInterval || "6000", 10) || 6000,
-			3000,
-		);
+		const interval = getCarouselInterval();
 		// 与「时间片」对齐：睡到下一个时间片边界再换，而不是「加载后 interval」。
 		// 这样页面开着时显示的画面也会与当前时间片保持一致，不会越走越偏。
 		const now = Date.now();
@@ -1086,7 +1130,7 @@ const bannerCors = rainyDayEnabled ? "anonymous" : undefined;
 	 */
 	function timeSlotIndex(count: number): number {
 		if (count <= 1) return 0;
-		const interval = Number(stage?.dataset.carouselInterval) || 1800000;
+		const interval = getCarouselInterval();
 		if (!Number.isFinite(interval) || interval <= 0) return 0;
 		return Math.floor(Date.now() / interval) % count;
 	}

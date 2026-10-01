@@ -113,7 +113,14 @@ export type BannerConfig = {
 	};
 	carousel: {
 		enable: boolean;
+		/** 通用轮播间隔（毫秒，运行时最小值 3000；1800000 = 30 分钟） */
 		interval: number;
+		/** 桌面（≥1024px）间隔；不填回退 interval */
+		intervalDesktop?: number;
+		/** 平板（768–1023.98px）间隔；不填回退 intervalDesktop / interval */
+		intervalTablet?: number;
+		/** 手机（<768px）间隔；不填回退 intervalTablet / interval */
+		intervalMobile?: number;
 		/** 交叉淡入淡出过渡时长（毫秒，默认 1200） */
 		fadeDuration?: number;
 		/** 运镜呼吸动画模式："ken-burns"（默认，序列运镜）| "zoom-in" | "zoom-out" | "pan-left" | "pan-right" | "none" */

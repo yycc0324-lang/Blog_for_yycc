@@ -73,21 +73,16 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 		//   mobile  → < 768px（竖版 2:3 最佳）
 		// 三端壁纸在**所有页面**都会显示（含文章页），不再限制仅首页。
 		// 数组顺序就是轮播顺序；只需要静态 Banner 时，每组保留一张图片即可。
+		// 数组留空（[]）= 自动扫描对应目录，按文件名自然顺序轮播：
+		//   desktop → src/assets/images/banner/desktop/   （≥1024px，横向图）
+		//   tablet  → src/assets/images/banner/tablet/    （768–1023.98px，方图/竖图；空则回退 mobile）
+		//   mobile  → src/assets/images/banner/mobile/    （<768px，2:3 竖图最佳）
+		// 平时只要往目录里丢图 / 删图即可，不用改这里。
+		// 想精确控制顺序、只挑其中几张、用远程图或深浅色两套时，改成显式数组即可（非空则优先）。
 		src: {
-			desktop: [
-				"assets/images/banner/desktop/1.webp",
-				"assets/images/banner/desktop/2.webp",
-				"assets/images/banner/desktop/3.webp",
-				"assets/images/banner/desktop/4.webp",
-				"assets/images/banner/desktop/5.webp",
-				"assets/images/banner/desktop/6.webp",
-			],
-			// 平板专用组：把竖图/方图放进 assets/images/banner/tablet/ 后填在这里。
-			// 目前留空 → 自动回退用下面的 mobile 组。
+			desktop: [],
 			tablet: [],
-			mobile: [
-				"assets/images/banner/mobile/1.webp",
-			],
+			mobile: [],
 		},
 		// 图片裁切焦点（CSS object-position）："top"、"center" 或 "bottom"。
 		position: "center",
@@ -136,10 +131,15 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 		carousel: {
 			// 是否开启多张图片自动轮播；多张图片时生效，单张图片时自动降级为静态展示。
 			enable: true,
-			// 轮播切换间隔时间（毫秒），运行时最小值限制为 3000ms。
+			// 通用轮播间隔时间（毫秒），运行时最小值限制为 3000ms。
 			// 30 * 60 * 1000 = 30 分钟换一张壁纸。
 			// 调试时可临时改成 5000（5 秒）快速验证轮播是否生效。
 			interval: 1800000,
+			// 下面三项可按端单独覆盖，不填则沿用上面的 interval。
+			// 轮播按「时间片」对齐：所有人同一时间看到同一张，到点整体切换。
+			intervalDesktop: 1800000, // 桌面 ≥1024px：30 分钟
+			intervalTablet: 1800000, // 平板 768–1023.98px：30 分钟
+			intervalMobile: 1800000, // 手机 <768px：30 分钟
 			// 交叉淡入淡出（Crossfade）过渡时长（毫秒，默认 1200ms）。
 			fadeDuration: 1200,
 			// 运镜呼吸动画模式："ken-burns"（默认，循环运镜）| "zoom-in"（推进）| "zoom-out"（拉远）| "pan-left"（左移）| "pan-right"（右移）| "none"（无运镜）。
