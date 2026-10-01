@@ -170,8 +170,8 @@ export const zh_CN: Translation = {
 	[Key.statsToday]: "今天",
 	[Key.statsYesterday]: "昨天",
 	[Key.statsDaysAgo]: "{days} 天前",
-	[Key.profileStatsPageViews]: "页面浏览（目前没有接入该功能，数据为虚拟）",
-	[Key.profileStatsVisits]: "访问次数（目前没有接入该功能，数据为虚拟）",
+	[Key.profileStatsPageViews]: "页面浏览",
+	[Key.profileStatsVisits]: "访问次数",
 	[Key.visitorCountPrefix]: "已有：",
 	[Key.visitorCountSuffix]: " 位不同用户访问",
 
