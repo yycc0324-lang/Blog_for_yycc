@@ -67,7 +67,11 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 	banner: {
 		// 推荐将图片放入 src/assets，并填写相对 src 的路径，以启用构建期 AVIF/WebP 响应式优化。
 		// 以 "/" 开头的 public 路径与远程 URL 仍可用，但会保留原图、不生成候选。
-		// desktop 用于 >= 1024px；mobile 仅用于 < 1024px 的首页，手机非首页不显示壁纸。
+		// 三端各一组图，按视口断点自动选择：
+		//   desktop → ≥ 1024px（横版为主）
+		//   tablet  → 768 ~ 1023.98px（竖版/方版为主；留空或注释掉则自动回退到 mobile 组）
+		//   mobile  → < 768px（竖版 2:3 最佳）
+		// 三端壁纸在**所有页面**都会显示（含文章页），不再限制仅首页。
 		// 数组顺序就是轮播顺序；只需要静态 Banner 时，每组保留一张图片即可。
 		src: {
 			desktop: [
@@ -78,17 +82,19 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 				"assets/images/banner/desktop/5.webp",
 				"assets/images/banner/desktop/6.webp",
 			],
+			// 平板专用组：把竖图/方图放进 assets/images/banner/tablet/ 后填在这里。
+			// 目前留空 → 自动回退用下面的 mobile 组。
+			tablet: [],
 			mobile: [
 				"assets/images/banner/mobile/1.webp",
-				"assets/images/banner/mobile/2.webp",
-				"assets/images/banner/mobile/3.webp",
-				"assets/images/banner/mobile/4.webp",
-				"assets/images/banner/mobile/5.webp",
-				"assets/images/banner/mobile/6.webp",
 			],
 		},
-		// 图片裁切焦点："top"、"center" 或 "bottom"。
+		// 图片裁切焦点（CSS object-position）："top"、"center" 或 "bottom"。
 		position: "center",
+		// 平板裁切焦点；不填则回退 position。
+		positionTablet: "center",
+		// 手机裁切焦点；不填则回退 positionTablet / position。
+		positionMobile: "center",
 		dim: {
 			// 在图片上覆盖黑色遮罩以提高标题和顶部栏的对比度；opacity 范围为 0-1。
 			enable: true,

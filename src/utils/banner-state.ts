@@ -1,7 +1,7 @@
 import type { WallpaperMode } from "@/types/config";
 import type { SidebarPage } from "@/types/sidebarConfig";
 
-export type BannerViewport = "desktop" | "mobile";
+export type BannerViewport = "desktop" | "tablet" | "mobile";
 export type BannerContentLayout = "banner" | "compact";
 
 export type BannerCopyMode = "home" | "context" | null;
@@ -26,10 +26,9 @@ export interface BannerState {
 
 export function resolveBannerState(input: BannerStateInput): BannerState {
 	const isHome = input.page === "home";
-	const visible =
-		input.mode === "banner" &&
-		input.imageCount > 0 &&
-		(input.viewport === "desktop" || isHome);
+	// 桌面 / 平板 / 手机三组只要当前视口这组有图就显示 Banner。
+	// 手机与平板端不再限制「仅首页」，与桌面端行为保持一致。
+	const visible = input.mode === "banner" && input.imageCount > 0;
 
 	const copyMode: BannerCopyMode = !visible
 		? null

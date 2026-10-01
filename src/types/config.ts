@@ -70,12 +70,24 @@ export type BannerThemeSource = {
 
 export type BannerSourceValue = string[] | BannerThemeSource;
 
+/** 图片裁切焦点（对应 CSS object-position）。 */
+export type BannerPosition = "top" | "center" | "bottom";
+
 export type BannerConfig = {
 	src: {
+		/** 桌面 ≥1024px 专用 */
 		desktop: BannerSourceValue;
+		/** 平板 768–1023.98px 专用；未配置或为空时回退到 mobile 组 */
+		tablet?: BannerSourceValue;
+		/** 手机 <768px 专用 */
 		mobile: BannerSourceValue;
 	};
-	position?: "top" | "center" | "bottom";
+	/** 桌面（≥1024px）图片裁切焦点 */
+	position?: BannerPosition;
+	/** 平板（768–1023.98px）裁切焦点；未配置时回退到 position */
+	positionTablet?: BannerPosition;
+	/** 手机（<768px）裁切焦点；未配置时回退到 positionTablet / position */
+	positionMobile?: BannerPosition;
 	dim: {
 		enable: boolean;
 		opacity: number;

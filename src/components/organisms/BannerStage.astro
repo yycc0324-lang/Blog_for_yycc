@@ -37,7 +37,7 @@ interface ResponsiveBannerImage {
 
 const optimizeBannerImage = async (
 	src: string,
-	viewport: "desktop" | "mobile",
+	viewport: "desktop" | "tablet" | "mobile",
 ): Promise<ResponsiveBannerImage> => {
 	const resolved = await resolveImageAsset(src);
 	if (typeof resolved === "string") {
@@ -49,7 +49,11 @@ const optimizeBannerImage = async (
 	}
 
 	const requestedWidths =
-		viewport === "desktop" ? [1280, 1600, 1920] : [640, 828, 1080];
+		viewport === "desktop"
+			? [1280, 1600, 1920]
+			: viewport === "tablet"
+				? [828, 1080, 1366]
+				: [640, 828, 1080];
 	const widths = [
 		...new Set([
 			...requestedWidths.filter((width) => width <= resolved.width),
@@ -116,10 +120,20 @@ const mobileSource = normalizeBannerSource(
 	siteConfig.banner.src.mobile,
 	"mobile",
 );
+const tabletSourceNormalized = normalizeBannerSource(
+	siteConfig.banner.src.tablet ?? [],
+	"tablet",
+);
+// 平板组未配置或为空时回退到手机组，保持向后兼容。
+const tabletSource =
+	tabletSourceNormalized.light.length > 0 ? tabletSourceNormalized : mobileSource;
 
 // 对图片按路径去重进行优化缓存
 const optimizationCache = new Map<string, Promise<ResponsiveBannerImage>>();
-const getOptimized = (src: string, viewport: "desktop" | "mobile") => {
+const getOptimized = (
+	src: string,
+	viewport: "desktop" | "tablet" | "mobile",
+) => {
 	const key = `${viewport}:${src}`;
 	let p = optimizationCache.get(key);
 	if (!p) {
@@ -135,6 +149,12 @@ const desktopLightResponsive = await Promise.all(
 const desktopDarkResponsive = await Promise.all(
 	desktopSource.dark.map((src) => getOptimized(src, "desktop")),
 );
+const tabletLightResponsive = await Promise.all(
+	tabletSource.light.map((src) => getOptimized(src, "tablet")),
+);
+const tabletDarkResponsive = await Promise.all(
+	tabletSource.dark.map((src) => getOptimized(src, "tablet")),
+);
 const mobileLightResponsive = await Promise.all(
 	mobileSource.light.map((src) => getOptimized(src, "mobile")),
 );
@@ -145,6 +165,10 @@ const mobileDarkResponsive = await Promise.all(
 const desktopImages = {
 	light: desktopLightResponsive.map(({ fallback }) => fallback),
 	dark: desktopDarkResponsive.map(({ fallback }) => fallback),
+};
+const tabletImages = {
+	light: tabletLightResponsive.map(({ fallback }) => fallback),
+	dark: tabletDarkResponsive.map(({ fallback }) => fallback),
 };
 const mobileImages = {
 	light: mobileLightResponsive.map(({ fallback }) => fallback),
@@ -176,12 +200,28 @@ const carouselFadeDuration = Math.min(
 );
 const carouselAnimation = siteConfig.banner.carousel?.animation ?? "ken-burns";
 const initialDesktopSrc = desktopImages.light[0] ?? "";
+const initialTabletSrc = tabletImages.light[0] ?? "";
 const initialMobileSrc = mobileImages.light[0] ?? "";
-const initialSrc = initialDesktopSrc || initialMobileSrc;
+const initialSrc = initialDesktopSrc || initialTabletSrc || initialMobileSrc;
 const initialDesktopImage = desktopLightResponsive[0];
+const initialTabletImage = tabletLightResponsive[0];
 const initialMobileImage = mobileLightResponsive[0];
-const initialImage = initialDesktopImage ?? initialMobileImage;
-const initialMobileBanner = page === "home";
+const initialImage = initialDesktopImage ?? initialTabletImage ?? initialMobileImage;
+
+// 三端独立的裁切焦点（未配置时逐级回退，保证向后兼容）
+const positionDesktop = siteConfig.banner.position ?? "center";
+const positionTablet = siteConfig.banner.positionTablet ?? positionDesktop;
+const positionMobile = siteConfig.banner.positionMobile ?? positionTablet;
+
+// <picture> 的三组 <source>：桌面 ≥1024 / 平板 768–1023.98 / 手机 <768
+const bannerSourceGroups = [
+	{ media: "(min-width: 1024px)", image: initialDesktopImage },
+	{
+		media: "(min-width: 768px) and (max-width: 1023.98px)",
+		image: initialTabletImage,
+	},
+	{ media: "(max-width: 767.98px)", image: initialMobileImage },
+];
 
 // 全页雨幕（organisms/RainyWindowLayer，由 Layout 挂载）以「当前可见的横幅图片」作为折射源：
 // 启用时给横幅图片加 crossorigin，远程图床只有在 CORS 模式下抓取成功，特效库的纹理加载
@@ -197,13 +237,13 @@ const bannerCors = rainyDayEnabled ? "anonymous" : undefined;
 	data-copy-mode={initialCopyMode}
 	data-context-motion="idle"
 	data-desktop-images={JSON.stringify(desktopImages)}
+	data-tablet-images={JSON.stringify(tabletImages)}
 	data-mobile-images={JSON.stringify(mobileImages)}
 	data-carousel-enabled={String(siteConfig.banner.carousel.enable)}
 	data-carousel-interval={String(Math.max(siteConfig.banner.carousel.interval, 3000))}
 	data-carousel-fade-duration={String(carouselFadeDuration)}
 	data-carousel-animation={carouselAnimation}
-	style={`--banner-fade-duration: ${carouselFadeDuration}ms;`}
-	data-position={siteConfig.banner.position ?? "center"}
+	style={`--banner-fade-duration: ${carouselFadeDuration}ms; --banner-pos-desktop: ${positionDesktop}; --banner-pos-tablet: ${positionTablet}; --banner-pos-mobile: ${positionMobile};`}
 	data-home-title={siteConfig.banner.homeText.title}
 	data-home-subtitles={JSON.stringify(displaySubtitles)}
 	data-ip-greeting-enabled={String(ipGreetingEnabled)}
@@ -219,34 +259,28 @@ const bannerCors = rainyDayEnabled ? "anonymous" : undefined;
 >
 	<div class="banner-stage__media" aria-hidden="true">
 		<picture>
-			{initialDesktopImage?.avifSrcset && (
-				<source media="(min-width: 1024px)" type="image/avif" srcset={initialDesktopImage.avifSrcset} sizes="100vw" />
-			)}
-			{initialDesktopImage?.webpSrcset && (
-				<source media="(min-width: 1024px)" type="image/webp" srcset={initialDesktopImage.webpSrcset} sizes="100vw" />
-			)}
-			{initialDesktopImage && !initialDesktopImage.avifSrcset && !initialDesktopImage.webpSrcset && (
-				<source media="(min-width: 1024px)" srcset={initialDesktopImage.fallback} />
-			)}
-			{initialMobileBanner && initialMobileImage?.avifSrcset && (
-				<source media="(max-width: 1023.98px)" type="image/avif" srcset={initialMobileImage.avifSrcset} sizes="100vw" />
-			)}
-			{initialMobileBanner && initialMobileImage?.webpSrcset && (
-				<source media="(max-width: 1023.98px)" type="image/webp" srcset={initialMobileImage.webpSrcset} sizes="100vw" />
-			)}
-			{initialMobileBanner && initialMobileImage && !initialMobileImage.avifSrcset && !initialMobileImage.webpSrcset && (
-				<source media="(max-width: 1023.98px)" srcset={initialMobileImage.fallback} />
-			)}
+			{bannerSourceGroups.map(({ media, image }) => (
+				<>
+					{image?.avifSrcset && (
+						<source media={media} type="image/avif" srcset={image.avifSrcset} sizes="100vw" />
+					)}
+					{image?.webpSrcset && (
+						<source media={media} type="image/webp" srcset={image.webpSrcset} sizes="100vw" />
+					)}
+					{image && !image.avifSrcset && !image.webpSrcset && (
+						<source media={media} srcset={image.fallback} />
+					)}
+				</>
+			))}
 			<img
 				class="banner-stage__image banner-stage__image--front banner-stage__image--active"
-				src={initialMobileBanner ? initialSrc || undefined : undefined}
+				src={initialSrc || undefined}
 				width={initialImage?.width}
 				height={initialImage?.height}
 				fetchpriority="high"
 				loading="eager"
 				decoding="async"
 				alt=""
-				style={`object-position: ${siteConfig.banner.position ?? "center"};`}
 				crossorigin={bannerCors}
 			/>
 		</picture>
@@ -394,6 +428,7 @@ const bannerCors = rainyDayEnabled ? "anonymous" : undefined;
 		activeLayer: 0,
 		images: {
 			desktop: parseThemeImages(stage?.dataset.desktopImages),
+			tablet: parseThemeImages(stage?.dataset.tabletImages),
 			mobile: parseThemeImages(stage?.dataset.mobileImages),
 		},
 		activeTheme: isDarkMode() ? "dark" : "light",
@@ -418,9 +453,9 @@ const bannerCors = rainyDayEnabled ? "anonymous" : undefined;
 	}
 
 	function currentViewport(): BannerViewport {
-		return window.matchMedia("(min-width: 1024px)").matches
-			? "desktop"
-			: "mobile";
+		if (window.matchMedia("(min-width: 1024px)").matches) return "desktop";
+		if (window.matchMedia("(min-width: 768px)").matches) return "tablet";
+		return "mobile";
 	}
 
 	function stopRotation() {
@@ -1138,6 +1173,8 @@ const bannerCors = rainyDayEnabled ? "anonymous" : undefined;
 				}
 			});
 			window.matchMedia("(min-width: 1024px)").addEventListener("change", () => syncBanner());
+			// 平板/手机分界（768px）也要重新挑图，否则横竖屏切换或折叠屏展开时会用到错的那组。
+			window.matchMedia("(min-width: 768px)").addEventListener("change", () => syncBanner());
 				window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", () => {
 					if (prefersReducedMotion()) {
 						stopLayerMotions();
@@ -1201,9 +1238,19 @@ const bannerCors = rainyDayEnabled ? "anonymous" : undefined;
 			width: 100%
 			height: 100%
 			object-fit: cover
+			/* 三端各自的裁切焦点（--banner-pos-* 由组件内联在 section 上） */
+			object-position: var(--banner-pos-desktop, center)
 			opacity: 0
 			will-change: opacity, transform
 			transform-origin: center center
+
+		@media (max-width: 1023.98px)
+			.banner-stage__image
+				object-position: var(--banner-pos-tablet, var(--banner-pos-desktop, center))
+
+		@media (max-width: 767.98px)
+			.banner-stage__image
+				object-position: var(--banner-pos-mobile, var(--banner-pos-tablet, var(--banner-pos-desktop, center)))
 
 		.banner-stage__image--fading
 			transition: opacity var(--banner-fade-duration, 1200ms) var(--m3e-easing-standard)
@@ -1327,9 +1374,8 @@ const bannerCors = rainyDayEnabled ? "anonymous" : undefined;
 		display: none
 
 	@media (max-width: 1023.98px)
-		:global(body:not([data-current-page="home"])) .banner-stage
-			display: none
-
+		/* 手机 / 平板端不再限制「仅首页显示壁纸」：所有页面都展示（隐藏与否完全由
+		   body[data-banner-layout] / data-wallpaper-mode 决定）。 */
 		.banner-stage
 			&__copy h1
 				font-size: 2.75rem

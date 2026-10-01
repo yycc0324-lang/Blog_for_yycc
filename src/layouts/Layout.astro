@@ -73,6 +73,7 @@ function hasBannerImages(source: BannerSourceValue | undefined): boolean {
 const defaultSocialImage =
 	siteConfig.ogImage ||
 	getFirstBannerImage(siteConfig.banner.src.desktop) ||
+	getFirstBannerImage(siteConfig.banner.src.tablet ?? []) ||
 	getFirstBannerImage(siteConfig.banner.src.mobile) ||
 	"";
 const candidateOgImage = ogImage || banner || defaultSocialImage;
@@ -108,6 +109,9 @@ const RainyWindowLayer = rainyDayEnabled
 	: null;
 
 const hasDesktopBanner = hasBannerImages(siteConfig.banner.src.desktop);
+const hasTabletBanner =
+	hasBannerImages(siteConfig.banner.src.tablet ?? []) ||
+	hasBannerImages(siteConfig.banner.src.mobile);
 const hasMobileBanner = hasBannerImages(siteConfig.banner.src.mobile);
 
 let pageTitle: string;
@@ -246,6 +250,7 @@ const hasMonoFont =
 		data-banner-layout="compact"
 		data-banner-top-app-bar="false"
 		data-banner-has-desktop={String(hasDesktopBanner)}
+		data-banner-has-tablet={String(hasTabletBanner)}
 		data-banner-has-mobile={String(hasMobileBanner)}
 	>
 		<ConfigCarrier></ConfigCarrier>
