@@ -3,6 +3,8 @@
 侧栏音乐播放器在 `meting` / `mixed` 模式下通过 **Meting API** 拉取远端歌单。
 本仓库自带一份可复现的 Docker 部署资产与两个脚本，覆盖本机开发与线上部署两种场景。
 
+> 搭好之后的日常维护（换歌单、换 Cookie、改配置分别要动什么）整理在 [`meting/README.md`](meting/README.md)。
+
 | 类别 | 文件 |
 | --- | --- |
 | 资产 | `docs/meting/{Dockerfile, docker-compose.yml, nginx-meting.conf, qq-cookie.txt.example}` |

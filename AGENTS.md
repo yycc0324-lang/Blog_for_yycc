@@ -32,7 +32,7 @@ Shirone is a blog theme built with Astro 7, Svelte 5, Tailwind 4, Stylus, and pn
 - `docs/markdown-syntax-manifest.md` — required before adding, changing, or retiring custom author-facing Markdown syntax.
 - `rules/article-writing.md` — required before writing or editing any article under `src/content/posts/**`; it records the author's line-level corrections to Chinese prose style (banned sentence patterns, no stage summaries, short section labels).
 - `docs/sidebar-system.md` — sidebar orchestration, page filtering, and Swup synchronization.
-- `docs/DEPLOYMENT_METING.md` — required before changing the music player's Meting provider, the self-hosted Meting assets under `docs/meting/`, or the deployment scripts `scripts/deploy-meting.sh` / `scripts/update-meting-cookie.sh` / `scripts/meting-common.sh`.
+- `docs/DEPLOYMENT_METING.md` — required before changing the music player's Meting provider, the self-hosted Meting assets under `docs/meting/`, or the deployment scripts `scripts/deploy-meting.sh` / `scripts/update-meting-cookie.sh` / `scripts/meting-common.sh`. Day-to-day maintenance — how a playback request flows, and what to change for a new playlist or a refreshed cookie — is summarized in `docs/meting/README.md`.
 - `src/config/README.md` — required before changing configuration types or values.
 - `rules/ai-skills.md` — required before adding or changing AI skills or their packaging workflow.
 - `docs/npm-package-mode.md` — how the theme behaves when installed as the `shirones` package (config paths, content root, init).
