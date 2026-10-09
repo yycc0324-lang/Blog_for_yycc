@@ -122,7 +122,21 @@ if [ -f "$COOKIE_FILE" ] && [ -s "$COOKIE_FILE" ]; then
 fi
 printf '%s\n' "$cookie" > "$COOKIE_FILE"
 chmod 600 "$COOKIE_FILE"
-log "已写入 ${COOKIE_FILE}（权限 600，长度 $(wc -c < "$COOKIE_FILE" | tr -d ' ') 字节）"
+
+# Linux 的 bind mount 会真校验属主与权限（macOS 的 Docker Desktop 不校验，所以本机测不出这个问题）：
+# 容器里的 Apache 以 www-data(33) 读这个文件，属主 root + 600 就是「文件在、却读不到」，
+# 表现为 Cookie 明明写对了、逐首探测却全是 0 字节。这里直接把属主让给容器内的 www-data。
+# 镜像基于 php:8.2-apache（www-data = 33）；chown 失败（非 root / 文件系统不支持）时退回 644 兜底。
+if [ "$(uname -s)" = "Linux" ]; then
+	if chown 33:33 "$COOKIE_FILE" 2>/dev/null; then
+		info "已把 Cookie 属主让给容器内的 www-data（33:33），容器才读得到"
+	else
+		chmod 644 "$COOKIE_FILE"
+		warn "无法 chown 到 33:33，已退回权限 644（容器可读，代价是同机其它用户也能读）"
+	fi
+fi
+
+log "已写入 ${COOKIE_FILE}（长度 $(wc -c < "$COOKIE_FILE" | tr -d ' ') 字节）"
 
 # ---------- 4) 解析有效期（psrf_access_token_expiresAt 是 Unix 时间戳）----------
 exp="$(printf '%s' "$cookie" | grep -oE 'psrf_access_token_expiresAt=[0-9]+' | head -1 | cut -d= -f2 || true)"

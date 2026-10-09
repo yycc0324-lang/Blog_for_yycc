@@ -252,6 +252,18 @@ COOKIEEOF
 		warn "未检测到可用的 QQ Cookie（需同时含数字 uin 与 qm_keyst）"
 		warn "  QQ 音乐 VIP 曲目将拿不到播放地址；配好后无需重启，刷新页面即生效"
 	fi
+
+	# 3.4 Linux 的 bind mount 会真校验属主与权限：Cookie 属主必须是容器内的 www-data(33)，
+	#     属主 root + 600 会让 index.php 「文件在却读不到」，表现是逐首探测全 0 字节
+	#     （macOS 的 Docker Desktop 不校验权限，所以在开发机上复现不出来）。
+	if [ -s "$cookie_file" ] && [ "$(uname -s)" = "Linux" ]; then
+		if chown 33:33 "$cookie_file" 2>/dev/null; then
+			info "已确保 Cookie 属主为容器内 www-data（33:33）"
+		else
+			chmod 644 "$cookie_file" 2>/dev/null || true
+			warn "无法 chown 到 33:33，已退回权限 644（容器可读）"
+		fi
+	fi
 }
 
 

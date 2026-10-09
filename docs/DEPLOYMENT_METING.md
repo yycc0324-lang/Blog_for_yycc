@@ -139,17 +139,30 @@ DEPLOY_DIR=/你的目录 bash scripts/update-meting-cookie.sh
 要点：**无需重启容器、无需重建镜像**，覆盖宿主机文件后下一次请求即生效（`index.php` 每次请求都重新读它）。
 `qq-cookie.txt` 已在 `.gitignore` 中，切勿提交或外发。
 
+⚠️ **Linux 服务器必看（属主）**：`qq-cookie.txt` 是 bind mount 进容器的，Linux 会**真校验**属主与权限，
+而容器里的 Apache 以 `www-data`（UID 33）读它。属主 `root` + 权限 `600` 会造成
+「文件确实在容器里、Cookie 却读不到」——歌单照常解析，但逐首探测全是 `0` 字节。
+两个脚本现在都会自动处理；**手动**放置文件时请自己补一句：
+
+```bash
+chown 33:33 /www/wwwroot/meting/qq-cookie.txt    # 路径按你的 DEPLOY_DIR
+```
+
+（macOS 的 Docker Desktop 不校验权限，所以这个坑在开发机上一律复现不出来，只在 Linux 上暴露。）
+
+
 ## 5. 前端配置（`src/config/musicConfig.ts`）
 
 ```ts
 provider: "local",              // 当前：只播 src/data/music.ts（歌单体检筛出的"确认可播放"曲目，零远端请求）
                                 // 想让远端歌单自动同步：改 "mixed"（本地保底 + 远端合并）或 "meting"（只用远端）
 meting: {
-  api: "https://api.injahow.cn/meting/?server=:server&type=:type&id=:id&r=:r",
-  // 当前用公共 Meting 实例（自建容器只绑 127.0.0.1，公网不可达）。
-  // 服务器侧把 Meting 反代到公网后（第 9 节），把 api 换回自建地址
-  // （如 "https://meting.你的域名/?server=:server&type=:type&id=:id&r=:r"），
-  // 再 `pnpm music:audit --write` 重新生成曲库，即可恢复 VIP 曲目能力。
+  api: "https://cnyicheng.top/meting/?server=:server&type=:type&id=:id&r=:r",
+  // 自建 Meting 的**同域路径反代**：站点 Nginx 的 location /meting/ → 127.0.0.1:8900，
+  // 容器内带站长本人的会员 Cookie —— VIP / 版权曲目（如周杰伦）只有这条路拿得到播放地址。
+  // 公共实例没有这份 Cookie，这类曲目在那边一律 0 字节，不要再切回去。
+  // 路径式反代与博客同域同证书：无 CORS、无混合内容问题，也不用额外域名 + 证书（见第 9 节 B 方案）。
+  // 换歌单只改下面的 id，然后 `pnpm music:audit --write` 重新生成曲库。
   server: "tencent",            // tencent = QQ 音乐（netease / kugou 等亦可）
   type: "playlist",
   id: "9777005268",            // ★ 换歌单只改这里（QQ 音乐歌单分享链接里的 id=）
@@ -196,6 +209,7 @@ pnpm dev            # http://localhost:4321/
 | 执行 `deploy-meting.sh up` 时提示"检测到共用容器" | 本机已有 8899 的容器，脚本为避免抢端口会自动改用 8900 另起一套 | 只想共用就不需要 `up`，直接 `bash scripts/deploy-meting.sh test` |
 | 维护命令报"No such container"之类错误 | 部署目录识别错了（机器上有多套 Meting） | 显式指定：`DEPLOY_DIR=/你的目录 bash scripts/deploy-meting.sh test` |
 | 线上页面无声音，控制台报 Mixed Content | https 页面请求了 http 接口 | 用 `docs/meting/nginx-meting.conf` 反代并挂证书，`api` 改成 `https://` 域名 |
+| 歌单能解析、`qq-cookie.txt` 内容也对，但 `type=url` 全是 `0` 字节 | Linux bind mount 校验属主：Cookie 属主不是容器内的 `www-data(33)`（常见于 root 写的 600） | `chown 33:33 $DEPLOY_DIR/qq-cookie.txt`；新版两个脚本已自动处理，macOS 上复现不出来 |
 | 返回的音频地址域名不对 | 反代丢了 `Host` 头 | 保留 `proxy_set_header Host $host;` |
 
 ---
@@ -220,6 +234,45 @@ pnpm build                             # 再把 dist/ 发布到博客站点
 ```
 
 **访客侧：零操作。** 打开网页即可播放；Cookie 只存在于服务器，浏览器既不接触也拿不到。
+
+### 9B. 同域路径反代（最省事：不用新域名、不用新证书）
+
+不想为 Meting 单独开子域时，直接在**博客站点自己的** `server { }` 里加一段路径反代：
+
+```bash
+# ★ 域名要带上路径段，脚本会把它写死进 index.php 的 API_URI
+PUBLIC_DOMAIN=cnyicheng.top/meting bash scripts/deploy-meting.sh
+```
+
+```nginx
+location /meting/ {
+    proxy_pass http://127.0.0.1:8900/;     # 结尾这个 / 不能少：容器收到 /meting/ 会 404
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_connect_timeout 10s;
+    proxy_send_timeout 30s;
+    proxy_read_timeout 30s;
+    proxy_buffering off;
+}
+```
+
+好处：同域同证书 —— 没有 CORS、没有混合内容问题，也不用再申请证书。前端 `api` 写：
+
+```ts
+api: "https://cnyicheng.top/meting/?server=:server&type=:type&id=:id&r=:r"
+```
+
+> ⚠️ 部署脚本结尾打印的「新建站点：域名 cnyicheng.top/meting」是 **A 方案（子域）** 的提示。
+> 走 B 方案时**不要新建站点**，把上面的 location 加进现有站点配置即可。
+
+```bash
+# 验证（两条都要过）
+curl -s "https://cnyicheng.top/meting/?server=tencent&type=playlist&id=9777005268" | head -c 200
+curl -s -o /dev/null -L -w '%{http_code} %{content_type} %{size_download}B\n' \
+  "https://cnyicheng.top/meting/?server=tencent&type=url&id=0039MnYb0qxYhV"
+```
 
 日常维护（都在仓库里执行，不需要登服务器改任何配置）：
 

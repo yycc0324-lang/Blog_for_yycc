@@ -43,8 +43,13 @@ function parseArgs(argv) {
 			options.write = true;
 			continue;
 		}
-		const [key, value] = raw.replace(/^--/, "").split("=");
-		if (value === undefined) continue;
+		// 只在第一个 "=" 处切分：--api 的取值本身带查询串（?server=:server&type=:type…），
+		// 用 split("=") 会把值截断成 "http://host/?server"，导致歌单请求返回 HTML。
+		const body = raw.replace(/^--/, "");
+		const separator = body.indexOf("=");
+		if (separator === -1) continue;
+		const key = body.slice(0, separator);
+		const value = body.slice(separator + 1);
 		if (key === "limit" || key === "timeout") {
 			const parsed = Number.parseInt(value, 10);
 			if (Number.isFinite(parsed) && parsed > 0) options[key] = parsed;
