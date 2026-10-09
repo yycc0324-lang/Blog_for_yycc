@@ -67,13 +67,14 @@ export const musicConfig: MusicConfig = withUserConfig("music", {
 	// 	},
 	// ],
 	meting: {
-		// 公共 Meting 实例（https，访客浏览器可直连）。本站以 http(IP:324) 形式部署，无混合内容顾虑；
-		// 自建 Meting 容器只绑 127.0.0.1（8899/8900），公网不可达，浏览器侧无法使用。
-		// 体检结果：公共实例的可播曲目与自建 Cookie 版一致（VIP/版权曲目两端都拿不到音频地址）。
-		// 服务器把 Meting 反代到公网后（docs/DEPLOYMENT_METING.md 第 5、9 节），把这里换回自建地址
-		// 并用 `pnpm music:audit --write` 重新生成曲库即可。
+		// 自建 Meting 的**同域路径反代**：站点 Nginx 的 location /meting/ → 服务器 127.0.0.1:8900，
+		// 容器内带站长本人的会员 Cookie，VIP / 版权曲目（如周杰伦）才有播放地址。
+		// 公共实例（api.injahow.cn 等）没有这份 Cookie，这类曲目在那边一律返回 0 字节，所以不能再用。
+		// 路径式反代与博客同域同证书：没有 CORS、没有混合内容问题，也不需要额外域名。
+		// 部署、Cookie 维护与排查见 docs/DEPLOYMENT_METING.md；换歌单只改下面的 id，
+		// 然后 `pnpm music:audit --write` 重新生成曲库。
 		// 模板占位符由 utils/music/meting.ts 的 buildMetingUrl() 填充。
-		api: "https://api.injahow.cn/meting/?server=:server&type=:type&id=:id&r=:r",
+		api: "https://cnyicheng.top/meting/?server=:server&type=:type&id=:id&r=:r",
 		server: "tencent", // QQ 音乐
 		type: "playlist",
 		id: "9777005268", // QQ 歌单 ID（在 QQ 音乐歌单分享链接里取 id= 后面的数字）
