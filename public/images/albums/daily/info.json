@@ -1,0 +1,12 @@
+{
+	"title": "日常",
+	"description": "参赛证、B站年度报告、相机、雪景、街景，随手存下的日常。",
+	"date": "2026-10-31",
+	"location": "",
+	"tags": [
+		"日常"
+	],
+	"layout": "masonry",
+	"columns": 3,
+	"hidden": false
+}

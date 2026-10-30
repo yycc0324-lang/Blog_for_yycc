@@ -1,0 +1,13 @@
+{
+	"title": "动漫",
+	"description": "追番截图和相关的图，先占个位置。",
+	"date": "2026-10-31",
+	"location": "",
+	"tags": [
+		"动漫",
+		"追番"
+	],
+	"layout": "masonry",
+	"columns": 3,
+	"hidden": true
+}
